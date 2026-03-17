@@ -1,36 +1,47 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# VeriWorkly Resume
 
-## Getting Started
+> A modern, open-source resume builder with powerful customization and developer-friendly architecture.
 
-First, run the development server:
+VeriWorkly Resume is a free and open-source tool to create, customize, and export professional resumes with ease.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Built for developers, students, and job seekers, with a strong focus on:
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- flexibility
+- clean design
+- extensibility
+- open contribution
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## ✨ Features
 
-## Learn More
+- 🎨 Multiple modern resume templates
+- ⚡ Real-time preview
+- 🧩 Modular section system
+- 📄 Export to PDF
+- 💾 Save & load resumes (JSON)
+- 🔄 Import existing resume data
+- 🛠 Developer-friendly architecture
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🚀 Demo
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Live demo coming soon.
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🧠 Design Philosophy
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Most resume builders today are:
+
+- locked behind paywalls
+- hard to customize
+- not developer-friendly
+
+**VeriWorkly Resume is different:**
+
+- 100% free
+- open-source
+- built for extensibility
+- designed for contributors
