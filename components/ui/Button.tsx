@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 
 type ChildWithProps = {
   className?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 };
 
 const buttonVariants = {

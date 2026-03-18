@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
 
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -17,17 +17,61 @@ import {
 import ResumeCard from "./ResumeCard";
 import EmptyState from "./EmptyState";
 
+const EMPTY_RESUMES: ResumeListItem[] = [];
+
+let cachedResumes: ResumeListItem[] = EMPTY_RESUMES;
+let cachedResumesKey = "";
+
+function subscribeToResumeChanges(onStoreChange: () => void) {
+  if (typeof window === "undefined") {
+    return () => {};
+  }
+
+  const handleChange = () => onStoreChange();
+
+  window.addEventListener("storage", handleChange);
+  window.addEventListener("focus", handleChange);
+  window.addEventListener("visibilitychange", handleChange);
+
+  return () => {
+    window.removeEventListener("storage", handleChange);
+    window.removeEventListener("focus", handleChange);
+    window.removeEventListener("visibilitychange", handleChange);
+  };
+}
+
+function getResumeSnapshot() {
+  const nextResumes = listSavedResumes();
+  const nextKey = JSON.stringify(nextResumes);
+
+  if (nextKey === cachedResumesKey) {
+    return cachedResumes;
+  }
+
+  cachedResumes = nextResumes;
+  cachedResumesKey = nextKey;
+
+  return cachedResumes;
+}
+
+function getServerResumeSnapshot(): ResumeListItem[] {
+  return EMPTY_RESUMES;
+}
+
 const DashboardWorkspace = () => {
   const router = useRouter();
 
-  const [isLoaded, setIsLoaded] = useState(false);
-
-  const [resumes, setResumes] = useState<ResumeListItem[]>([]);
+  const [isHydrated, setIsHydrated] = useState(false);
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
+  const resumes = useSyncExternalStore(
+    subscribeToResumeChanges,
+    getResumeSnapshot,
+    getServerResumeSnapshot,
+  );
+
   useEffect(() => {
-    setResumes(listSavedResumes());
-    setIsLoaded(true);
+    setIsHydrated(true);
   }, []);
 
   const deleteTarget = useMemo(
@@ -45,27 +89,8 @@ const DashboardWorkspace = () => {
     if (!deleteTargetId) return;
 
     deleteResumeById(deleteTargetId);
-
-    setResumes((prev) => prev.filter((r) => r.id !== deleteTargetId));
     setDeleteTargetId(null);
   };
-
-  if (!isLoaded) {
-    return (
-      <div className="animate-pulse space-y-6 py-8">
-        <div className="bg-card border-border h-32 w-full rounded-3xl border" />
-
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {[1, 2, 3].map((i) => (
-            <div
-              key={i}
-              className="bg-card border-border h-48 w-full rounded-3xl border"
-            />
-          ))}
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div
@@ -94,29 +119,35 @@ const DashboardWorkspace = () => {
       </Card>
 
       <div className="sr-only" aria-live="polite">
-        {resumes.length} resumes available
+        {isHydrated
+          ? `${resumes.length} resumes available`
+          : "Loading resumes..."}
       </div>
 
-      {resumes.length === 0 ? (
-        <EmptyState onCreate={handleCreate} />
-      ) : (
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {resumes.map((resume) => (
-            <ResumeCard
-              key={resume.id}
-              resume={resume}
-              onDelete={setDeleteTargetId}
-            />
-          ))}
-        </div>
-      )}
+      {isHydrated && (
+        <>
+          {resumes.length === 0 ? (
+            <EmptyState onCreate={handleCreate} />
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+              {resumes.map((resume) => (
+                <ResumeCard
+                  key={resume.id}
+                  resume={resume}
+                  onDelete={setDeleteTargetId}
+                />
+              ))}
+            </div>
+          )}
 
-      <DestructiveModal
-        open={Boolean(deleteTargetId)}
-        onConfirm={handleConfirmDelete}
-        onClose={() => setDeleteTargetId(null)}
-        entityName={deleteTarget?.title ?? "resume"}
-      />
+          <DestructiveModal
+            open={Boolean(deleteTargetId)}
+            onConfirm={handleConfirmDelete}
+            onClose={() => setDeleteTargetId(null)}
+            entityName={deleteTarget?.title ?? "resume"}
+          />
+        </>
+      )}
     </div>
   );
 };

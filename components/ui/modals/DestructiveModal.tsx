@@ -66,7 +66,8 @@ const DestructiveModal = ({
             </p>
 
             <p className="text-muted mt-1 text-sm">
-              This action cannot be reversed.
+              Local storage and all associated data will be permanently removed.
+              This action cannot be undone.
             </p>
           </div>
 
