@@ -1,9 +1,14 @@
 import * as React from "react";
+
 import { cn } from "@/lib/utils";
 
+type ChildWithProps = {
+  className?: string;
+  [key: string]: any;
+};
+
 const buttonVariants = {
-  primary:
-    "bg-accent text-accent-foreground shadow-sm hover:opacity-90 cursor-pointer",
+  primary: "bg-accent text-accent-foreground shadow-sm hover:opacity-90",
   secondary:
     "bg-card text-foreground ring-1 ring-inset ring-border hover:bg-background",
   ghost: "bg-transparent text-foreground hover:bg-card",
@@ -24,7 +29,7 @@ export function buttonClassName(
   className?: string,
 ) {
   return cn(
-    "inline-flex items-center justify-center rounded-full font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 disabled:pointer-events-none disabled:opacity-50",
+    "inline-flex items-center justify-center rounded-full font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 disabled:pointer-events-none disabled:opacity-50 cursor-pointer",
     buttonVariants[variant],
     buttonSizes[size],
     className,
@@ -42,7 +47,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   loading?: boolean;
 }
 
-export function Button({
+export const Button = ({
   className,
   size = "md",
   variant = "primary",
@@ -52,16 +57,25 @@ export function Button({
   disabled,
   children,
   ...props
-}: ButtonProps) {
-  const Comp: any = asChild ? "span" : "button";
-
+}: ButtonProps) => {
   const isDisabled = disabled || loading;
 
+  if (asChild && React.isValidElement(children)) {
+    const child = children as React.ReactElement<ChildWithProps>;
+
+    return React.cloneElement(child, {
+      className: buttonClassName(variant, size, child.props.className),
+      "aria-disabled": isDisabled,
+      "data-disabled": isDisabled ? "" : undefined,
+      ...props,
+    });
+  }
+
   return (
-    <Comp
+    <button
       className={buttonClassName(variant, size, className)}
-      type={!asChild ? type : undefined}
-      disabled={!asChild ? isDisabled : undefined}
+      type={type}
+      disabled={isDisabled}
       aria-disabled={isDisabled}
       data-disabled={isDisabled ? "" : undefined}
       {...props}
@@ -69,11 +83,11 @@ export function Button({
       {loading ? (
         <span className="flex items-center gap-2">
           <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-          Loading...
+          <span>Loading...</span>
         </span>
       ) : (
         children
       )}
-    </Comp>
+    </button>
   );
-}
+};
