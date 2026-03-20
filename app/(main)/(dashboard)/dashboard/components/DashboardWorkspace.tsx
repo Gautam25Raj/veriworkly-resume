@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState, useSyncExternalStore } from "react";
+import { useMemo, useState, useSyncExternalStore } from "react";
 
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
@@ -61,7 +61,7 @@ function getServerResumeSnapshot(): ResumeListItem[] {
 const DashboardWorkspace = () => {
   const router = useRouter();
 
-  const [isHydrated, setIsHydrated] = useState(false);
+  const [isHydrated] = useState(() => typeof window !== "undefined");
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
   const resumes = useSyncExternalStore(
@@ -70,10 +70,6 @@ const DashboardWorkspace = () => {
     getServerResumeSnapshot,
   );
 
-  useEffect(() => {
-    setIsHydrated(true);
-  }, []);
-
   const deleteTarget = useMemo(
     () => resumes.find((r) => r.id === deleteTargetId),
 
@@ -81,7 +77,7 @@ const DashboardWorkspace = () => {
   );
 
   const handleCreate = () => {
-    const nextResume = createResume(`Resume ${resumes.length + 1}`);
+    const nextResume = createResume();
     router.push(`/editor/${nextResume.id}`);
   };
 
