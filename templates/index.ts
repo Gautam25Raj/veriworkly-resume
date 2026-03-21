@@ -1,8 +1,8 @@
-import ModernTemplate from "@/templates/modern";
-import { modernTemplateMeta } from "@/templates/modern/meta";
+import ModernTemplate from "@/templates/modern-core/templates/modern";
+import { modernTemplateMeta } from "@/templates/modern-core/templates/modern/meta";
 
-import MinimalTemplate from "@/templates/minimal";
-import { minimalTemplateMeta } from "@/templates/minimal/meta";
+import MinimalTemplate from "@/templates/modern-core/templates/minimal";
+import { minimalTemplateMeta } from "@/templates/modern-core/templates/minimal/meta";
 
 import type { TemplateDefinition } from "@/types/template";
 
@@ -11,6 +11,7 @@ export const templateRegistry: TemplateDefinition[] = [
     ...modernTemplateMeta,
     Component: ModernTemplate,
   },
+
   {
     ...minimalTemplateMeta,
     Component: MinimalTemplate,
@@ -18,8 +19,10 @@ export const templateRegistry: TemplateDefinition[] = [
 ];
 
 export function getTemplateById(templateId: string) {
+  const normalizedTemplateId = templateId === "faang" ? "ats" : templateId;
+
   return (
-    templateRegistry.find((template) => template.id === templateId) ??
+    templateRegistry.find((template) => template.id === normalizedTemplateId) ??
     templateRegistry[0]
   );
 }

@@ -1,0 +1,10 @@
+export { renderSkillsSection } from "./sections/renderSkillsSection";
+export { renderCustomSection } from "./sections/renderCustomSection";
+export { renderAwardsSection } from "./sections/renderAwardsSection";
+export { renderSummarySection } from "./sections/renderSummarySection";
+export { renderProjectsSection } from "./sections/renderProjectsSection";
+export { renderEducationSection } from "./sections/renderEducationSection";
+export { renderLanguagesSection } from "./sections/renderLanguagesSection";
+export { renderExperienceSection } from "./sections/renderExperienceSection";
+export { renderPublicationsSection } from "./sections/renderPublicationsSection";
+export { renderCertificationsSection } from "./sections/renderCertificationsSection";
