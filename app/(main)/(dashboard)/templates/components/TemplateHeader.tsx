@@ -1,5 +1,5 @@
-// features/templates/components/TemplateDetailHeader.tsx
 import Link from "next/link";
+
 import { Badge } from "@/components/ui/Badge";
 import { TemplateDefinition } from "@/types/template";
 
@@ -14,12 +14,15 @@ export function TemplateDetailHeader({
         <p className="text-muted text-xs font-semibold tracking-[0.24em] uppercase">
           Template Detail
         </p>
+
         <h1 className="text-foreground text-4xl font-semibold tracking-tight">
           {template.name}
         </h1>
+
         <p className="text-muted max-w-2xl text-base leading-7">
           {template.description}
         </p>
+
         <div className="flex flex-wrap gap-2">
           {template.tags.map((tag) => (
             <Badge key={tag}>{tag}</Badge>
@@ -31,6 +34,7 @@ export function TemplateDetailHeader({
         <Link href="/dashboard" className="text-accent hover:underline">
           Use in editor
         </Link>
+
         <Link
           href="/templates"
           className="text-muted hover:text-foreground transition-colors"

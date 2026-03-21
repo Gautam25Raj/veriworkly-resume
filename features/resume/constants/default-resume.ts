@@ -23,7 +23,7 @@ export const defaultResume: ResumeData = {
     role: "Software Developer",
     headline:
       "Software Developer building scalable web products with clean architecture, practical execution, and a little creative flair.",
-    email: "gautam.raj.dev@gmail.com",
+    email: "https://gautam-raj.vercel.app",
     phone: "+91 00000 00000",
     location: "Moon Base, Milky Way",
     linkEmail: true,
@@ -38,19 +38,19 @@ export const defaultResume: ResumeData = {
         id: "link-1",
         type: "github",
         label: "GitHub",
-        url: "https://github.com/gautamraj",
+        url: "https://github.com/gautam25raj",
       },
       {
         id: "link-2",
         type: "linkedin",
         label: "LinkedIn",
-        url: "https://linkedin.com/in/gautamraj",
+        url: "https://linkedin.com/in/-gautam-raj",
       },
       {
         id: "link-3",
         type: "portfolio",
         label: "Portfolio",
-        url: "https://gautamraj.dev",
+        url: "https://gautam-raj.vercel.app",
       },
     ],
   },
@@ -96,7 +96,7 @@ export const defaultResume: ResumeData = {
       id: "proj-1",
       name: "Veriworkly Resume",
       role: "Lead Developer",
-      link: "https://github.com/gautamraj",
+      link: "https://github.com/gautam25raj",
       summary:
         "Production-ready resume builder with a modular editor, multi-template rendering, local persistence, and export workflows.",
       highlights: [
@@ -110,7 +110,7 @@ export const defaultResume: ResumeData = {
       id: "proj-2",
       name: "Realtime Task Board",
       role: "Full Stack Developer",
-      link: "https://github.com/gautamraj",
+      link: "https://github.com/gautam25raj",
       summary:
         "Collaborative Kanban app with real-time updates, role-based access, and activity tracking.",
       highlights: [
@@ -258,6 +258,8 @@ export const defaultResume: ResumeData = {
     fontFamily: "geist",
     sectionSpacing: 28,
     pagePadding: 32,
+    bodyLineHeight: 1.5,
+    headingLineHeight: 1.2,
   },
   updatedAt: new Date().toISOString(),
 };

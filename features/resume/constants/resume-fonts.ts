@@ -1,4 +1,5 @@
 import type { ResumeCustomization } from "@/types/resume";
+
 import { FONT_CSS_VARIABLES } from "@/features/resume/constants/font-css-variables";
 
 type ResumeFontFamily = ResumeCustomization["fontFamily"];
@@ -21,18 +22,21 @@ export const RESUME_FONT_REGISTRY: Record<
     fallbackStack: "ui-sans-serif, system-ui, sans-serif",
     scope: "global",
   },
+
   serif: {
     label: "Merriweather Serif",
     cssVariable: FONT_CSS_VARIABLES.resumeSerif,
     fallbackStack: "ui-serif, Georgia, Cambria, serif",
     scope: "resume",
   },
+
   mono: {
     label: "Geist Mono",
     cssVariable: FONT_CSS_VARIABLES.geistMono,
     fallbackStack: "ui-monospace, SFMono-Regular, Menlo, monospace",
     scope: "global",
   },
+
   modern: {
     label: "Manrope Grotesk",
     cssVariable: FONT_CSS_VARIABLES.resumeModern,

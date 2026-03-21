@@ -132,6 +132,8 @@ export interface ResumeCustomization {
   fontFamily: "geist" | "serif" | "mono" | "modern";
   sectionSpacing: number;
   pagePadding: number;
+  bodyLineHeight: number;
+  headingLineHeight: number;
 }
 
 export interface ResumeData {
