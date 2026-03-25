@@ -4,6 +4,21 @@ import { modernTemplateMeta } from "@/templates/modern-core/templates/modern/met
 import MinimalTemplate from "@/templates/modern-core/templates/minimal";
 import { minimalTemplateMeta } from "@/templates/modern-core/templates/minimal/meta";
 
+import ExecutiveTemplate from "@/templates/modern-core/templates/leadership";
+import { executiveTemplateMeta } from "@/templates/modern-core/templates/leadership/meta";
+
+import AtsClassicTemplate from "@/templates/compact-core/templates/ats-classic";
+import { atsClassicTemplateMeta } from "@/templates/compact-core/templates/ats-classic/meta";
+
+import ClassicAcademicTemplate from "@/templates/compact-core/templates/professional-classic";
+import { classicAcademicTemplateMeta } from "@/templates/compact-core/templates/professional-classic/meta";
+
+import StructuredProfessionalTemplate from "@/templates/compact-core/templates/structured-professional";
+import { structuredProfessionalTemplateMeta } from "@/templates/compact-core/templates/structured-professional/meta";
+
+import AcademicSerifTemplate from "@/templates/compact-core/templates/academic-serif";
+import { academicSerifTemplateMeta } from "@/templates/compact-core/templates/academic-serif/meta";
+
 import type { TemplateDefinition } from "@/types/template";
 
 export const templateRegistry: TemplateDefinition[] = [
@@ -15,6 +30,31 @@ export const templateRegistry: TemplateDefinition[] = [
   {
     ...minimalTemplateMeta,
     Component: MinimalTemplate,
+  },
+
+  {
+    ...executiveTemplateMeta,
+    Component: ExecutiveTemplate,
+  },
+
+  {
+    ...atsClassicTemplateMeta,
+    Component: AtsClassicTemplate,
+  },
+
+  {
+    ...classicAcademicTemplateMeta,
+    Component: ClassicAcademicTemplate,
+  },
+
+  {
+    ...structuredProfessionalTemplateMeta,
+    Component: StructuredProfessionalTemplate,
+  },
+
+  {
+    ...academicSerifTemplateMeta,
+    Component: AcademicSerifTemplate,
   },
 ];
 

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
@@ -32,11 +33,13 @@ const TemplateCard = ({ template }: TemplateCardProps) => {
 
           <div className="relative h-56 bg-slate-100">
             {template.previewImage ? (
-              <img
+              <Image
+                fill
                 alt=""
                 aria-hidden="true"
-                className="h-full w-full object-cover object-top"
                 src={template.previewImage}
+                sizes="(min-width: 1280px) 380px, 100vw"
+                className="h-full w-full object-cover object-top"
               />
             ) : null}
 
@@ -58,11 +61,13 @@ const TemplateCard = ({ template }: TemplateCardProps) => {
           }}
         >
           {template.previewImage ? (
-            <img
+            <Image
+              fill
               alt=""
               aria-hidden="true"
-              className="absolute inset-0 h-full w-full object-cover object-top opacity-70"
               src={template.previewImage}
+              sizes="(min-width: 1280px) 320px, 100vw"
+              className="absolute inset-0 h-full w-full object-cover object-top opacity-70"
             />
           ) : null}
 
