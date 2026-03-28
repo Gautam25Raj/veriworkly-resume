@@ -14,15 +14,19 @@ export default function EditorByIdError({
         <p className="text-accent text-xs font-semibold tracking-[0.24em] uppercase">
           Resume Editor
         </p>
+
         <h1 className="text-foreground mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
           This resume could not be opened
         </h1>
+
         <p className="text-muted mt-2 max-w-2xl text-sm leading-6">
           The draft may be unavailable in this browser session. Retry, or go
           back to dashboard to choose another resume.
         </p>
+
         <div className="mt-5 flex flex-wrap items-center gap-3">
           <Button onClick={() => reset()}>Retry</Button>
+
           <Button
             variant="secondary"
             onClick={() => (window.location.href = "/dashboard")}

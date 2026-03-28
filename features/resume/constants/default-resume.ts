@@ -23,7 +23,7 @@ export const defaultResume: ResumeData = {
     role: "Software Developer",
     headline:
       "Software Developer building scalable web products with clean architecture, practical execution, and a little creative flair.",
-    email: "https://gautam-raj.vercel.app",
+    email: "ashragautam25@gmail.com",
     phone: "+91 00000 00000",
     location: "Moon Base, Milky Way",
     linkEmail: true,

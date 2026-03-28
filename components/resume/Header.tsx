@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 import type {
   ResumeLinks,
   ResumeBasics,
@@ -6,17 +8,28 @@ import type {
 } from "@/types/resume";
 
 const LINK_TYPE_ICON: Record<ResumeLinkType, string> = {
-  github: "GH",
-  linkedin: "in",
-  dribbble: "Dr",
-  website: "Web",
-  twitter: "X",
-  portfolio: "PF",
-  behance: "Be",
-  medium: "M",
-  youtube: "YT",
-  custom: "Link",
+  github: "/icons/socials/github.svg",
+  linkedin: "/icons/socials/linkedIn.svg",
+  dribbble: "/icons/socials/dribble.svg",
+  twitter: "/icons/socials/twitter-x.svg",
+  portfolio: "/icons/socials/globe.svg",
+  behance: "/icons/socials/behance.svg",
+  medium: "/icons/socials/medium.svg",
+  youtube: "/icons/socials/youtube.svg",
+  custom: "/icons/socials/globe.svg",
 };
+
+function SocialIcon({ type }: { type: ResumeLinkType }) {
+  return (
+    <Image
+      alt={type}
+      className="h-4 w-4"
+      height={16}
+      src={LINK_TYPE_ICON[type]}
+      width={16}
+    />
+  );
+}
 
 function getLinkDisplayText(item: ResumeLinkItem) {
   if (item.label.trim()) {
@@ -54,9 +67,9 @@ function renderLinks(links: ResumeLinks) {
             target="_blank"
             rel="noreferrer"
             title={item.label || item.type}
-            className="hover:bg-accent/10 rounded-full border border-(--resume-border) px-2 py-1 text-xs font-medium text-(--resume-text)"
+            className="hover:bg-accent/10 inline-flex h-8 w-8 items-center justify-center rounded-full border border-(--resume-border)"
           >
-            {LINK_TYPE_ICON[item.type]}
+            <SocialIcon type={item.type} />
           </a>
         ))}
       </div>
@@ -91,8 +104,8 @@ function renderLinks(links: ResumeLinks) {
           rel="noreferrer"
           className="inline-flex items-center gap-1.5 text-(--resume-muted) hover:text-(--resume-text)"
         >
-          <span className="rounded-full border border-(--resume-border) px-1.5 py-0.5 text-[10px] font-medium text-(--resume-text)">
-            {LINK_TYPE_ICON[item.type]}
+          <span className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-(--resume-border)">
+            <SocialIcon type={item.type} />
           </span>
 
           <span>{getLinkDisplayText(item)}</span>

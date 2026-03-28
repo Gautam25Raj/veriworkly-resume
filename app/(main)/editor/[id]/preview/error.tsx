@@ -14,14 +14,18 @@ export default function EditorPreviewError({
         <p className="text-accent text-xs font-semibold tracking-[0.24em] uppercase">
           Resume Preview
         </p>
+
         <h1 className="text-foreground mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
           We could not render this preview
         </h1>
+
         <p className="text-muted mt-2 max-w-2xl text-sm leading-6">
           Try rendering the preview again or return to the editor route.
         </p>
+
         <div className="mt-5 flex flex-wrap items-center gap-3">
           <Button onClick={() => reset()}>Try again</Button>
+
           <Button
             variant="secondary"
             onClick={() => (window.location.href = "/dashboard")}

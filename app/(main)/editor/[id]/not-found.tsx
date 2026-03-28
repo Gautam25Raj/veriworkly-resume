@@ -9,17 +9,21 @@ export default function EditorByIdNotFound() {
         <p className="text-accent text-xs font-semibold tracking-[0.24em] uppercase">
           Resume Editor
         </p>
+
         <h1 className="text-foreground mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
           Resume not found
         </h1>
+
         <p className="text-muted mt-2 max-w-2xl text-sm leading-6">
           This resume link is invalid or the draft is not available in the
           current browser storage.
         </p>
+
         <div className="mt-5 flex flex-wrap items-center gap-3">
           <Button asChild variant="primary">
             <Link href="/dashboard">Go to Dashboard</Link>
           </Button>
+
           <Button asChild variant="ghost">
             <Link href="/templates">View Templates</Link>
           </Button>

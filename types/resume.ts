@@ -35,7 +35,6 @@ export type ResumeLinkType =
   | "github"
   | "linkedin"
   | "dribbble"
-  | "website"
   | "twitter"
   | "portfolio"
   | "behance"

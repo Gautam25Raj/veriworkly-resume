@@ -1,19 +1,19 @@
-import {
-  defaultResume,
-  defaultSections,
-} from "@/features/resume/constants/default-resume";
 import type {
   ResumeData,
   ResumeLinkItem,
   ResumeLinkType,
 } from "@/types/resume";
 
+import {
+  defaultResume,
+  defaultSections,
+} from "@/features/resume/constants/default-resume";
+
 function isKnownLinkType(value: string): value is ResumeLinkType {
   return [
     "github",
     "linkedin",
     "dribbble",
-    "website",
     "twitter",
     "portfolio",
     "behance",
@@ -21,6 +21,14 @@ function isKnownLinkType(value: string): value is ResumeLinkType {
     "youtube",
     "custom",
   ].includes(value);
+}
+
+function normalizeLinkType(value: string | undefined): ResumeLinkType {
+  if (value === "website") {
+    return "portfolio";
+  }
+
+  return value && isKnownLinkType(value) ? value : "portfolio";
 }
 
 function normalizeLinks(value: Partial<ResumeData> | null | undefined) {
@@ -31,7 +39,7 @@ function normalizeLinks(value: Partial<ResumeData> | null | undefined) {
       displayMode: incomingLinks.displayMode ?? defaultResume.links.displayMode,
       items: (incomingLinks.items ?? []).map((item, index) => ({
         id: item.id || `link-${index + 1}`,
-        type: isKnownLinkType(item.type) ? item.type : "website",
+        type: normalizeLinkType(item.type),
         label: item.label || "",
         url: item.url || "",
       })),
@@ -47,9 +55,24 @@ function normalizeLinks(value: Partial<ResumeData> | null | undefined) {
   >;
 
   const migratedItems: ResumeLinkItem[] = [
-    { type: "website" as ResumeLinkType, label: "", url: legacyBasics.website || "", id: "" },
-    { type: "github" as ResumeLinkType, label: "", url: legacyBasics.github || "", id: "" },
-    { type: "linkedin" as ResumeLinkType, label: "", url: legacyBasics.linkedin || "", id: "" },
+    {
+      type: "portfolio" as ResumeLinkType,
+      label: "",
+      url: legacyBasics.website || "",
+      id: "",
+    },
+    {
+      type: "github" as ResumeLinkType,
+      label: "",
+      url: legacyBasics.github || "",
+      id: "",
+    },
+    {
+      type: "linkedin" as ResumeLinkType,
+      label: "",
+      url: legacyBasics.linkedin || "",
+      id: "",
+    },
   ]
     .filter((item) => item.url.trim().length > 0)
     .map((item, index) => ({

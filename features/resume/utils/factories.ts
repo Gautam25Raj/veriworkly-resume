@@ -53,7 +53,7 @@ export function createProjectItem(): ResumeProjectItem {
 }
 
 export function createLinkItem(
-  type: ResumeLinkType = "website",
+  type: ResumeLinkType = "portfolio",
 ): ResumeLinkItem {
   return {
     id: uniqueId("link"),

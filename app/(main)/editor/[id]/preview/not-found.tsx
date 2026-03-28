@@ -9,17 +9,21 @@ export default function EditorPreviewNotFound() {
         <p className="text-accent text-xs font-semibold tracking-[0.24em] uppercase">
           Resume Preview
         </p>
+
         <h1 className="text-foreground mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
           Preview not available
         </h1>
+
         <p className="text-muted mt-2 max-w-2xl text-sm leading-6">
           This preview link is invalid or the resume is no longer available in
           local storage.
         </p>
+
         <div className="mt-5 flex flex-wrap items-center gap-3">
           <Button asChild variant="primary">
             <Link href="/dashboard">Go to Dashboard</Link>
           </Button>
+
           <Button asChild variant="ghost">
             <Link href="/templates">View Templates</Link>
           </Button>
