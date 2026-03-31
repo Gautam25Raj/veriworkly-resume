@@ -15,6 +15,8 @@ import { errorHandler, notFoundHandler } from "@/middleware/errorHandler";
 import statsRoutes from "@/routes/stats";
 import healthRoutes from "@/routes/health";
 import roadmapRoutes from "@/routes/roadmap";
+import { authNodeHandler } from "@/auth";
+import { ensureAdminUserExists, validateAuthRuntimeConfig } from "@/auth/runtime";
 
 import { startGitHubSyncJob, stopGitHubSyncJob } from "@/jobs/githubSyncJob";
 
@@ -43,6 +45,7 @@ app.set("trust proxy", 1);
 app.use("/api/v1/health", healthRoutes);
 app.use("/api/v1/roadmap", roadmapRoutes);
 app.use("/api/v1/stats", statsRoutes);
+app.all("/api/v1/auth/*", authNodeHandler);
 
 // 404 handler
 app.use(notFoundHandler);
@@ -71,13 +74,16 @@ process.on("SIGINT", shutdown);
 // Start server
 async function main() {
   try {
+    validateAuthRuntimeConfig();
+
     // Initialize Redis
     await initRedis();
     logger.info("Redis initialized");
 
     // Test database connection
-    await prisma.$queryRaw`SELECT 1`;
     logger.info("Database connected");
+
+    await ensureAdminUserExists();
 
     // Start listening
     const server = app.listen(config.port, () => {

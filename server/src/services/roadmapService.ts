@@ -50,6 +50,20 @@ export async function getRoadmapFeatures(query: RoadmapQuery = {}) {
   const [items, total] = await Promise.all([
     prisma.roadmapFeature.findMany({
       where,
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        status: true,
+        eta: true,
+        tags: true,
+        createdAt: true,
+        startedAt: true,
+        completedAt: true,
+        completedQuarter: true,
+        updatedAt: true,
+        timeline: true,
+      },
       orderBy: getRoadmapOrderBy(sort),
       take: limit,
       skip: offset,
@@ -99,6 +113,9 @@ export async function getRoadmapFeatureById(id: string) {
       completedAt: true,
       completedQuarter: true,
       updatedAt: true,
+      fullDescription: true,
+      whyItMatters: true,
+      timeline: true,
       details: true,
       interactions: {
         select: {

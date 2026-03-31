@@ -9,19 +9,53 @@ export const roadmapQuerySchema = z.object({
 
 const roadmapDetailsSchema = z
   .object({
-    fullDescription: z.string().optional(),
-    whyItMatters: z.string().optional(),
-    timeline: z.string().optional(),
+    fullDescription: z.string().nullable().optional(),
+    whyItMatters: z.string().nullable().optional(),
+    timeline: z.string().nullable().optional(),
+
+    problem: z.string().nullable().optional(),
+    solution: z.string().nullable().optional(),
+    approach: z.string().nullable().optional(),
+
+    keyImprovements: z.array(z.string()).nullable().optional(),
+
+    beforeAfter: z
+      .array(
+        z.object({
+          before: z.string(),
+          after: z.string(),
+        }),
+      )
+      .nullable()
+      .optional(),
+
+    technicalHighlights: z.array(z.string()).nullable().optional(),
+
+    media: z
+      .array(
+        z.object({
+          type: z.string().nullable().optional(),
+          label: z.string().nullable().optional(),
+          url: z.string().nullable().optional(),
+        }),
+      )
+      .nullable()
+      .optional(),
+
+    impactMetrics: z.array(z.string()).nullable().optional(),
+
     items: z
       .array(
         z.object({
           name: z.string(),
-          description: z.string().optional(),
-          image: z.string().optional(),
+          description: z.string().nullable().optional(),
+          image: z.string().nullable().optional(),
         }),
       )
+      .nullable()
       .optional(),
   })
+  .nullable()
   .optional();
 
 export const roadmapAdminCreateSchema = z.object({
@@ -29,7 +63,7 @@ export const roadmapAdminCreateSchema = z.object({
   title: z.string().min(1),
   description: z.string().min(1),
   status: z.enum(["todo", "in-progress", "done"]).default("todo"),
-  eta: z.string().optional(),
+  eta: z.string().nullable().optional(),
   tags: z.array(z.string()).optional(),
   startedAt: z.string().datetime().optional(),
   completedAt: z.string().datetime().optional(),
@@ -42,12 +76,15 @@ export const roadmapAdminUpdateSchema = z
     title: z.string().min(1).optional(),
     description: z.string().min(1).optional(),
     status: z.enum(["todo", "in-progress", "done"]).optional(),
-    eta: z.string().optional(),
+
+    eta: z.string().nullable().optional(),
     tags: z.array(z.string()).optional(),
-    startedAt: z.string().datetime().optional().nullable(),
-    completedAt: z.string().datetime().optional().nullable(),
-    completedQuarter: z.string().optional().nullable(),
-    details: roadmapDetailsSchema.nullable().optional(),
+
+    startedAt: z.string().datetime().nullable().optional(),
+    completedAt: z.string().datetime().nullable().optional(),
+    completedQuarter: z.string().nullable().optional(),
+
+    details: roadmapDetailsSchema,
   })
   .refine((value) => Object.keys(value).length > 0, {
     message: "At least one field is required for update",

@@ -36,7 +36,7 @@ export async function getRoadmapController(req: Request, res: Response, next: Ne
     const result = await getRoadmapFeatures({
       status: query.status as RoadmapStatus | undefined,
       sort: query.sort as RoadmapSort | undefined,
-      limit: query.limit,
+      limit: 20,
       offset: query.offset,
     });
 

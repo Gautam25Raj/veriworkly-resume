@@ -1,5 +1,3 @@
-import RedisStore from "rate-limit-redis";
-import rateLimit from "express-rate-limit";
 import { Request, Response, NextFunction } from "express";
 
 import { config } from "@/config";
@@ -9,47 +7,93 @@ import { prisma } from "@/utils/prisma";
 import { getRedis } from "@/utils/redis";
 import { createErrorResponse } from "@/utils/errors";
 
-// 1. Hold the instance in memory
-let limiterInstance: ReturnType<typeof rateLimit> | null = null;
+type RateLimitEntry = {
+  count: number;
+  resetAt: number;
+};
+
+const bucket = new Map<string, RateLimitEntry>();
+
+function getClientKey(req: Request): string {
+  return req.ip || req.socket.remoteAddress || "unknown";
+}
+
+function getRouteLimitConfig(req: Request) {
+  const isAuthRoute = req.path.startsWith("/api/v1/auth");
+
+  return {
+    windowMs: isAuthRoute ? config.rateLimit.authWindowMs : config.rateLimit.windowMs,
+    maxRequests: isAuthRoute ? config.rateLimit.authMaxRequests : config.rateLimit.maxRequests,
+  };
+}
+
+function pruneExpiredEntries(now: number) {
+  for (const [key, entry] of bucket.entries()) {
+    if (entry.resetAt <= now) {
+      bucket.delete(key);
+    }
+  }
+}
 
 export const rateLimitMiddleware = (req: Request, res: Response, next: NextFunction) => {
-  // 2. Initialize it synchronously ONLY on the very first request
-  if (!limiterInstance) {
-    limiterInstance = rateLimit({
-      windowMs: config.rateLimit.windowMs,
-      max: config.rateLimit.maxRequests,
-      standardHeaders: true,
-      legacyHeaders: false,
+  const now = Date.now();
+  const { windowMs, maxRequests } = getRouteLimitConfig(req);
 
-      store: new RedisStore({
-        // By the time this runs, initRedis() has safely finished in app.ts
-        sendCommand: (...args: string[]) => getRedis().sendCommand(args),
-      }),
+  pruneExpiredEntries(now);
 
-      handler: (req: Request, res: Response, _next: NextFunction) => {
-        const ip = req.ip || req.socket.remoteAddress || "unknown";
+  const key = getClientKey(req);
 
-        logger.warn(`Rate limit exceeded for IP: ${ip}`);
+  const redisKey = `rate-limit:${req.method}:${req.path}:${key}`;
 
-        prisma.auditLog
-          .create({
-            data: {
-              method: req.method,
-              path: req.originalUrl,
-              status: 429,
-              ip,
-              userAgent: req.headers["user-agent"],
-              error: "Rate limit exceeded",
-            },
-          })
-          .catch((err) => logger.error("Failed to log rate limit violation", err));
+  const checkWithFallback = async () => {
+    try {
+      const redis = getRedis();
+      const count = await redis.incr(redisKey);
 
-        res
-          .status(429)
-          .json(createErrorResponse(429, "Too many requests. Please try again later."));
-      },
+      if (count === 1) {
+        await redis.pExpire(redisKey, windowMs);
+      }
+
+      return count;
+    } catch {
+      const current = bucket.get(redisKey);
+
+      if (!current || current.resetAt <= now) {
+        bucket.set(redisKey, { count: 1, resetAt: now + windowMs });
+        return 1;
+      }
+
+      current.count += 1;
+      return current.count;
+    }
+  };
+
+  checkWithFallback()
+    .then((count) => {
+      if (count <= maxRequests) {
+        next();
+        return;
+      }
+
+      logger.warn(`Rate limit exceeded for IP: ${key}`);
+
+      prisma.auditLog
+        .create({
+          data: {
+            method: req.method,
+            path: req.originalUrl,
+            status: 429,
+            ip: key,
+            userAgent: req.headers["user-agent"],
+            error: "Rate limit exceeded",
+          },
+        })
+        .catch((err) => logger.error("Failed to log rate limit violation", err));
+
+      res.status(429).json(createErrorResponse(429, "Too many requests. Please try again later."));
+    })
+    .catch((err) => {
+      logger.error("Rate limit middleware failure", err);
+      next();
     });
-  }
-
-  return limiterInstance(req, res, next);
 };

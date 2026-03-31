@@ -5,7 +5,10 @@ dotenv.config();
 export const config = {
   nodeEnv: process.env.NODE_ENV || "development",
   port: parseInt(process.env.PORT || "8080", 10),
-  allowedOrigins: (process.env.ALLOWED_ORIGINS || "http://localhost:3000").split(","),
+  allowedOrigins: (process.env.ALLOWED_ORIGINS || "http://localhost:3000")
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean),
 
   database: {
     url: process.env.DATABASE_URL || "",
@@ -21,9 +24,30 @@ export const config = {
     secret: process.env.JWT_SECRET || "dev-secret-key",
   },
 
+  auth: {
+    secret: process.env.AUTH_SECRET || "dev-auth-secret",
+    baseUrl: process.env.AUTH_BASE_URL || "http://localhost:8080",
+    sessionTtlSeconds: parseInt(process.env.AUTH_SESSION_TTL_SECONDS || "2592000", 10),
+    magicLinkTtlSeconds: parseInt(process.env.AUTH_MAGIC_LINK_TTL_SECONDS || "600", 10),
+    magicLinkAllowedAttempts: parseInt(process.env.AUTH_MAGIC_LINK_ALLOWED_ATTEMPTS || "1", 10),
+    emailProvider: process.env.AUTH_EMAIL_PROVIDER || "console",
+    emailFrom: process.env.AUTH_EMAIL_FROM || "VeriWorkly <no-reply@veriworkly.com>",
+    smtpHost: process.env.AUTH_SMTP_HOST || "",
+    smtpPort: parseInt(process.env.AUTH_SMTP_PORT || "587", 10),
+    smtpSecure: (process.env.AUTH_SMTP_SECURE || "false") === "true",
+    smtpUser: process.env.AUTH_SMTP_USER || "",
+    smtpPass: process.env.AUTH_SMTP_PASS || "",
+  },
+
+  admin: {
+    email: (process.env.ADMIN_EMAIL || "").toLowerCase(),
+  },
+
   rateLimit: {
     windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || "900000", 10),
     maxRequests: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || "100", 10),
+    authWindowMs: parseInt(process.env.AUTH_RATE_LIMIT_WINDOW_MS || "60000", 10),
+    authMaxRequests: parseInt(process.env.AUTH_RATE_LIMIT_MAX_REQUESTS || "20", 10),
   },
 
   logging: {

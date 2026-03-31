@@ -36,5 +36,6 @@ export const siteConfig = {
   navigation: [
     { href: "/dashboard", label: "Dashboard" },
     { href: "/templates", label: "Templates" },
+    { href: "/roadmap", label: "Roadmap" },
   ],
 } as const;
