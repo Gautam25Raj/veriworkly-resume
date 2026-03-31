@@ -1,0 +1,131 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User model for authentication and resume ownership
+model User {
+  id                  String     @id @default(cuid())
+  email               String     @unique
+  name                String?
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
+  resumes             Resume[]
+  roadmapInteractions RoadmapInteraction[]
+
+  @@index([email])
+}
+
+// Resume model for storing user resumes
+model Resume {
+  id                  String     @id @default(cuid())
+  userId              String
+  user                User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title               String     @default("My Resume")
+  content             Json       // Full resume data as JSON
+  template            String     @default("modern")
+  isPublic            Boolean    @default(false)
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
+
+  @@index([userId])
+  @@index([isPublic])
+}
+
+// Roadmap Feature model
+model RoadmapFeature {
+  id                  String     @id
+  title               String
+  description         String
+  status              String     @default("todo") // "todo", "in-progress", "done"
+  eta                 String?
+  tags                String[]   @default([])
+  createdAt           DateTime   @default(now())
+  startedAt           DateTime?
+  completedAt         DateTime?
+  completedQuarter    String?
+  updatedAt           DateTime   @updatedAt
+  fullDescription     String?
+  whyItMatters        String?
+  timeline            String?
+  details             Json?
+  interactions        RoadmapInteraction[]
+
+  @@index([status])
+  @@index([createdAt])
+}
+
+// Track user interactions with roadmap (votes, bookmarks, comments)
+model RoadmapInteraction {
+  id                  String     @id @default(cuid())
+  userId              String
+  user                User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  featureId           String
+  feature             RoadmapFeature @relation(fields: [featureId], references: [id], onDelete: Cascade)
+  type                String     // "vote", "bookmark", "comment"
+  value               Int?       // vote count
+  comment             String?
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
+
+  @@unique([userId, featureId, type])
+  @@index([userId])
+  @@index([featureId])
+}
+
+// GitHub Stats sync record
+model GitHubSync {
+  id                  String     @id @default(cuid())
+  projectName         String
+  projectUrl          String
+  issueCount          Int        @default(0)
+  todoCount           Int        @default(0)
+  inProgressCount     Int        @default(0)
+  doneCount           Int        @default(0)
+  data                Json       // Full GitHub data
+  etag                String?
+  lastSyncStatus      String?   // "success", "failed", "not-modified"
+  lastError           String?
+  nextSyncAt          DateTime?
+  syncedAt            DateTime   @updatedAt
+  createdAt           DateTime   @default(now())
+
+  @@unique([projectUrl])
+  @@index([syncedAt])
+}
+
+// API Keys for rate limiting and access control
+model ApiKey {
+  id        String     @id @default(cuid())
+  key       String     @unique
+  name      String
+  isActive  Boolean    @default(true)
+  rateLimit Int        @default(1000)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  lastUsed  DateTime?
+
+  @@index([isActive])
+}
+
+// Audit log for tracking API access
+model AuditLog {
+  id        String     @id @default(cuid())
+  method    String
+  path      String
+  status    Int
+  ip        String?
+  userAgent String?
+  error     String?
+  createdAt DateTime   @default(now())
+
+  @@index([createdAt])
+  @@index([method, path])
+}
