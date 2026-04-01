@@ -252,6 +252,7 @@ async function fetchRoadmapStatusItems(
     const query = new URLSearchParams({
       status,
       sort,
+      limit: "20",
       offset: offset.toString(),
     });
 
@@ -330,7 +331,7 @@ export async function fetchRoadmapFeatureById(
 
 export async function fetchSuggestedRoadmapItems(
   feature: RoadmapFeature,
-  limit = 5,
+  limit = 3,
 ): Promise<RoadmapFeature[]> {
   const related = await fetchRoadmapStatusItems(feature.status, "newest");
 

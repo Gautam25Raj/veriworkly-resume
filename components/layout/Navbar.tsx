@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 
 import { siteConfig } from "@/config/site";
 
@@ -24,8 +24,16 @@ export function Navbar() {
           <NavLinks className="hidden md:flex" />
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <ThemeToggle />
+
+          <Link
+            href="/login"
+            className={buttonClassName("ghost", "sm")}
+            title="Admin login"
+          >
+            Admin
+          </Link>
 
           <Link href="/dashboard" className={buttonClassName("primary", "sm")}>
             Dashboard
