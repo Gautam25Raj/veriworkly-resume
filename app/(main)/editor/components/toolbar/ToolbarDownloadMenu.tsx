@@ -1,18 +1,41 @@
 "use client";
 
-import { ChevronDown, Download } from "lucide-react";
+import {
+  ChevronDown,
+  Code2,
+  Download,
+  FileCode2,
+  FileImage,
+  FileJson,
+  FileText,
+  Files,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/Button";
 import { Menu, MenuItem } from "@/components/ui/Menu";
 
 interface ToolbarDownloadMenuProps {
-  isDownloadingPdf: boolean;
+  activeDownload: string | null;
   onDownloadPdf: () => Promise<void>;
+  onDownloadPng: () => Promise<void>;
+  onDownloadJpg: () => Promise<void>;
+  onDownloadDocx: () => Promise<void>;
+  onDownloadMarkdown: () => void;
+  onDownloadHtml: () => void;
+  onDownloadText: () => void;
+  onDownloadJson: () => void;
 }
 
 const ToolbarDownloadMenu = ({
-  isDownloadingPdf,
+  activeDownload,
   onDownloadPdf,
+  onDownloadPng,
+  onDownloadJpg,
+  onDownloadDocx,
+  onDownloadMarkdown,
+  onDownloadHtml,
+  onDownloadText,
+  onDownloadJson,
 }: ToolbarDownloadMenuProps) => {
   return (
     <Menu
@@ -34,16 +57,95 @@ const ToolbarDownloadMenu = ({
       )}
     >
       {({ close }) => (
-        <MenuItem
-          disabled={isDownloadingPdf}
-          onClick={async () => {
-            close();
-            await onDownloadPdf();
-          }}
-        >
-          <Download className="h-4 w-4" />
-          {isDownloadingPdf ? "Generating PDF..." : "PDF"}
-        </MenuItem>
+        <>
+          <MenuItem
+            disabled={Boolean(activeDownload)}
+            onClick={async () => {
+              close();
+              await onDownloadPdf();
+            }}
+          >
+            <Download className="h-4 w-4" />
+            {activeDownload === "pdf" ? "Generating PDF..." : "PDF"}
+          </MenuItem>
+
+          <MenuItem
+            disabled={Boolean(activeDownload)}
+            onClick={async () => {
+              close();
+              await onDownloadPng();
+            }}
+          >
+            <FileImage className="h-4 w-4" />
+            {activeDownload === "png" ? "Generating PNG..." : "PNG Image"}
+          </MenuItem>
+
+          <MenuItem
+            disabled={Boolean(activeDownload)}
+            onClick={async () => {
+              close();
+              await onDownloadJpg();
+            }}
+          >
+            <FileImage className="h-4 w-4" />
+            {activeDownload === "jpg" ? "Generating JPG..." : "JPG Image"}
+          </MenuItem>
+
+          <MenuItem
+            disabled={Boolean(activeDownload)}
+            onClick={async () => {
+              close();
+              await onDownloadDocx();
+            }}
+          >
+            <Files className="h-4 w-4" />
+            {activeDownload === "docx" ? "Generating DOCX..." : "DOCX"}
+          </MenuItem>
+
+          <MenuItem
+            disabled={Boolean(activeDownload)}
+            onClick={() => {
+              close();
+              onDownloadMarkdown();
+            }}
+          >
+            <FileCode2 className="h-4 w-4" />
+            Markdown
+          </MenuItem>
+
+          <MenuItem
+            disabled={Boolean(activeDownload)}
+            onClick={() => {
+              close();
+              onDownloadHtml();
+            }}
+          >
+            <Code2 className="h-4 w-4" />
+            HTML
+          </MenuItem>
+
+          <MenuItem
+            disabled={Boolean(activeDownload)}
+            onClick={() => {
+              close();
+              onDownloadText();
+            }}
+          >
+            <FileText className="h-4 w-4" />
+            Plain Text
+          </MenuItem>
+
+          <MenuItem
+            disabled={Boolean(activeDownload)}
+            onClick={() => {
+              close();
+              onDownloadJson();
+            }}
+          >
+            <FileJson className="h-4 w-4" />
+            JSON
+          </MenuItem>
+        </>
       )}
     </Menu>
   );
