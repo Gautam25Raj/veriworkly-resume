@@ -6,6 +6,6 @@ export const executiveTemplateMeta: TemplateMeta = {
   description:
     "Professional sidebar-left layout designed for high-impact readability.",
   accentColor: "#1d4ed8",
-  previewImage: "/templates/executive-preview.svg",
+  previewImage: "/templates/executive-resume-template.png",
   tags: ["Two column", "Corporate", "Sidebar", "Senior", "Leadership"],
 };

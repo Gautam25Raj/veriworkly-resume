@@ -6,6 +6,6 @@ export const minimalTemplateMeta: TemplateMeta = {
   description:
     "Clean document-first layout with understated typography and compact sections.",
   accentColor: "#0f766e",
-  previewImage: "/templates/minimal-preview.png",
+  previewImage: "/templates/minimal-resume-template.png",
   tags: ["One column", "Compact", "Simple", "Text-first"],
 };

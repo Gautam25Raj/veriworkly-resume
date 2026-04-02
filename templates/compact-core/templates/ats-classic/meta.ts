@@ -6,6 +6,6 @@ export const atsClassicTemplateMeta: TemplateMeta = {
   description:
     "Monoline compact format with strict hierarchy and machine-readable rhythm.",
   accentColor: "#b45309",
-  previewImage: "/templates/modern-preview.svg",
+  previewImage: "/templates/classic-resume-template.png",
   tags: ["One column", "Monoline", "Dense", "Document", "Classic"],
 };

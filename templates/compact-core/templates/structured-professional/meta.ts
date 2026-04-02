@@ -6,7 +6,7 @@ export const structuredProfessionalTemplateMeta: TemplateMeta = {
   description:
     "Timeline-led professional format with left-rail sections and role-first story flow.",
   accentColor: "#0e7490",
-  previewImage: "/templates/executive-preview.svg",
+  previewImage: "/templates/structured-resume-template.png",
   tags: [
     "One column",
     "Timeline",

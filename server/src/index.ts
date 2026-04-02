@@ -12,13 +12,13 @@ import { loggingMiddleware } from "@/middleware/logging";
 import { rateLimitMiddleware } from "@/middleware/rateLimit";
 import { errorHandler, notFoundHandler } from "@/middleware/errorHandler";
 
-import statsRoutes from "@/routes/stats";
+// import statsRoutes from "@/routes/stats";
 import healthRoutes from "@/routes/health";
 import roadmapRoutes from "@/routes/roadmap";
-import { authNodeHandler } from "@/auth";
-import { ensureAdminUserExists, validateAuthRuntimeConfig } from "@/auth/runtime";
+// import { authNodeHandler } from "@/auth";
+// import { ensureAdminUserExists, validateAuthRuntimeConfig } from "@/auth/runtime";
 
-import { startGitHubSyncJob, stopGitHubSyncJob } from "@/jobs/githubSyncJob";
+// import { startGitHubSyncJob, stopGitHubSyncJob } from "@/jobs/githubSyncJob";
 
 const app = express();
 
@@ -44,8 +44,8 @@ app.set("trust proxy", 1);
 // Versioned API routes (primary)
 app.use("/api/v1/health", healthRoutes);
 app.use("/api/v1/roadmap", roadmapRoutes);
-app.use("/api/v1/stats", statsRoutes);
-app.all("/api/v1/auth/*", authNodeHandler);
+// app.use("/api/v1/stats", statsRoutes);
+// app.all("/api/v1/auth/*", authNodeHandler);
 
 // 404 handler
 app.use(notFoundHandler);
@@ -58,7 +58,7 @@ async function shutdown() {
   logger.info("Shutting down gracefully...");
 
   try {
-    stopGitHubSyncJob();
+    // stopGitHubSyncJob();
     await closeRedis();
     await prisma.$disconnect();
     process.exit(0);
@@ -74,7 +74,7 @@ process.on("SIGINT", shutdown);
 // Start server
 async function main() {
   try {
-    validateAuthRuntimeConfig();
+    // validateAuthRuntimeConfig();
 
     // Initialize Redis
     await initRedis();
@@ -83,12 +83,12 @@ async function main() {
     // Test database connection
     logger.info("Database connected");
 
-    await ensureAdminUserExists();
+    // await ensureAdminUserExists();
 
     // Start listening
     const server = app.listen(config.port, () => {
       logger.info(`Server running on port ${config.port} (${config.nodeEnv})`);
-      startGitHubSyncJob();
+      // startGitHubSyncJob();
 
       if (isDevelopment) {
         logger.info(`Allowed origins: ${config.allowedOrigins.join(", ")}`);

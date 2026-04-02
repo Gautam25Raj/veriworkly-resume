@@ -1,11 +1,45 @@
-import RoadmapPageShell from "../components/RoadmapPageShell";
+import { siteConfig } from "@/config/site";
+
 import {
-  fetchRoadmapFromBackend,
   type RoadmapSort,
+  fetchRoadmapFromBackend,
 } from "@/features/roadmap/services/roadmap-backend";
 
+import RoadmapPageShell from "../components/RoadmapPageShell";
+
 export const metadata = {
-  title: "Roadmap Done | VeriWorkly Resume",
+  title: `Completed Features | ${siteConfig.name}`,
+  description:
+    "Explore features and updates already shipped in VeriWorkly. See what’s been completed in our free resume builder.",
+
+  openGraph: {
+    title: `${siteConfig.shortName} Roadmap – Completed Features`,
+    description:
+      "View recently completed features and updates in VeriWorkly resume builder.",
+    url: `${siteConfig.url}/roadmap/done`,
+    siteName: siteConfig.shortName,
+    images: [
+      {
+        url: "/og/roadmap/roadmap-done-page-og.png",
+        width: 1200,
+        height: 630,
+        alt: "VeriWorkly Completed Features",
+      },
+    ],
+    type: "website",
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: `${siteConfig.shortName} Completed Features`,
+    description: "See what features have already shipped in VeriWorkly.",
+    images: ["/og/roadmap/roadmap-done-page-og.png"],
+    creator: "@noober_boy",
+  },
+
+  alternates: {
+    canonical: `${siteConfig.url}/roadmap/done`,
+  },
 };
 
 export const dynamic = "force-dynamic";
@@ -38,11 +72,11 @@ export default async function DoneRoadmapPage({
 
   return (
     <RoadmapPageShell
-      title="Roadmap: Done"
-      description="Completed features with creation, completion date, and shipped quarter history."
       data={data}
-      basePath="/roadmap/done"
       activeStatus="done"
+      basePath="/roadmap/done"
+      title="Roadmap: Completed Features & Updates"
+      description="Completed features with creation, completion date, and shipped quarter history."
     />
   );
 }
