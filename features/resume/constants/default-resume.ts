@@ -18,17 +18,20 @@ export const defaultSections: ResumeSection[] = [
 export const defaultResume: ResumeData = {
   id: "default-resume",
   templateId: "modern",
+
   basics: {
-    fullName: "Gautam Raj",
-    role: "Software Developer",
+    fullName: "VeriWorkly User",
+    role: "Indie Developer & Product Builder",
     headline:
-      "Software Developer building scalable web products with clean architecture, practical execution, and a little creative flair.",
-    email: "gautam@veriworkly.com",
+      "Building useful, fast, and privacy-first web products — one idea at a time.",
+
+    email: "hello@veriworkly.com",
     phone: "+91 00000 00000",
-    location: "Moon Base, Milky Way",
+    location: "Internet (occasionally Earth 🌍)",
+
     linkEmail: true,
     linkPhone: true,
-    linkLocation: true,
+    linkLocation: false,
   },
 
   links: {
@@ -38,7 +41,7 @@ export const defaultResume: ResumeData = {
         id: "link-1",
         type: "github",
         label: "GitHub",
-        url: "https://github.com/gautam25raj",
+        url: "https://github.com/Gautam25Raj/veriworkly",
       },
       {
         id: "link-2",
@@ -50,29 +53,32 @@ export const defaultResume: ResumeData = {
         id: "link-3",
         type: "portfolio",
         label: "Portfolio",
-        url: "https://gautam-raj.vercel.app",
+        url: "https://veriworkly.com",
       },
     ],
   },
 
   summary:
-    "Software Developer with hands-on experience in TypeScript, React, Next.js, Node.js, and PostgreSQL. I build performant products from idea to production, balancing engineering rigor with a fun, human-centered product mindset.",
+    "Self-taught developer focused on building practical, real-world products. I enjoy turning ideas into polished user experiences using modern web technologies. Currently building VeriWorkly — a privacy-first resume builder with no login and a focus on simplicity.",
 
   experience: [
     {
       id: "exp-1",
-      company: "XYZ",
-      role: "Software Developer",
-      location: "Bengaluru, India",
-      startDate: "2026-03",
+      company: "VeriWorkly",
+      role: "Founder & Developer",
+      location: "Remote",
+      startDate: "2025-01",
       endDate: "Present",
       current: true,
+
       summary:
-        "Built and maintained full-stack product features for a multi-tenant SaaS platform used by recruiters and hiring teams.",
+        "Building a modern resume builder focused on speed, privacy, and user control.",
+
       highlights: [
-        "Implemented end-to-end modules in Next.js and Node.js, improving feature delivery velocity by 30 percent.",
-        "Designed reusable API and UI patterns that reduced duplicate code and simplified onboarding for new developers.",
-        "Optimized key database queries and caching paths, reducing average dashboard load time by 40 percent.",
+        "Designed and developed a full-featured resume builder with real-time preview and multi-template support.",
+        "Implemented local-first architecture ensuring zero data storage on servers.",
+        "Built modular editor system enabling dynamic sections, customization, and export workflows.",
+        "Focused on performance, clean UX, and developer-friendly architecture using Next.js and TypeScript.",
       ],
     },
   ],
@@ -80,29 +86,32 @@ export const defaultResume: ResumeData = {
   education: [
     {
       id: "edu-1",
-      school: "ABCD University",
-      degree: "B.Tech",
-      field: "Computer Science and Engineering",
-      startDate: "2019-06",
-      endDate: "2023-06",
-      current: false,
+      school: "Self-Taught",
+      degree: "Internet Degree™",
+      field: "Computer Science (Unofficial but Effective)",
+      startDate: "2019",
+      endDate: "Present",
+      current: true,
+
       summary:
-        "Focused on software engineering, data structures, algorithms, operating systems, and database systems.",
+        "Learned software development through building real-world projects, debugging production issues, and reading way too many docs.",
     },
   ],
 
   projects: [
     {
       id: "proj-1",
-      name: "Veriworkly Resume",
-      role: "Lead Developer",
-      link: "https://github.com/gautam25raj",
+      name: "VeriWorkly Resume Builder",
+      role: "Creator",
+      link: "https://veriworkly.com",
+
       summary:
-        "Production-ready resume builder with a modular editor, multi-template rendering, local persistence, and export workflows.",
+        "A privacy-first resume builder with no login, real-time preview, and flexible templates.",
+
       highlights: [
-        "Built with Next.js App Router, TypeScript, Zustand, and component-driven architecture for maintainability.",
-        "Implemented dynamic sections, template switching, JSON import/export, and PDF generation.",
-        "Structured features by domain to keep editor logic, rendering, and data normalization clean and testable.",
+        "Built with Next.js App Router, TypeScript, and modern state management.",
+        "Supports dynamic sections, JSON import/export, and PDF generation.",
+        "Focused on UX simplicity and performance with a clean, minimal interface.",
       ],
     },
 
@@ -111,11 +120,14 @@ export const defaultResume: ResumeData = {
       name: "Realtime Task Board",
       role: "Full Stack Developer",
       link: "https://github.com/gautam25raj",
+
       summary:
-        "Collaborative Kanban app with real-time updates, role-based access, and activity tracking.",
+        "Collaborative Kanban board with real-time updates and team workflows.",
+
       highlights: [
-        "Used Next.js, Node.js, PostgreSQL, and WebSocket events for low-latency collaboration.",
-        "Added permission-aware actions, audit trail logs, and optimistic UI updates.",
+        "Implemented real-time sync using WebSockets.",
+        "Designed role-based permissions and activity tracking.",
+        "Built scalable backend with Node.js and PostgreSQL.",
       ],
     },
   ],
@@ -123,130 +135,84 @@ export const defaultResume: ResumeData = {
   skills: [
     {
       id: "skills-1",
-      name: "Programming Languages",
-      keywords: ["TypeScript", "JavaScript", "SQL", "Python", "Java"],
+      name: "Languages",
+      keywords: ["TypeScript", "JavaScript", "SQL"],
     },
-
     {
       id: "skills-2",
       name: "Frontend",
-      keywords: ["React", "Next.js", "Tailwind CSS", "HTML5", "Responsive UI"],
+      keywords: ["React", "Next.js", "Tailwind CSS"],
     },
-
     {
       id: "skills-3",
-      name: "Backend and Data",
-      keywords: ["Node.js", "Express", "PostgreSQL", "Prisma", "REST APIs"],
+      name: "Backend",
+      keywords: ["Node.js", "Express", "PostgreSQL"],
     },
-
     {
       id: "skills-4",
-      name: "Developer Tools and Practices",
-      keywords: [
-        "Git",
-        "Docker",
-        "CI/CD",
-        "Testing",
-        "Performance Optimization",
-      ],
+      name: "Other",
+      keywords: ["System Design", "Performance", "UX Thinking"],
     },
   ],
 
   customSections: [
     {
-      id: "custom-certifications",
-      kind: "certifications",
-      title: "Certifications",
-      items: [
-        {
-          id: "cert-1",
-          name: "AWS Certified Cloud Practitioner",
-          issuer: "Amazon Web Services",
-          date: "2024-03",
-          link: "https://www.credly.com/",
-          referenceId: "Credential available on request",
-          description:
-            "Validated understanding of cloud architecture, deployment models, and security fundamentals.",
-          details: [
-            "Applied cloud cost and reliability best practices in production-facing features.",
-          ],
-        },
-      ],
-    },
-
-    {
-      id: "custom-awards",
-      kind: "awards",
-      title: "Awards",
-      items: [
-        {
-          id: "award-1",
-          name: "Hackathon Winner - Product Engineering Track",
-          issuer: "BuildFest India",
-          date: "2023-11",
-          link: "",
-          referenceId: "Team Lead",
-          description:
-            "Led a team to build and demo a working recruiting workflow prototype in 36 hours.",
-          details: [
-            "Owned API design, frontend integration, and final demo delivery.",
-          ],
-        },
-      ],
-    },
-
-    {
-      id: "custom-languages",
-      kind: "languages",
-      title: "Languages",
-      items: [
-        {
-          id: "lang-1",
-          name: "English",
-          issuer: "",
-          date: "",
-          link: "",
-          referenceId: "Professional working proficiency",
-          description: "",
-          details: [],
-        },
-        {
-          id: "lang-2",
-          name: "Hindi",
-          issuer: "",
-          date: "",
-          link: "",
-          referenceId: "Native proficiency",
-          description: "",
-          details: [],
-        },
-      ],
-    },
-
-    {
-      id: "custom-general",
+      id: "custom-philosophy",
       kind: "custom",
-      title: "Community and Leadership",
+      title: "Build Philosophy",
       editableTitle: true,
       items: [
         {
-          id: "community-1",
-          name: "Mentor - Developer Community",
-          issuer: "Local Tech Circle",
-          date: "2022-Present",
+          id: "philosophy-1",
+          name: "How I Build Products",
+          issuer: "",
+          date: "",
           link: "",
-          referenceId: "Volunteer",
+          referenceId: "",
           description:
-            "Mentor early-career developers on frontend architecture, debugging workflows, and interview preparation.",
+            "I believe software should be fast, simple, and respectful of user privacy.",
           details: [
-            "Conducted mock interviews and resume reviews for 100+ participants.",
+            "Prefer shipping small, iterative improvements over big rewrites.",
+            "Focus on real user problems instead of over-engineering.",
+            "Design for clarity first, then scale.",
           ],
+        },
+      ],
+    },
+
+    {
+      id: "custom-fun",
+      kind: "custom",
+      title: "Fun Facts",
+      editableTitle: true,
+      items: [
+        {
+          id: "fun-1",
+          name: "Debugging Skills",
+          issuer: "",
+          date: "",
+          link: "",
+          referenceId: "",
+          description:
+            "Can spend 3 hours debugging and then fix it in 2 minutes.",
+          details: [],
+        },
+        {
+          id: "fun-2",
+          name: "Stack Preference",
+          issuer: "",
+          date: "",
+          link: "",
+          referenceId: "",
+          description: "Strong believer in TypeScript everywhere.",
+          details: [],
         },
       ],
     },
   ],
 
   sections: defaultSections,
+
   customization: {
     accentColor: "#2563eb",
     textColor: "#0f172a",
@@ -261,5 +227,6 @@ export const defaultResume: ResumeData = {
     bodyLineHeight: 1.5,
     headingLineHeight: 1.2,
   },
+
   updatedAt: new Date().toISOString(),
 };

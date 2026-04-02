@@ -27,13 +27,13 @@ export function Navbar() {
         <div className="flex items-center gap-3">
           <ThemeToggle />
 
-          <Link
+          {/* <Link
             href="/login"
             className={buttonClassName("ghost", "sm")}
             title="Admin login"
           >
             Admin
-          </Link>
+          </Link> */}
 
           <Link href="/dashboard" className={buttonClassName("primary", "sm")}>
             Dashboard

@@ -6,6 +6,6 @@ export const modernTemplateMeta: TemplateMeta = {
   description:
     "Balanced hierarchy with strong spacing and a polished product-design feel.",
   accentColor: "#2563eb",
-  previewImage: "/templates/modern-preview.svg",
+  previewImage: "/templates/modern-resume-template.png",
   tags: ["Two column", "Popular", "Readable", "Balanced", "Contemporary"],
 };

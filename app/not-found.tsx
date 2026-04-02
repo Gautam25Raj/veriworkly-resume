@@ -5,7 +5,7 @@ import { Container } from "@/components/layout/Container";
 
 const NotFound = () => {
   return (
-    <main className="flex min-h-[70vh] items-center justify-center">
+    <main className="surface-grid flex min-h-screen items-center justify-center">
       <Container className="flex flex-col items-center text-center">
         <p className="text-accent text-sm font-bold tracking-[0.2em] uppercase">
           404 Error

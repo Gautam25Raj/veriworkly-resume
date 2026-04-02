@@ -6,6 +6,6 @@ export const classicAcademicTemplateMeta: TemplateMeta = {
   description:
     "Formal ruled-document style with strong section separators and editorial rhythm.",
   accentColor: "#9a3412",
-  previewImage: "/templates/minimal-preview.svg",
+  previewImage: "/templates/professional-resume-template.png",
   tags: ["One column", "Classic", "Ruled", "Formal", "Editorial", "Compact"],
 };

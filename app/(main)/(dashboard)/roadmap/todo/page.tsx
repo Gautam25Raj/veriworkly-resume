@@ -1,11 +1,46 @@
-import RoadmapPageShell from "../components/RoadmapPageShell";
+import { siteConfig } from "@/config/site";
+
 import {
-  fetchRoadmapFromBackend,
   type RoadmapSort,
+  fetchRoadmapFromBackend,
 } from "@/features/roadmap/services/roadmap-backend";
 
+import RoadmapPageShell from "../components/RoadmapPageShell";
+
 export const metadata = {
-  title: "Roadmap To Do | VeriWorkly Resume",
+  title: `Planned Features (Roadmap To Do) | ${siteConfig.name}`,
+  description:
+    "Explore upcoming features planned for VeriWorkly. See what’s next in our free, no-login resume builder.",
+
+  openGraph: {
+    title: `${siteConfig.shortName} Roadmap – Planned Features`,
+    description:
+      "Discover upcoming features and planned improvements in VeriWorkly resume builder.",
+    url: `${siteConfig.url}/roadmap/todo`,
+    siteName: siteConfig.shortName,
+    images: [
+      {
+        url: "/og/roadmap/roadmap-todo-page-og.png",
+        width: 1200,
+        height: 630,
+        alt: "VeriWorkly Planned Features Roadmap",
+      },
+    ],
+    type: "website",
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: `${siteConfig.shortName} Planned Features`,
+    description:
+      "See what features are planned next in our free resume builder.",
+    images: ["/og/roadmap/roadmap-todo-page-og.png"],
+    creator: "@noober_boy",
+  },
+
+  alternates: {
+    canonical: `${siteConfig.url}/roadmap/todo`,
+  },
 };
 
 function parseSort(raw: string | undefined): RoadmapSort | undefined {
@@ -36,11 +71,11 @@ export default async function TodoRoadmapPage({
 
   return (
     <RoadmapPageShell
-      title="Roadmap: To Do"
-      description="Upcoming features in planning with current priority and timeline context."
       data={data}
-      basePath="/roadmap/todo"
       activeStatus="todo"
+      basePath="/roadmap/todo"
+      title="Roadmap: Upcoming Features"
+      description="Upcoming features in planning with current priority and timeline context."
     />
   );
 }

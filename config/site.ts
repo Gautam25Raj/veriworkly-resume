@@ -2,13 +2,14 @@ export const siteConfig = {
   name: "VeriWorkly Resume",
   shortName: "VeriWorkly",
 
+  creator: "Gautam Raj",
+
   url: "https://veriworkly.com",
 
   description:
     "VeriWorkly Resume is a free, open-source resume builder with no login required. Create professional resumes with flexible templates, real-time preview, and complete data privacy — all stored locally in your browser.",
 
-  tagline:
-    "Private, free, and open-source resume builder with live preview and flexible templates.",
+  tagline: "Free resume builder. No login. 100% private.",
 
   links: {
     github: "https://github.com/Gautam25Raj/veriworkly",
@@ -18,20 +19,29 @@ export const siteConfig = {
   keywords: [
     "resume builder",
     "free resume builder",
-    "open source resume builder",
     "no login resume builder",
-    "developer resume builder",
-    "ATS friendly resume",
+    "ATS resume builder",
     "resume templates",
-    "online resume maker",
+    "ATS friendly resume templates",
+    "online resume builder",
+    "resume maker free",
+    "professional resume builder",
+    "modern resume templates",
     "privacy focused resume builder",
-    "local resume builder",
-    "resume editor",
-    "resume generator",
-    "resume creator",
-    "resume design tool",
-    "resume",
+    "open source resume builder",
   ],
+
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    siteName: "VeriWorkly",
+  },
+
+  twitter: {
+    handle: "@veriworkly",
+    site: "@veriworkly",
+    cardType: "summary_large_image",
+  },
 
   navigation: [
     { href: "/dashboard", label: "Dashboard" },
