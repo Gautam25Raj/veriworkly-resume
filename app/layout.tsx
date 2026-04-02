@@ -20,8 +20,8 @@ export const metadata: Metadata = {
   keywords: [...siteConfig.keywords],
 
   authors: [{ name: "VeriWorkly Team" }],
-  creator: "VeriWorkly",
-  publisher: "VeriWorkly",
+  creator: "Gautam Raj",
+  publisher: "Gautam Raj",
 
   category: "technology",
 
@@ -31,10 +31,10 @@ export const metadata: Metadata = {
     title: "Free Resume Builder with No Login | VeriWorkly",
     description:
       "Create professional resumes instantly with VeriWorkly. No login required. 100% free, open-source, and privacy-first — your data stays on your device.",
-    siteName: "VeriWorkly Resume",
+    siteName: "VeriWorkly",
     images: [
       {
-        url: "/opengraph-image.png",
+        url: "/og/landing-page-og.png",
         width: 1200,
         height: 630,
         alt: "VeriWorkly Resume Builder Preview",
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     title: "Free Resume Builder (No Login) | VeriWorkly",
     description:
       "Build resumes instantly with no login. Free, open-source, and privacy-first.",
-    images: ["/opengraph-image.png"],
+    images: ["/og/landing-page-og.png"],
     creator: "@noober_boy",
   },
 
@@ -55,6 +55,12 @@ export const metadata: Metadata = {
     icon: "/favicon.ico",
     shortcut: "/favicon.ico",
     apple: "/apple-icon.png",
+  },
+
+  appleWebApp: {
+    title: "VeriWorkly",
+    statusBarStyle: "default",
+    capable: true,
   },
 
   robots: {

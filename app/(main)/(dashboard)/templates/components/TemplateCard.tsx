@@ -78,15 +78,11 @@ const TemplateCard = ({ template }: TemplateCardProps) => {
 
           <div className="absolute inset-0 bg-linear-to-b from-black/0 via-black/0 to-black/40" />
 
-          <div className="text-muted absolute top-3 left-3 text-[10px] font-semibold tracking-[0.16em] uppercase">
-            {template.family}
-          </div>
-
           <div className="absolute right-3 bottom-3 rounded-full border border-white/25 bg-black/45 px-2.5 py-1 text-[10px] font-medium text-white/90 backdrop-blur-sm">
             {template.layout}
           </div>
 
-          <p className="absolute bottom-3 left-3 hidden text-[10px] font-medium text-white/85 xl:block">
+          <p className="absolute bottom-3 left-3 hidden rounded-full border-white/25 bg-black/40 px-2.5 py-1 text-[10px] font-medium text-white xl:block">
             Hover card for larger preview
           </p>
 

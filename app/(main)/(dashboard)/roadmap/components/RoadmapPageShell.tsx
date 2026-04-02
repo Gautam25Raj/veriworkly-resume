@@ -1,11 +1,12 @@
 import {
-  KanbanBoard,
-  type KanbanColumn,
-} from "@/components/roadmap/KanbanBoard";
-import {
   type RoadmapSort,
   type RoadmapResponse,
 } from "@/features/roadmap/services/roadmap-backend";
+
+import {
+  KanbanBoard,
+  type KanbanColumn,
+} from "@/components/roadmap/KanbanBoard";
 import { Container } from "@/components/layout/Container";
 
 import RoadmapHeader from "./RoadmapHeader";
