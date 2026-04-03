@@ -23,10 +23,9 @@ function isPathProtected(pathname: string, prefixes: string[]) {
 async function getSessionFromBackend(
   request: NextRequest,
 ): Promise<AuthSession> {
-  const backendBaseUrl = process.env.NEXT_PUBLIC_BACKEND_URL?.replace(
-    /\/$/,
-    "",
-  );
+  const backendBaseUrl =
+    process.env.BACKEND_INTERNAL_URL?.replace(/\/$/, "") ||
+    process.env.NEXT_PUBLIC_BACKEND_URL?.replace(/\/$/, "");
 
   if (!backendBaseUrl) return null;
 
