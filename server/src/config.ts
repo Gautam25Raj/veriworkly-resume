@@ -28,8 +28,8 @@ export const config = {
     secret: process.env.AUTH_SECRET || "dev-auth-secret",
     baseUrl: process.env.AUTH_BASE_URL || "http://localhost:8080",
     sessionTtlSeconds: parseInt(process.env.AUTH_SESSION_TTL_SECONDS || "2592000", 10),
-    magicLinkTtlSeconds: parseInt(process.env.AUTH_MAGIC_LINK_TTL_SECONDS || "600", 10),
-    magicLinkAllowedAttempts: parseInt(process.env.AUTH_MAGIC_LINK_ALLOWED_ATTEMPTS || "1", 10),
+    otpTtlSeconds: parseInt(process.env.AUTH_OTP_TTL_SECONDS || "600", 10),
+    otpAllowedAttempts: parseInt(process.env.AUTH_OTP_ALLOWED_ATTEMPTS || "3", 10),
     emailProvider: process.env.AUTH_EMAIL_PROVIDER || "console",
     emailFrom: process.env.AUTH_EMAIL_FROM || "VeriWorkly <no-reply@veriworkly.com>",
     smtpHost: process.env.AUTH_SMTP_HOST || "",
@@ -59,6 +59,12 @@ export const config = {
     roadmapStatsTtlSeconds: parseInt(process.env.ROADMAP_STATS_CACHE_TTL_SECONDS || "2592000", 10),
     roadmapTagsTtlSeconds: parseInt(process.env.ROADMAP_TAGS_CACHE_TTL_SECONDS || "2592000", 10),
     githubStatsTtlSeconds: parseInt(process.env.GITHUB_STATS_CACHE_TTL_SECONDS || "43200", 10),
+  },
+
+  metrics: {
+    flushCron: process.env.USAGE_METRICS_FLUSH_CRON || "10 0 * * *",
+    flushTimezone: process.env.USAGE_METRICS_FLUSH_TIMEZONE || "UTC",
+    redisRetentionDays: parseInt(process.env.USAGE_METRICS_REDIS_RETENTION_DAYS || "10", 10),
   },
 
   github: {

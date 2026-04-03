@@ -5,11 +5,12 @@ services:
       dockerfile: Dockerfile
       args:
         NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_BACKEND_URL:-http://localhost:8080/api/v1}
+        NODE_ENV: ${NODE_ENV:-development}
     environment:
-      NODE_ENV: production
+      NODE_ENV: ${NODE_ENV:-development}
       PORT: 3000
       NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_BACKEND_URL:-http://localhost:8080/api/v1}
-      BACKEND_INTERNAL_URL: http://api:8080/api/v1
+      BACKEND_INTERNAL_URL: ${BACKEND_INTERNAL_URL:-http://api:8080/api/v1}
       ADMIN_EMAIL: ${ADMIN_EMAIL:-}
     depends_on:
       api:
@@ -35,7 +36,7 @@ services:
       context: ./server
       dockerfile: Dockerfile
     environment:
-      NODE_ENV: production
+      NODE_ENV: ${NODE_ENV:-development}
       PORT: 8080
       DATABASE_URL: ${DATABASE_URL:?Set DATABASE_URL to your Neon Postgres connection string}
       REDIS_URL: ${REDIS_URL:-redis://redis:6379}
@@ -48,27 +49,6 @@ services:
       ADMIN_EMAIL: ${ADMIN_EMAIL:-}
       LOG_LEVEL: ${LOG_LEVEL:-info}
       GITHUB_SYNC_ENABLED: ${GITHUB_SYNC_ENABLED:-false}
-      INTERNAL_SYNC_API_KEY: ${INTERNAL_SYNC_API_KEY:-}
-      AUTH_SESSION_TTL_SECONDS: ${AUTH_SESSION_TTL_SECONDS:-2592000}
-      AUTH_MAGIC_LINK_TTL_SECONDS: ${AUTH_MAGIC_LINK_TTL_SECONDS:-600}
-      AUTH_MAGIC_LINK_ALLOWED_ATTEMPTS: ${AUTH_MAGIC_LINK_ALLOWED_ATTEMPTS:-3}
-      AUTH_EMAIL_PROVIDER: ${AUTH_EMAIL_PROVIDER:-console}
-      AUTH_EMAIL_FROM: ${AUTH_EMAIL_FROM:-}
-      AUTH_SMTP_HOST: ${AUTH_SMTP_HOST:-}
-      AUTH_SMTP_PORT: ${AUTH_SMTP_PORT:-587}
-      AUTH_SMTP_SECURE: ${AUTH_SMTP_SECURE:-false}
-      AUTH_SMTP_USER: ${AUTH_SMTP_USER:-}
-      AUTH_SMTP_PASS: ${AUTH_SMTP_PASS:-}
-      GITHUB_TOKEN: ${GITHUB_TOKEN:-}
-      GITHUB_OWNER: ${GITHUB_OWNER:-}
-      GITHUB_REPO: ${GITHUB_REPO:-}
-      GITHUB_PROJECT_URL: ${GITHUB_PROJECT_URL:-}
-      GITHUB_SYNC_CRON: ${GITHUB_SYNC_CRON:-0 0,12 * * *}
-      GITHUB_SYNC_TIMEZONE: ${GITHUB_SYNC_TIMEZONE:-UTC}
-      RATE_LIMIT_WINDOW_MS: ${RATE_LIMIT_WINDOW_MS:-900000}
-      RATE_LIMIT_MAX_REQUESTS: ${RATE_LIMIT_MAX_REQUESTS:-100}
-      USAGE_METRICS_FLUSH_CRON: ${USAGE_METRICS_FLUSH_CRON:-10 0 * * *}
-      USAGE_METRICS_FLUSH_TIMEZONE: ${USAGE_METRICS_FLUSH_TIMEZONE:-UTC}
     depends_on:
       redis:
         condition: service_healthy
