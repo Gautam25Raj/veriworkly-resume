@@ -28,6 +28,12 @@ export const config = {
     secret: process.env.AUTH_SECRET || "dev-auth-secret",
     baseUrl: process.env.AUTH_BASE_URL || "http://localhost:8080",
     sessionTtlSeconds: parseInt(process.env.AUTH_SESSION_TTL_SECONDS || "2592000", 10),
+    sessionResetTtlOnUse: parseInt(process.env.AUTH_SESSION_RESET_TTL_ON_USE || "86400", 10),
+    sessionCacheEnabled: (process.env.AUTH_SESSION_CACHE_ENABLED || "false") === "true",
+    sessionCacheMaxAgeSeconds: parseInt(
+      process.env.AUTH_SESSION_CACHE_MAX_AGE_SECONDS || "900",
+      10,
+    ),
     otpTtlSeconds: parseInt(process.env.AUTH_OTP_TTL_SECONDS || "600", 10),
     otpAllowedAttempts: parseInt(process.env.AUTH_OTP_ALLOWED_ATTEMPTS || "3", 10),
     emailProvider: process.env.AUTH_EMAIL_PROVIDER || "console",

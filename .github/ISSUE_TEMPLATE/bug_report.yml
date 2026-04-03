@@ -1,0 +1,42 @@
+name: "🐛 Bug Report"
+description: "Tell us about a bug you've found."
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug!
+  - type: textarea
+    id: description
+    attributes:
+      label: "Description"
+      description: "A clear and concise description of what the bug is."
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: "Steps to Reproduce"
+      description: "How can we replicate this issue?"
+      placeholder: |
+        1. Go to '...'
+        2. Click on '....'
+        3. See error
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: "Environment Information"
+      description: "OS, Browser version, Node.js version, etc."
+      placeholder: |
+        - OS: Windows 11
+        - Browser: Chrome 120
+        - Node.js: 20.10.0
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: "Relevant Logs"
+      description: "Paste any console logs or server errors here."

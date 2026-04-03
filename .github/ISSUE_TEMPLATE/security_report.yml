@@ -1,0 +1,14 @@
+name: "🔐 Security Report"
+description: "Report a security vulnerability (private channel preferred)."
+labels: ["security"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### 🛑 STOP!
+        If this is a critical vulnerability, please follow the [Security Policy](SECURITY.md) and report it via email instead of opening a public issue.
+  - type: textarea
+    id: vulnerability
+    attributes:
+      label: "Vulnerability Details"
+      description: "Describe the potential security risk."
