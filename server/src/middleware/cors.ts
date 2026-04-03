@@ -1,11 +1,11 @@
 import cors from "cors";
 
-import { config } from "@/config";
+import { config, isDevelopment } from "@/config";
 import { ApiError } from "@/utils/errors";
 
 export const corsMiddleware = cors({
   origin: (origin, callback) => {
-    if (!origin || config.allowedOrigins.includes(origin)) {
+    if ((!origin && isDevelopment) || config.allowedOrigins.includes(origin || "")) {
       callback(null, true);
     } else {
       callback(new ApiError(403, "Not allowed by CORS"));

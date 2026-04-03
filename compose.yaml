@@ -1,0 +1,123 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_BACKEND_URL:-http://localhost:8080/api/v1}
+        NODE_ENV: ${NODE_ENV:-development}
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      PORT: 3000
+      NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_BACKEND_URL:-http://localhost:8080/api/v1}
+      BACKEND_INTERNAL_URL: ${BACKEND_INTERNAL_URL:-http://api:8080/api/v1}
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      AUTH_SECRET: ${AUTH_SECRET}
+    depends_on:
+      api:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3000').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 1m
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+
+  api:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      PORT: 8080
+      DATABASE_URL: ${DATABASE_URL:?DATABASE_URL is required}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS}
+
+      # Redis
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
+      REDIS_HOST: ${REDIS_HOST:-redis}
+      REDIS_PORT: ${REDIS_PORT:-6379}
+
+      # Better Auth Core
+      AUTH_SECRET: ${AUTH_SECRET:?AUTH_SECRET is required}
+      AUTH_BASE_URL: ${AUTH_BASE_URL:-http://localhost:8080}
+      JWT_SECRET: ${JWT_SECRET:-dev-secret-key}
+
+      # Better Auth Sessions
+      AUTH_SESSION_TTL_SECONDS: ${AUTH_SESSION_TTL_SECONDS:-2592000}
+      AUTH_SESSION_RESET_TTL_ON_USE: ${AUTH_SESSION_RESET_TTL_ON_USE:-86400}
+      AUTH_SESSION_CACHE_ENABLED: ${AUTH_SESSION_CACHE_ENABLED:-false}
+      AUTH_SESSION_CACHE_MAX_AGE_SECONDS: ${AUTH_SESSION_CACHE_MAX_AGE_SECONDS:-900}
+
+      # Auth OTP & Admin
+      AUTH_OTP_TTL_SECONDS: ${AUTH_OTP_TTL_SECONDS:-600}
+      AUTH_OTP_ALLOWED_ATTEMPTS: ${AUTH_OTP_ALLOWED_ATTEMPTS:-3}
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+
+      # Email / SMTP
+      AUTH_EMAIL_PROVIDER: ${AUTH_EMAIL_PROVIDER:-console}
+      AUTH_EMAIL_FROM: ${AUTH_EMAIL_FROM}
+      AUTH_SMTP_HOST: ${AUTH_SMTP_HOST}
+      AUTH_SMTP_PORT: ${AUTH_SMTP_PORT:-587}
+      AUTH_SMTP_SECURE: ${AUTH_SMTP_SECURE:-false}
+      AUTH_SMTP_USER: ${AUTH_SMTP_USER}
+      AUTH_SMTP_PASS: ${AUTH_SMTP_PASS}
+
+      # Rate Limiting
+      RATE_LIMIT_WINDOW_MS: ${RATE_LIMIT_WINDOW_MS:-900000}
+      RATE_LIMIT_MAX_REQUESTS: ${RATE_LIMIT_MAX_REQUESTS:-100}
+
+      # GitHub Sync
+      GITHUB_SYNC_ENABLED: ${GITHUB_SYNC_ENABLED:-false}
+      GITHUB_TOKEN: ${GITHUB_TOKEN}
+      GITHUB_OWNER: ${GITHUB_OWNER}
+      GITHUB_REPO: ${GITHUB_REPO}
+      GITHUB_PROJECT_URL: ${GITHUB_PROJECT_URL}
+      GITHUB_SYNC_CRON: ${GITHUB_SYNC_CRON}
+      INTERNAL_SYNC_API_KEY: ${INTERNAL_SYNC_API_KEY}
+
+      # Metrics
+      USAGE_METRICS_FLUSH_CRON: ${USAGE_METRICS_FLUSH_CRON}
+      USAGE_METRICS_FLUSH_TIMEZONE: ${USAGE_METRICS_FLUSH_TIMEZONE:-UTC}
+    depends_on:
+      redis:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:8080/api/v1/health').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 1m
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 20s
+      timeout: 5s
+      retries: 3
+    restart: unless-stopped
+
+volumes:
+  redis-data:

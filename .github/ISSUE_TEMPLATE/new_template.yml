@@ -1,0 +1,26 @@
+name: "🎨 New Resume Template"
+description: "Propose a new resume design for the collection."
+labels: ["template", "enhancement"]
+body:
+  - type: input
+    id: template-name
+    attributes:
+      label: "Template Name"
+      placeholder: "e.g., 'Modern Minimalist' or 'The Executive'"
+    validations:
+      required: true
+  - type: textarea
+    id: vision
+    attributes:
+      label: "Design Vision"
+      description: "What makes this template unique/useful?"
+  - type: textarea
+    id: layout
+    attributes:
+      label: "Layout Details"
+      description: "Single column? Two column? Special font requirements?"
+  - type: input
+    id: reference
+    attributes:
+      label: "Reference/Inspiration"
+      description: "Link to a design or image if available."
