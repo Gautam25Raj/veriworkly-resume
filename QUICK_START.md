@@ -48,15 +48,38 @@ npm install
 cd server
 npm install
 cp .env.example .env
-# Update .env with your Neon/Postgres DB string
+```
+
+Update required values:
+
+- `DATABASE_URL`
+- `AUTH_SECRET`
+- `JWT_SECRET`
+
+### 3. Setup Database
+
+```bash
+npm run db:migrate   # recommended
+# or
 npm run db:push
+```
+
+### 4. Start Redis
+
+```bash
+docker run -d -p 6379:6379 --name redis redis:7
+```
+
+### 5. Start Backend
+
+```bash
 npm run dev
 ```
 
-### 3. Frontend Setup (New Terminal)
+### 6. Start Frontend (New Terminal)
 
 ```bash
-# From the root directory
+# From root
 npm run dev
 ```
 
@@ -72,6 +95,6 @@ npm run dev
 
 ## 📘 Next Steps
 
-- Read `README.md` for full project documentation
-- See `README.Docker.md` for production setup
-- Review `ENV_SETUP.md` for detailed environment configuration
+- Read [README.md](./README.md) for full project documentation
+- See [README.Docker.md](./README.Docker.md) for production setup
+- Review [ENV_SETUP.md](./ENV_SETUP.md) for detailed environment configuration

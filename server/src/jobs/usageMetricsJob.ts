@@ -1,0 +1,108 @@
+import cron, { ScheduledTask } from "node-cron";
+
+import { config } from "@/config";
+import { logger } from "@/utils/logger";
+import { getRedis } from "@/utils/redis";
+
+import { flushUsageMetricsForDate } from "@/services/analyticsService";
+
+let job: ScheduledTask | null = null;
+
+/**
+ * Returns a Date object representing the start of yesterday in UTC.
+ * This ensures we only flush complete day cycles.
+ */
+
+function getYesterdayUtcDate() {
+  const now = new Date();
+  return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - 1));
+}
+
+/**
+ * Orchestrates the movement of metrics from Redis to Postgres.
+ * Uses a distributed lock to ensure only one instance performs the flush.
+ */
+
+async function runFlush(reason: "startup" | "cron") {
+  const redis = getRedis();
+
+  const lockKey = "usage:flush:lock";
+
+  const lockTTL = 60 * 5;
+
+  let lockAcquired = false;
+
+  try {
+    const lockResult = await redis.set(lockKey, "locked", {
+      NX: true,
+      EX: lockTTL,
+    });
+
+    lockAcquired = lockResult === "OK";
+
+    if (!lockAcquired) {
+      logger.warn(`Skipping metrics flush (${reason}): lock already held`);
+      return;
+    }
+
+    const targetDate = getYesterdayUtcDate();
+    const result = await flushUsageMetricsForDate(targetDate);
+
+    if (result.flushedEvents > 0) {
+      logger.info(`Usage metrics flush (${reason}) completed`, {
+        dateKey: result.dateKey,
+        flushedEvents: result.flushedEvents,
+      });
+    } else {
+      logger.info(`Usage metrics flush (${reason}) skipped: no data for ${result.dateKey}`);
+    }
+  } catch (error) {
+    logger.error(`Usage metrics flush (${reason}) failed`, {
+      error: error instanceof Error ? error.message : error,
+    });
+  } finally {
+    if (lockAcquired) {
+      await redis
+        .del(lockKey)
+        .catch((err) => logger.error("Failed to release metrics flush lock", err));
+    }
+  }
+}
+
+/**
+ * Schedules the daily metrics flush and runs an initial check on startup.
+ */
+
+export function startUsageMetricsJob() {
+  const { flushCron, flushTimezone } = config.metrics;
+
+  if (job) return;
+
+  job = cron.schedule(
+    flushCron,
+    () => {
+      void runFlush("cron");
+    },
+    { timezone: flushTimezone },
+  );
+
+  logger.info("Usage metrics flush job scheduled", {
+    cron: flushCron,
+    timezone: flushTimezone,
+  });
+
+  // Check on startup in case the cron was missed during downtime
+  void runFlush("startup");
+}
+
+/**
+ * Cleanly stops the cron job during server shutdown.
+ */
+
+export function stopUsageMetricsJob() {
+  if (job) {
+    job.stop();
+    job = null;
+    logger.info("Usage metrics flush job stopped");
+  }
+}
