@@ -10,12 +10,17 @@ import {
   loadResumeFromLocalStorage,
   clearResumeFromLocalStorage,
   listResumesFromLocalStorage,
+  loadResumeCollectionFromLocalStorage,
+  saveResumeCollectionToLocalStorage,
   deleteResumeFromLocalStorage,
   loadResumeByIdFromLocalStorage,
   setActiveResumeIdInLocalStorage,
 } from "@/features/resume/services/local-storage";
+import { loadWorkspaceSettingsFromLocalStorage } from "@/features/resume/services/workspace-settings";
+import { deriveResumeFromMasterProfile } from "@/features/resume/services/master-profile";
 import { defaultResume } from "@/features/resume/constants/default-resume";
 import { normalizeResumeData } from "@/features/resume/utils/normalize-data";
+import type { ResumeSyncState, ResumeSyncStatus } from "@/types/resume";
 
 export interface ResumeListItem {
   id: string;
@@ -23,6 +28,7 @@ export interface ResumeListItem {
   templateId: string;
   role: string;
   updatedAt: string;
+  sync: ResumeSyncState;
 }
 
 export type ResumeImageFormat = "png" | "jpg";
@@ -62,6 +68,7 @@ export function listSavedResumes(): ResumeListItem[] {
     templateId: resume.templateId,
     role: resume.basics.role,
     updatedAt: resume.updatedAt,
+    sync: resume.sync,
   }));
 }
 
@@ -81,11 +88,14 @@ export function loadResumeById(resumeId: string) {
 }
 
 export function createResume() {
-  const nextResume = normalizeResumeData({
-    ...defaultResume,
-    id: createId(),
-    updatedAt: new Date().toISOString(),
-  });
+  const workspaceSettings = loadWorkspaceSettingsFromLocalStorage();
+  const nextResume = deriveResumeFromMasterProfile(createId());
+
+  nextResume.sync = {
+    ...defaultResume.sync,
+    enabled: workspaceSettings.autoSyncEnabled,
+    status: workspaceSettings.autoSyncEnabled ? "pending" : "local-only",
+  };
 
   saveResume(nextResume);
 
