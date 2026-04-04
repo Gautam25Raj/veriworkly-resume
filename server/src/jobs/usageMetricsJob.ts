@@ -1,10 +1,10 @@
 import cron, { ScheduledTask } from "node-cron";
 
-import { config } from "@/config";
-import { logger } from "@/utils/logger";
-import { getRedis } from "@/utils/redis";
+import { config } from "#config";
+import { logger } from "#utils/logger";
+import { getRedis } from "#utils/redis";
 
-import { flushUsageMetricsForDate } from "@/services/analyticsService";
+import { flushUsageMetricsForDate } from "#services/analyticsService";
 
 let job: ScheduledTask | null = null;
 

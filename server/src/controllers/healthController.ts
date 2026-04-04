@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 
-import prisma from "@/utils/prisma";
-import { logger } from "@/utils/logger";
-import { getRedis } from "@/utils/redis";
-import { createErrorResponse, createSuccessResponse } from "@/utils/errors";
+import prisma from "#utils/prisma";
+import { logger } from "#utils/logger";
+import { getRedis } from "#utils/redis";
+import { createErrorResponse, createSuccessResponse } from "#utils/errors";
 
 /**
  * Basic health endpoint to confirm service liveness.

@@ -1,7 +1,7 @@
 import cors from "cors";
 
-import { config, isDevelopment } from "@/config";
-import { ApiError } from "@/utils/errors";
+import { config, isDevelopment } from "#config";
+import { ApiError } from "#utils/errors";
 
 export const corsMiddleware = cors({
   origin: (origin, callback) => {

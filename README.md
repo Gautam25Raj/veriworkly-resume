@@ -1,6 +1,6 @@
 <div align="center">
   <a href="https://veriworkly.com">
-    <img src="public/og/banner.png" alt="VeriWorkly Resume" />
+    <img src="public/og/landing-page-og.png" alt="VeriWorkly Resume" />
   </a>
 
   <h1>VeriWorkly Resume</h1>

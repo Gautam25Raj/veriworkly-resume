@@ -1,12 +1,12 @@
 import { v4 as uuidv4 } from "uuid";
 import cron, { ScheduledTask } from "node-cron";
 
-import { config } from "@/config";
+import { config } from "#config";
 
-import { logger } from "@/utils/logger";
-import { getRedis } from "@/utils/redis";
+import { logger } from "#utils/logger";
+import { getRedis } from "#utils/redis";
 
-import { shouldSyncGitHubStats, syncGitHubStatsFromGitHub } from "@/services/statsService";
+import { shouldSyncGitHubStats, syncGitHubStatsFromGitHub } from "#services/statsService";
 
 let job: ScheduledTask | null = null;
 

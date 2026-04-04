@@ -27,13 +27,13 @@ const Navbar = () => {
         <div className="flex items-center gap-3">
           <ThemeToggle />
 
-          <Link
+          {/* <Link
             href="/login"
             title="Admin login"
             className={buttonClassName("ghost", "sm")}
           >
             Admin
-          </Link>
+          </Link> */}
 
           <Link href="/dashboard" className={buttonClassName("primary", "sm")}>
             Dashboard
