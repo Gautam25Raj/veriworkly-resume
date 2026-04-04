@@ -15,11 +15,17 @@ import {
   saveResume,
   createResume,
   deleteResume,
+  exportResumeAsHtml,
   exportResumeAsJson,
+  exportResumeAsDocx,
+  exportResumeAsImage,
+  exportResumeAsText,
   importResumeFromFile,
+  exportResumeAsMarkdown,
 } from "@/features/resume/services/resume-service";
 import { useResume } from "@/features/resume/hooks/use-resume";
 import { generatePDF } from "@/features/resume/utils/generate-pdf";
+import { trackUsageEvent } from "@/features/analytics/services/usage-metrics";
 
 interface ToolbarProps {
   resumeId: string;
@@ -36,8 +42,9 @@ const Toolbar = ({ resumeId, resumePreviewId }: ToolbarProps) => {
   const [message, setMessage] = useState("Autosave ready");
 
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
-  const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
+
+  const [activeDownload, setActiveDownload] = useState<string | null>(null);
 
   async function onImportResume(file: File | undefined) {
     if (!file) {
@@ -77,6 +84,8 @@ const Toolbar = ({ resumeId, resumePreviewId }: ToolbarProps) => {
     router.push(`/editor/${nextResume.id}`);
 
     setMessage("Resume deleted");
+    trackUsageEvent({ event: "resume_deleted" });
+
     setDeleteConfirmOpen(false);
     setDeleteConfirmText("");
   }
@@ -87,7 +96,7 @@ const Toolbar = ({ resumeId, resumePreviewId }: ToolbarProps) => {
   }
 
   async function onDownloadPdf() {
-    setIsDownloadingPdf(true);
+    setActiveDownload("pdf");
 
     const didDownload = await generatePDF(
       resumePreviewId,
@@ -100,7 +109,71 @@ const Toolbar = ({ resumeId, resumePreviewId }: ToolbarProps) => {
         : "Could not generate PDF. Try again.",
     );
 
-    setIsDownloadingPdf(false);
+    if (didDownload) {
+      trackUsageEvent({ event: "resume_exported" });
+    }
+
+    setActiveDownload(null);
+  }
+
+  async function onDownloadImage(format: "png" | "jpg") {
+    setActiveDownload(format);
+
+    const didDownload = await exportResumeAsImage(
+      resumePreviewId,
+      resume,
+      format,
+    );
+
+    setMessage(
+      didDownload
+        ? `${format.toUpperCase()} downloaded successfully`
+        : `Could not generate ${format.toUpperCase()}. Try again.`,
+    );
+
+    if (didDownload) {
+      trackUsageEvent({ event: "resume_exported" });
+    }
+
+    setActiveDownload(null);
+  }
+
+  async function onDownloadDocx() {
+    setActiveDownload("docx");
+
+    try {
+      await exportResumeAsDocx(resume);
+      setMessage("DOCX downloaded successfully");
+      trackUsageEvent({ event: "resume_exported" });
+    } catch {
+      setMessage("Could not generate DOCX. Try again.");
+    } finally {
+      setActiveDownload(null);
+    }
+  }
+
+  function onDownloadMarkdown() {
+    exportResumeAsMarkdown(resume);
+    setMessage("Markdown downloaded successfully");
+    trackUsageEvent({ event: "resume_exported" });
+  }
+
+  function onDownloadHtml() {
+    exportResumeAsHtml(resume, resumePreviewId);
+    setMessage("HTML downloaded successfully");
+    trackUsageEvent({ event: "resume_exported" });
+  }
+
+  function onDownloadText() {
+    exportResumeAsText(resume);
+    setMessage("Plain text downloaded successfully");
+    trackUsageEvent({ event: "resume_exported" });
+  }
+
+  function onDownloadJson() {
+    exportResumeAsJson(resume);
+    setMessage("JSON downloaded successfully");
+    trackUsageEvent({ event: "resume_exported" });
   }
 
   return (
@@ -141,15 +214,21 @@ const Toolbar = ({ resumeId, resumePreviewId }: ToolbarProps) => {
 
         <ToolbarDownloadMenu
           onDownloadPdf={onDownloadPdf}
-          isDownloadingPdf={isDownloadingPdf}
+          onDownloadPng={() => onDownloadImage("png")}
+          onDownloadJpg={() => onDownloadImage("jpg")}
+          onDownloadDocx={onDownloadDocx}
+          onDownloadMarkdown={onDownloadMarkdown}
+          onDownloadHtml={onDownloadHtml}
+          onDownloadText={onDownloadText}
+          onDownloadJson={onDownloadJson}
+          activeDownload={activeDownload}
         />
 
         <ToolbarActionsMenu
           onDelete={openDeleteModal}
           onImport={() => fileInputRef.current?.click()}
           onExport={() => {
-            exportResumeAsJson(resume);
-            setMessage("JSON export downloaded");
+            onDownloadJson();
           }}
           onReset={() => {
             resetResume();

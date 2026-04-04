@@ -9,10 +9,6 @@ export const roadmapQuerySchema = z.object({
 
 const roadmapDetailsSchema = z
   .object({
-    fullDescription: z.string().nullable().optional(),
-    whyItMatters: z.string().nullable().optional(),
-    timeline: z.string().nullable().optional(),
-
     problem: z.string().nullable().optional(),
     solution: z.string().nullable().optional(),
     approach: z.string().nullable().optional(),
@@ -65,6 +61,9 @@ export const roadmapAdminCreateSchema = z.object({
   status: z.enum(["todo", "in-progress", "done"]).default("todo"),
   eta: z.string().nullable().optional(),
   tags: z.array(z.string()).optional(),
+  fullDescription: z.string().nullable().optional(),
+  whyItMatters: z.string().nullable().optional(),
+  timeline: z.string().nullable().optional(),
   startedAt: z.string().datetime().optional(),
   completedAt: z.string().datetime().optional(),
   completedQuarter: z.string().optional(),
@@ -79,6 +78,9 @@ export const roadmapAdminUpdateSchema = z
 
     eta: z.string().nullable().optional(),
     tags: z.array(z.string()).optional(),
+    fullDescription: z.string().nullable().optional(),
+    whyItMatters: z.string().nullable().optional(),
+    timeline: z.string().nullable().optional(),
 
     startedAt: z.string().datetime().nullable().optional(),
     completedAt: z.string().datetime().nullable().optional(),

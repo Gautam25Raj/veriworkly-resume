@@ -3,6 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
 }
 
 datasource db {
@@ -17,11 +18,15 @@ model User {
   name                String?
   emailVerified       Boolean              @default(false)
   image               String?
+  autoSyncEnabled     Boolean              @default(false)
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
   sessions            Session[]
   accounts            Account[]
   resumes             Resume[]
+  masterProfile       MasterProfile?
+  resumeCloudSyncs    ResumeCloudSync[]
+  resumeShareLinks    ResumeShareLink[]
   roadmapInteractions RoadmapInteraction[]
 
   @@index([email])
@@ -84,11 +89,74 @@ model Resume {
   content   Json // Full resume data as JSON
   template  String   @default("modern")
   isPublic  Boolean  @default(false)
+  syncEnabled Boolean @default(false)
+  syncStatus  String  @default("local-only")
+  cloudResumeId String?
+  lastSyncedAt DateTime?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([userId])
   @@index([isPublic])
+}
+
+model MasterProfile {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  content   Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ResumeCloudSync {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  resumeId      String
+  syncEnabled   Boolean  @default(false)
+  syncStatus    String   @default("local-only")
+  cloudResumeId String?
+  lastSyncedAt  DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([userId, resumeId])
+  @@index([userId])
+  @@index([resumeId])
+}
+
+model ResumeShareLink {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  resumeId     String
+  resumeTitle  String
+  token        String   @unique
+  snapshot     Json
+  passwordHash String?
+  expiresAt    DateTime?
+  viewCount    Int      @default(0)
+  lastViewedAt DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  views        ResumeShareView[]
+
+  @@index([userId])
+  @@index([resumeId])
+  @@index([expiresAt])
+}
+
+model ResumeShareView {
+  id           String          @id @default(cuid())
+  shareLinkId  String
+  shareLink    ResumeShareLink  @relation(fields: [shareLinkId], references: [id], onDelete: Cascade)
+  ipAddress    String?
+  userAgent    String?
+  createdAt    DateTime        @default(now())
+
+  @@index([shareLinkId])
+  @@index([createdAt])
 }
 
 // Roadmap Feature model
@@ -130,6 +198,19 @@ model RoadmapInteraction {
   @@unique([userId, featureId, type])
   @@index([userId])
   @@index([featureId])
+}
+
+// Daily aggregated usage metrics flushed from Redis counters
+model UsageMetricDaily {
+  id        String   @id @default(cuid())
+  date      DateTime
+  event     String
+  count     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([date, event])
+  @@index([event, date])
 }
 
 // GitHub Stats sync record

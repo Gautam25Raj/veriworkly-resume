@@ -1,0 +1,18 @@
+name: "📖 Documentation Improvement"
+description: "Suggest improvements or report errors in the documentation."
+labels: ["documentation"]
+body:
+  - type: textarea
+    id: current-docs
+    attributes:
+      label: "What is currently wrong or missing?"
+      description: "Link to the file or explain the missing information."
+    validations:
+      required: true
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: "Proposed Change"
+      description: "How can we make this better?"
+    validations:
+      required: true

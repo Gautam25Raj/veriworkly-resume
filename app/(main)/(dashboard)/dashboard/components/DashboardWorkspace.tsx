@@ -1,149 +1,109 @@
 "use client";
 
+import {
+  useMemo,
+  useState,
+  useEffect,
+  useCallback,
+  useSyncExternalStore,
+} from "react";
 import { useRouter } from "next/navigation";
-import { useMemo, useState, useSyncExternalStore } from "react";
-
-import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
-import DestructiveModal from "@/components/ui/modals/DestructiveModal";
 
 import {
-  createResume,
-  deleteResumeById,
-  listSavedResumes,
   type ResumeListItem,
+  createResume,
+  listSavedResumes,
+  deleteResumeById,
 } from "@/features/resume/services/resume-service";
+import { trackUsageEvent } from "@/features/analytics/services/usage-metrics";
 
-import ResumeCard from "./ResumeCard";
-import EmptyState from "./EmptyState";
+import ResumeGrid from "./ResumeGrid";
+import WorkspaceHeader from "./WorkspaceHeader";
+
+import DestructiveModal from "@/components/ui/modals/DestructiveModal";
 
 const EMPTY_RESUMES: ResumeListItem[] = [];
 
-let cachedResumes: ResumeListItem[] = EMPTY_RESUMES;
-let cachedResumesKey = "";
+let resumeCache = { data: EMPTY_RESUMES, key: "" };
 
-function subscribeToResumeChanges(onStoreChange: () => void) {
-  if (typeof window === "undefined") {
-    return () => {};
-  }
+const subscribe = (onStoreChange: () => void) => {
+  if (typeof window === "undefined") return () => {};
 
-  const handleChange = () => onStoreChange();
-
-  window.addEventListener("storage", handleChange);
-  window.addEventListener("focus", handleChange);
-  window.addEventListener("visibilitychange", handleChange);
+  window.addEventListener("storage", onStoreChange);
+  window.addEventListener("focus", onStoreChange);
+  window.addEventListener("visibilitychange", onStoreChange);
 
   return () => {
-    window.removeEventListener("storage", handleChange);
-    window.removeEventListener("focus", handleChange);
-    window.removeEventListener("visibilitychange", handleChange);
+    window.removeEventListener("storage", onStoreChange);
+    window.removeEventListener("focus", onStoreChange);
+    window.removeEventListener("visibilitychange", onStoreChange);
   };
-}
+};
 
-function getResumeSnapshot() {
-  const nextResumes = listSavedResumes();
-  const nextKey = JSON.stringify(nextResumes);
+const getResumeSnapshot = () => {
+  const next = listSavedResumes();
+  const nextKey = JSON.stringify(next);
 
-  if (nextKey === cachedResumesKey) {
-    return cachedResumes;
+  if (nextKey !== resumeCache.key) {
+    resumeCache = { data: next, key: nextKey };
   }
 
-  cachedResumes = nextResumes;
-  cachedResumesKey = nextKey;
-
-  return cachedResumes;
-}
-
-function getServerResumeSnapshot(): ResumeListItem[] {
-  return EMPTY_RESUMES;
-}
+  return resumeCache.data;
+};
 
 const DashboardWorkspace = () => {
   const router = useRouter();
 
-  const [isHydrated] = useState(() => typeof window !== "undefined");
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
   const resumes = useSyncExternalStore(
-    subscribeToResumeChanges,
+    subscribe,
     getResumeSnapshot,
-    getServerResumeSnapshot,
+    () => EMPTY_RESUMES,
   );
 
   const deleteTarget = useMemo(
     () => resumes.find((r) => r.id === deleteTargetId),
-
     [resumes, deleteTargetId],
   );
 
-  const handleCreate = () => {
+  const handleCreate = useCallback(() => {
     const nextResume = createResume();
-    router.push(`/editor/${nextResume.id}`);
-  };
 
-  const handleConfirmDelete = () => {
+    trackUsageEvent({ event: "resume_created" });
+
+    router.push(`/editor/${nextResume.id}`);
+  }, [router]);
+
+  const handleConfirmDelete = useCallback(() => {
     if (!deleteTargetId) return;
 
     deleteResumeById(deleteTargetId);
+
+    trackUsageEvent({ event: "resume_deleted" });
     setDeleteTargetId(null);
-  };
+  }, [deleteTargetId]);
+
+  useEffect(() => {
+    trackUsageEvent({ event: "dashboard_opened" });
+  }, []);
 
   return (
-    <div
-      role="region"
-      className="space-y-6 py-8"
-      aria-label="Resume management dashboard"
-    >
-      <Card className="flex flex-wrap items-center justify-between gap-4">
-        <header>
-          <p className="text-muted text-xs font-semibold tracking-[0.2em] uppercase">
-            Resume Workspace
-          </p>
+    <div role="region" className="space-y-6 py-8" aria-label="Resume dashboard">
+      <WorkspaceHeader onCreate={handleCreate} />
 
-          <h1 className="text-foreground text-2xl font-semibold">
-            Your resumes
-          </h1>
+      <ResumeGrid
+        resumes={resumes}
+        onCreate={handleCreate}
+        onDelete={setDeleteTargetId}
+      />
 
-          <p className="text-muted mt-1 text-sm">
-            Manage, preview, and safely delete drafts from one place.
-          </p>
-        </header>
-
-        <Button size="sm" variant="secondary" onClick={handleCreate}>
-          Create Resume
-        </Button>
-      </Card>
-
-      <div className="sr-only" aria-live="polite">
-        {isHydrated
-          ? `${resumes.length} resumes available`
-          : "Loading resumes..."}
-      </div>
-
-      {isHydrated && (
-        <>
-          {resumes.length === 0 ? (
-            <EmptyState onCreate={handleCreate} />
-          ) : (
-            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-              {resumes.map((resume) => (
-                <ResumeCard
-                  key={resume.id}
-                  resume={resume}
-                  onDelete={setDeleteTargetId}
-                />
-              ))}
-            </div>
-          )}
-
-          <DestructiveModal
-            open={Boolean(deleteTargetId)}
-            onConfirm={handleConfirmDelete}
-            onClose={() => setDeleteTargetId(null)}
-            entityName={deleteTarget?.title ?? "resume"}
-          />
-        </>
-      )}
+      <DestructiveModal
+        open={Boolean(deleteTargetId)}
+        onConfirm={handleConfirmDelete}
+        onClose={() => setDeleteTargetId(null)}
+        entityName={deleteTarget?.title ?? "resume"}
+      />
     </div>
   );
 };

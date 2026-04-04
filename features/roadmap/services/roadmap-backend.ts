@@ -104,6 +104,7 @@ async function fetchApiData<T>(
 ): Promise<T> {
   const response = await fetch(backendApiUrl(path), {
     ...options,
+    credentials: options?.credentials ?? "include",
     headers: {
       "Content-Type": "application/json",
       ...(options?.headers ?? {}),
