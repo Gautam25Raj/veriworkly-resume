@@ -1,10 +1,12 @@
+import type { ResumeData } from "@/types/resume";
+
 import {
   RESUME_STORAGE_KEY,
   RESUME_ACTIVE_ID_STORAGE_KEY,
   RESUME_COLLECTION_STORAGE_KEY,
 } from "@/lib/constants";
 
-import type { ResumeData } from "@/types/resume";
+import { normalizeResumeData } from "@/features/resume/utils/normalize-data";
 
 interface ResumeCollection {
   version: 1;
@@ -16,9 +18,16 @@ function isBrowser() {
 }
 
 function toCollection(items: Record<string, ResumeData>): ResumeCollection {
+  const normalizedItems = Object.fromEntries(
+    Object.entries(items).map(([resumeId, resume]) => [
+      resumeId,
+      normalizeResumeData(resume),
+    ]),
+  );
+
   return {
     version: 1,
-    items,
+    items: normalizedItems,
   };
 }
 
@@ -87,7 +96,15 @@ export function saveResumeCollectionToLocalStorage(
 
   window.localStorage.setItem(
     RESUME_COLLECTION_STORAGE_KEY,
-    JSON.stringify(collection),
+    JSON.stringify({
+      ...collection,
+      items: Object.fromEntries(
+        Object.entries(collection.items).map(([resumeId, resume]) => [
+          resumeId,
+          normalizeResumeData(resume),
+        ]),
+      ),
+    }),
   );
 }
 
@@ -115,13 +132,18 @@ export function saveResumeToLocalStorage(resume: ResumeData) {
     return;
   }
 
+  const normalizedResume = normalizeResumeData(resume);
+
   const collection = loadResumeCollectionFromLocalStorage();
 
-  collection.items[resume.id] = resume;
+  collection.items[normalizedResume.id] = normalizedResume;
   saveResumeCollectionToLocalStorage(collection);
-  setActiveResumeIdInLocalStorage(resume.id);
+  setActiveResumeIdInLocalStorage(normalizedResume.id);
 
-  window.localStorage.setItem(RESUME_STORAGE_KEY, JSON.stringify(resume));
+  window.localStorage.setItem(
+    RESUME_STORAGE_KEY,
+    JSON.stringify(normalizedResume),
+  );
 }
 
 export function loadResumeFromLocalStorage() {
