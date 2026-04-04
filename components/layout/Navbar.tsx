@@ -9,7 +9,7 @@ import { Container } from "@/components/layout/Container";
 import NavLinks from "../dashboard/NavLinks";
 import { ThemeToggle } from "../dashboard/ThemeToggle";
 
-export function Navbar() {
+const Navbar = () => {
   return (
     <header className="border-border/40 bg-background/80 sticky top-0 z-50 border-b backdrop-blur-md">
       <Container className="flex h-16 items-center justify-between">
@@ -27,13 +27,13 @@ export function Navbar() {
         <div className="flex items-center gap-3">
           <ThemeToggle />
 
-          {/* <Link
+          <Link
             href="/login"
-            className={buttonClassName("ghost", "sm")}
             title="Admin login"
+            className={buttonClassName("ghost", "sm")}
           >
             Admin
-          </Link> */}
+          </Link>
 
           <Link href="/dashboard" className={buttonClassName("primary", "sm")}>
             Dashboard
@@ -46,4 +46,6 @@ export function Navbar() {
       </div>
     </header>
   );
-}
+};
+
+export default Navbar;

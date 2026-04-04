@@ -13,7 +13,7 @@ This project runs as:
 
 ## ⚙️ Prerequisites
 
-- Node.js **18+**
+- Node.js **20+**
 - npm / pnpm / yarn
 - PostgreSQL database (Neon recommended)
 - Redis (recommended)

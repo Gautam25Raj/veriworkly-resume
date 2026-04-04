@@ -1,163 +1,150 @@
-# VeriWorkly Resume
+<div align="center">
+  <a href="https://veriworkly.com">
+    <img src="public/og/banner.png" alt="VeriWorkly Resume" />
+  </a>
 
-Build resumes without friction, limits, or compromises.
+  <h1>VeriWorkly Resume</h1>
 
-Create a professional, production-quality resume in minutes with full control over your data, design, and structure.
+  <p>Build professional resumes without limits, accounts, or friction. 100% local-first and private.</p>
 
-No login. No subscriptions. No hidden restrictions.
+  <p>
+    <a href="https://veriworkly.com"><strong>Get Started</strong></a>
+    ·
+    <a href="https://docs.veriworkly.com"><strong>Learn More</strong></a>
+    ·
+    <a href="https://roadmap.veriworkly.com"><strong>Public Roadmap</strong></a>
+  </p>
 
-Private by default. Open by design. Built for everyone.
+  <p>
+    <img src="https://img.shields.io/github/package-json/v/Gautam25Raj/veriworkly-resume?style=flat-square" alt="VeriWorkly Resume version">
+    <img src="https://img.shields.io/github/stars/Gautam25Raj/veriworkly-resume?style=flat-square" alt="GitHub Stars">
+    <img src="https://img.shields.io/github/license/Gautam25Raj/veriworkly-resume?style=flat-square" alt="License" />
+  </p>
+</div>
 
-## Trust Bar
+---
 
-- 100% local-first (your data never leaves your device)
-- No login required
-- Completely free forever
-- Open-source and transparent
-- Real-time editing and preview
+**VeriWorkly Resume** is a modern, production-quality resume builder designed to be 100% local-first and private. It features a distraction-free editor, real-time sync, and professional PDF/DOCX exports.
 
-## What You Can Do
+Built with privacy as a core principle, VeriWorkly gives you complete ownership of your data. The codebase is fully open-source under the MIT license, with no tracking, no ads, and no hidden costs.
 
-Everything you need to build a modern resume.
+## ✨ Features
 
-- Build resumes with a clean, distraction-free editor
-- Switch between templates instantly
-- Customize every section of your resume
-- See live preview updates in real time
-- Export your resume anytime
+**Resume Building**
 
-No complicated workflows. No unnecessary steps. Just a fast, focused experience.
+- **Local-First & Private:** Your data stays in your browser. No login, no tracking, no data leaks.
+- **Real-Time Editor:** Watch your resume update instantly as you type with zero lag.
+- **Distraction-Free Mode:** Focus on your content with a clean, focused editing environment.
+- **Rich Text Support:** Professional formatting with markdown-inspired simplicity.
 
-## Why VeriWorkly Exists
+**Templates**
 
-Most resume builders are broken in one of two ways:
+- **Professionally Designed:** Switch between multiple high-impact styles without losing data.
+- **Dynamic Customization:** Adjust colors, fonts, and spacing in real-time.
+- **ATS-Optimized:** Templates designed to pass through Automated Tracking Systems with ease.
+- **Multi-Format Export:** Export to high-quality PDF (via `jsPDF`) and DOCX (via `docx`).
 
-- They lock your data behind accounts and paywalls
-- Or they are too rigid, outdated, and hard to customize
+**Platform**
 
-VeriWorkly Resume was built to fix both.
+- **Public Roadmap:** Built by the community. Vote on features and track progress.
+- **Self-Hostable:** Run it locally or in production via Docker with minimal configuration.
+- **Modern Tech:** Built with Next.js 15, TypeScript, and Tailwind CSS 4.
 
-We believe:
+## 🎨 Templates
 
-- You should own your data
-- You should not need an account to create a resume
-- Good tools should be fast, simple, and accessible
-- Developers should be able to extend and improve the system
+<table>
+  <tr>
+    <td align="center">
+      <img src="public/templates/modern-resume-template.png" alt="Modern" width="150" />
+      <br /><sub><b>Modern</b></sub>
+    </td>
+    <td align="center">
+      <img src="public/templates/minimal-resume-template.png" alt="Minimal" width="150" />
+      <br /><sub><b>Minimal</b></sub>
+    </td>
+    <td align="center">
+      <img src="public/templates/executive-resume-template.png" alt="Executive" width="150" />
+      <br /><sub><b>Executive</b></sub>
+    </td>
+    <td align="center">
+      <img src="public/templates/classic-resume-template.png" alt="ATS Classic" width="150" />
+      <br /><sub><b>ATS Classic</b></sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="public/templates/professional-resume-template.png" alt="Professional" width="150" />
+      <br /><sub><b>Professional</b></sub>
+    </td>
+    <td align="center">
+      <img src="public/templates/structured-resume-template.png" alt="Structured" width="150" />
+      <br /><sub><b>Structured</b></sub>
+    </td>
+    <td align="center">
+      <img src="public/templates/academic-resume-template.png" alt="Academic" width="150" />
+      <br /><sub><b>Academic Serif</b></sub>
+    </td>
+  </tr>
+</table>
 
-This is not just another resume builder. It is a better foundation.
+## 🚀 Quick Start
 
-## Privacy and Control
-
-Your data stays with you. Always.
-
-- No backend required to use the product
-- No data collection or tracking
-- No risk of data leaks from external systems
-
-Everything is saved locally in your browser. You can export, import, or delete anytime.
-
-## No Login. No Lock-In.
-
-Start instantly. Leave anytime.
-
-- No sign-up required
-- No email verification
-- No onboarding walls
-- Open the editor and start building immediately
-
-Your work is yours, not tied to an account.
-
-## Pricing
-
-Free. And it stays that way.
-
-- No subscriptions
-- No premium templates
-- No hidden limitations
-- All templates are accessible
-- All features are available
-
-## Template System
-
-Built for flexibility, not limitations.
-
-- Templates are modular and pluggable
-- Switch templates instantly without losing data
-- Designed to support multiple styles and formats
-
-## Fully Customizable Structure
-
-Your resume, your way.
-
-- Add, remove, and modify sections
-- Support for custom and optional sections
-- Flexible JSON-based data model
-
-Whether you are a developer, designer, student, or founder, your resume adapts to you.
-
-## Built for Speed
-
-No lag. No clutter. No nonsense.
-
-- Instant updates while editing
-- Lightweight and optimized
-- No bloated UI or unnecessary features
-
-You focus on content, not the tool.
-
-## Built for Developers
-
-A resume builder that developers actually enjoy working on.
-
-- Feature-based structure
-- Clear separation of logic and UI
-- Easy template contribution system
-- Strong TypeScript foundation
-
-Whether you want to contribute or customize, it is built for you.
-
-## Open Source and Transparent
-
-No black boxes. No hidden behavior.
-
-- Fully open-source codebase
-- Community-driven improvements
-- No hidden logic or vendor lock-in
-
-You can trust what you can see.
-
-## Future Ecosystem
-
-More than just a resume builder.
-
-VeriWorkly is the beginning of a complete career ecosystem:
-
-- Resume and portfolio generation
-- ATS analysis and scoring
-- Job platform integrations
-- Company insights and tools
-
-Your resume is step one.
-
-## Getting Started
-
-1. Install dependencies:
+The quickest way to run VeriWorkly Resume locally:
 
 ```bash
+# Clone the repository
+git clone https://github.com/Gautam25Raj/veriworkly-resume.git
+cd veriworkly-resume
+
+# Start development server
 npm install
-```
-
-2. Run the development server:
-
-```bash
 npm run dev
+
+# Access the app
+open http://localhost:3000
 ```
 
-3. Open http://localhost:3000
+For dockerized production setups and backend services, see the [Local Setup Guide](README.Local.md) or [Docker Guide](README.Docker.md).
 
-## Final CTA
+## 🛠️ Tech Stack
 
-Start building your resume now, no account required.
+| Category         | Technology                     |
+| ---------------- | ------------------------------ |
+| Framework        | Next.js 15 (App Router)        |
+| Runtime          | Node.js                        |
+| Language         | TypeScript                     |
+| Database         | PostgreSQL (Neon) with Prisma  |
+| Styling          | Tailwind CSS 4                 |
+| State Management | Zustand                        |
+| Export           | `jspdf`, `html2canvas`, `docx` |
+| Auth             | Better Auth (OTP)              |
 
-- Open Editor
-- Explore Templates
+## 📖 Documentation
+
+Detailed guides for various parts of the ecosystem:
+
+| Guide                                          | Description                                  |
+| ---------------------------------------------- | -------------------------------------------- |
+| [Local Setup](README.Local.md)                 | Manual installation and environment config   |
+| [Docker Deployment](README.Docker.md)          | Self-hosting with Docker Compose             |
+| [Environment Setup](ENV_SETUP.md)              | Global configuration for API and Web         |
+| [Project Architecture](server/ARCHITECTURE.md) | Deep dive into the backend and schema design |
+| [Contributing](CONTRIBUTING.md)                | How to help build the future of VeriWorkly   |
+
+## 🤝 Support & Contributing
+
+VeriWorkly Resume is and always will be free and open-source. If it has helped you land a job or saved you time, please consider supporting continued development:
+
+- **Star this repository** to help others discover it.
+- **Follow the [Public Roadmap](app/admin/roadmap/page.tsx)** to suggest new features.
+- **Submit a Pull Request** for bug fixes or new templates.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for more information.
+
+## 📜 License
+
+Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
+
+---
+
+Built with ❤️ by [VeriWorkly Team](https://veriworkly.com)

@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 
 import { config } from "@/config";
-
 import { logger } from "@/utils/logger";
 import { prisma } from "@/utils/prisma";
 import { getRedis } from "@/utils/redis";
@@ -12,10 +11,19 @@ type RateLimitEntry = {
   resetAt: number;
 };
 
+const MAX_MEMORY_ENTRIES = process.env.MAX_MEMORY_ENTRIES
+  ? parseInt(process.env.MAX_MEMORY_ENTRIES, 10)
+  : 15000;
 const bucket = new Map<string, RateLimitEntry>();
 
 function getClientKey(req: Request): string {
-  return req.ip || req.socket.remoteAddress || "unknown";
+  // Try X-Forwarded-For first (Express trust proxy handles this via req.ip)
+  const ip = req.ip || req.headers["x-forwarded-for"] || req.socket.remoteAddress || "unknown";
+
+  if (Array.isArray(ip)) return ip[0];
+  if (typeof ip === "string" && ip.includes(",")) return ip.split(",")[0].trim();
+
+  return ip;
 }
 
 function getRouteLimitConfig(req: Request) {
@@ -27,7 +35,9 @@ function getRouteLimitConfig(req: Request) {
   };
 }
 
-function pruneExpiredEntries(now: number) {
+function pruneExpiredEntries() {
+  const now = Date.now();
+
   for (const [key, entry] of bucket.entries()) {
     if (entry.resetAt <= now) {
       bucket.delete(key);
@@ -35,12 +45,17 @@ function pruneExpiredEntries(now: number) {
   }
 }
 
+const cleanupInterval = setInterval(pruneExpiredEntries, 10 * 60 * 1000);
+cleanupInterval.unref();
+
 export const rateLimitMiddleware = (req: Request, res: Response, next: NextFunction) => {
+  if (config.nodeEnv === "development") {
+    return next();
+  }
+
   const now = Date.now();
+
   const { windowMs, maxRequests } = getRouteLimitConfig(req);
-
-  pruneExpiredEntries(now);
-
   const key = getClientKey(req);
 
   const redisKey = `rate-limit:${req.method}:${req.path}:${key}`;
@@ -48,6 +63,9 @@ export const rateLimitMiddleware = (req: Request, res: Response, next: NextFunct
   const checkWithFallback = async () => {
     try {
       const redis = getRedis();
+
+      if (!redis.isOpen) throw new Error("Redis not open");
+
       const count = await redis.incr(redisKey);
 
       if (count === 1) {
@@ -59,6 +77,14 @@ export const rateLimitMiddleware = (req: Request, res: Response, next: NextFunct
       const current = bucket.get(redisKey);
 
       if (!current || current.resetAt <= now) {
+        if (bucket.size > MAX_MEMORY_ENTRIES) {
+          logger.warn(
+            "Rate limit memory bucket reached max capacity! Clearing map to prevent crash.",
+          );
+
+          bucket.clear();
+        }
+
         bucket.set(redisKey, { count: 1, resetAt: now + windowMs });
         return 1;
       }
