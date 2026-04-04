@@ -1,13 +1,13 @@
 import { Router } from "express";
 
-// import { adminAuthMiddleware } from "@/middleware/adminAuth";
+// import { adminAuthMiddleware } from "#middleware/adminAuth";
 
 import {
   getGitHubStatsController,
   recordUsageMetricController,
   // getAdminDashboardStatsController,
   // syncGitHubStatsAsAdminController,
-} from "@/controllers/statsController";
+} from "#controllers/statsController";
 
 const router = Router();
 

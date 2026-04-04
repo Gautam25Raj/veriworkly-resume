@@ -1,9 +1,12 @@
 {
   "name": "veriworkly-server",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "VeriWorkly Resume Backend API",
   "main": "dist/index.js",
   "type": "module",
+  "imports": {
+    "#*": "./dist/*.js"
+  },
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",

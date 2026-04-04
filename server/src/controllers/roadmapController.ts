@@ -7,11 +7,11 @@ import {
   getRoadmapStats,
   getRoadmapFeatures,
   getRoadmapFeatureById,
-} from "@/services/roadmapService";
+} from "#services/roadmapService";
 
-import { roadmapQuerySchema } from "@/validators/roadmapValidator";
+import { roadmapQuerySchema } from "#validators/roadmapValidator";
 
-import { ApiError, createSuccessResponse, handleValidationError } from "@/utils/errors";
+import { ApiError, createSuccessResponse, handleValidationError } from "#utils/errors";
 
 /**
  * Get roadmap features with optional filtering/sorting/pagination from query params.

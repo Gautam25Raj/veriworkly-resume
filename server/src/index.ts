@@ -1,28 +1,28 @@
 import helmet from "helmet";
 import express from "express";
 
-import { config, isDevelopment } from "@/config";
+import { config, isDevelopment } from "#config";
 
-import { logger } from "@/utils/logger";
-import { prisma } from "@/utils/prisma";
-import { initRedis, closeRedis } from "@/utils/redis";
+import { logger } from "#utils/logger";
+import { prisma } from "#utils/prisma";
+import { initRedis, closeRedis } from "#utils/redis";
 
-import { corsMiddleware } from "@/middleware/cors";
-import { loggingMiddleware } from "@/middleware/logging";
-import { rateLimitMiddleware } from "@/middleware/rateLimit";
-import { errorHandler, notFoundHandler } from "@/middleware/errorHandler";
+import { corsMiddleware } from "#middleware/cors";
+import { loggingMiddleware } from "#middleware/logging";
+import { rateLimitMiddleware } from "#middleware/rateLimit";
+import { errorHandler, notFoundHandler } from "#middleware/errorHandler";
 
-// import shareRoutes from "@/routes/share";
-import statsRoutes from "@/routes/stats";
-import healthRoutes from "@/routes/health";
-// import resumeRoutes from "@/routes/resumes";
-import roadmapRoutes from "@/routes/roadmap";
+// import shareRoutes from "#routes/share";
+import statsRoutes from "#routes/stats";
+import healthRoutes from "#routes/health";
+// import resumeRoutes from "#routes/resumes";
+import roadmapRoutes from "#routes/roadmap";
 
-// import { authNodeHandler } from "@/auth";
-// import { ensureAdminUserExists, validateAuthRuntimeConfig } from "@/auth/runtime";
+// import { authNodeHandler } from "#auth";
+// import { ensureAdminUserExists, validateAuthRuntimeConfig } from "#auth/runtime";
 
-import { startGitHubSyncJob, stopGitHubSyncJob } from "@/jobs/githubSyncJob";
-import { startUsageMetricsJob, stopUsageMetricsJob } from "@/jobs/usageMetricsJob";
+import { startGitHubSyncJob, stopGitHubSyncJob } from "#jobs/githubSyncJob";
+import { startUsageMetricsJob, stopUsageMetricsJob } from "#jobs/usageMetricsJob";
 
 const app = express();
 

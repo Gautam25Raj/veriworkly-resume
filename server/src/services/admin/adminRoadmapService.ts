@@ -1,8 +1,8 @@
 import { randomUUID } from "node:crypto";
 
-import { prisma } from "@/utils/prisma";
-import { ApiError } from "@/utils/errors";
-import { cacheDelByPrefix } from "@/utils/redis";
+import { prisma } from "#utils/prisma";
+import { ApiError } from "#utils/errors";
+import { cacheDelByPrefix } from "#utils/redis";
 
 import { Prisma } from "@prisma/client";
 
@@ -15,6 +15,9 @@ interface RoadmapAdminCreateInput {
   status: RoadmapStatus;
   eta?: string;
   tags?: string[];
+  fullDescription?: string | null;
+  whyItMatters?: string | null;
+  timeline?: string | null;
   startedAt?: Date;
   completedAt?: Date;
   completedQuarter?: string;
@@ -25,12 +28,24 @@ interface RoadmapAdminUpdateInput {
   title?: string;
   description?: string;
   status?: RoadmapStatus;
-  eta?: string;
+  eta?: string | undefined;
   tags?: string[];
+  fullDescription?: string | null;
+  whyItMatters?: string | null;
+  timeline?: string | null;
   startedAt?: Date | null;
   completedAt?: Date | null;
   completedQuarter?: string | null;
   details?: unknown | null;
+}
+
+function calculateQuarter(date: Date): string {
+  const month = date.getMonth();
+  const year = date.getFullYear();
+
+  const quarter = Math.floor(month / 3) + 1;
+
+  return `Q${quarter} ${year}`;
 }
 
 async function invalidateRoadmapCache(): Promise<void> {
@@ -42,6 +57,23 @@ async function invalidateRoadmapCache(): Promise<void> {
 }
 
 export async function createRoadmapFeature(input: RoadmapAdminCreateInput) {
+  let startedAt: Date | null | undefined = input.startedAt;
+  let completedAt: Date | null | undefined = input.completedAt;
+
+  let completedQuarter: string | null = null;
+
+  if (input.status === "todo") {
+    startedAt = null;
+    completedAt = null;
+  } else if (input.status === "in-progress") {
+    startedAt = startedAt || new Date();
+    completedAt = null;
+  } else if (input.status === "done") {
+    startedAt = startedAt || new Date();
+    completedAt = completedAt || new Date();
+    completedQuarter = calculateQuarter(completedAt);
+  }
+
   const feature = await prisma.roadmapFeature.create({
     data: {
       id: input.id || randomUUID(),
@@ -50,9 +82,12 @@ export async function createRoadmapFeature(input: RoadmapAdminCreateInput) {
       status: input.status,
       eta: input.eta,
       tags: input.tags ?? [],
-      startedAt: input.startedAt,
-      completedAt: input.completedAt,
-      completedQuarter: input.completedQuarter,
+      fullDescription: input.fullDescription ?? null,
+      whyItMatters: input.whyItMatters ?? null,
+      timeline: input.timeline ?? null,
+      startedAt,
+      completedAt,
+      completedQuarter,
       details: input.details as object | undefined,
     },
   });
@@ -62,10 +97,32 @@ export async function createRoadmapFeature(input: RoadmapAdminCreateInput) {
 }
 
 export async function updateRoadmapFeature(id: string, input: RoadmapAdminUpdateInput) {
-  const existing = await prisma.roadmapFeature.findUnique({ where: { id }, select: { id: true } });
+  const existing = await prisma.roadmapFeature.findUnique({
+    where: { id },
+    select: { id: true, status: true, startedAt: true, completedAt: true },
+  });
 
   if (!existing) {
     throw new ApiError(404, "Roadmap feature not found");
+  }
+
+  const targetStatus = input.status ?? existing.status;
+
+  let finalStartedAt = input.startedAt !== undefined ? input.startedAt : existing.startedAt;
+  let finalCompletedAt = input.completedAt !== undefined ? input.completedAt : existing.completedAt;
+
+  let finalCompletedQuarter: string | null = null;
+
+  if (targetStatus === "todo") {
+    finalStartedAt = null;
+    finalCompletedAt = null;
+  } else if (targetStatus === "in-progress") {
+    finalStartedAt = finalStartedAt || new Date();
+    finalCompletedAt = null;
+  } else if (targetStatus === "done") {
+    finalStartedAt = finalStartedAt || new Date();
+    finalCompletedAt = finalCompletedAt || new Date();
+    finalCompletedQuarter = calculateQuarter(finalCompletedAt);
   }
 
   const normalizedDetails =
@@ -83,10 +140,13 @@ export async function updateRoadmapFeature(id: string, input: RoadmapAdminUpdate
       ...(input.status !== undefined ? { status: input.status } : {}),
       ...(input.eta !== undefined ? { eta: input.eta } : {}),
       ...(input.tags !== undefined ? { tags: input.tags } : {}),
-      ...(input.startedAt !== undefined ? { startedAt: input.startedAt } : {}),
-      ...(input.completedAt !== undefined ? { completedAt: input.completedAt } : {}),
-      ...(input.completedQuarter !== undefined ? { completedQuarter: input.completedQuarter } : {}),
+      ...(input.fullDescription !== undefined ? { fullDescription: input.fullDescription } : {}),
+      ...(input.whyItMatters !== undefined ? { whyItMatters: input.whyItMatters } : {}),
+      ...(input.timeline !== undefined ? { timeline: input.timeline } : {}),
       ...(normalizedDetails !== undefined ? { details: normalizedDetails } : {}),
+      startedAt: finalStartedAt,
+      completedAt: finalCompletedAt,
+      completedQuarter: finalCompletedQuarter,
     },
   });
 

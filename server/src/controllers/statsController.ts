@@ -1,10 +1,10 @@
 import { z } from "zod";
 import { Request, Response, NextFunction } from "express";
 
-import { createSuccessResponse } from "@/utils/errors";
+import { createSuccessResponse } from "#utils/errors";
 
-import { getGitHubStats, syncGitHubStatsFromGitHub } from "@/services/statsService";
-import { getAdminDashboardMetrics, incrementUsageMetric } from "@/services/analyticsService";
+import { getGitHubStats, syncGitHubStatsFromGitHub } from "#services/statsService";
+import { getAdminDashboardMetrics, incrementUsageMetric } from "#services/analyticsService";
 
 /**
  * Zod validation schema for incoming usage metrics.

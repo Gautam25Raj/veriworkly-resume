@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 
-import { config } from "@/config";
+import { config } from "#config";
 
-import { prisma } from "@/utils/prisma";
-import { logger } from "@/utils/logger";
+import { prisma } from "#utils/prisma";
+import { logger } from "#utils/logger";
 
 declare global {
   namespace Express {

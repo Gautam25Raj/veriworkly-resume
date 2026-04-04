@@ -5,12 +5,12 @@ import {
   createRoadmapFeature,
   deleteRoadmapFeature,
   updateRoadmapFeature,
-} from "@/services/admin/adminRoadmapService";
-import { type RoadmapStatus } from "@/services/roadmapService";
+} from "#services/admin/adminRoadmapService";
+import { type RoadmapStatus } from "#services/roadmapService";
 
-import { roadmapAdminCreateSchema, roadmapAdminUpdateSchema } from "@/validators/roadmapValidator";
+import { roadmapAdminCreateSchema, roadmapAdminUpdateSchema } from "#validators/roadmapValidator";
 
-import { ApiError, createSuccessResponse, handleValidationError } from "@/utils/errors";
+import { ApiError, createSuccessResponse, handleValidationError } from "#utils/errors";
 
 /**
  * Create a new roadmap feature (admin only).
@@ -38,8 +38,11 @@ export async function createRoadmapFeatureController(
       title: payload.title,
       description: payload.description,
       status: payload.status as RoadmapStatus,
-      eta: payload.eta,
+      eta: payload.eta ?? undefined,
       tags: payload.tags,
+      fullDescription: payload.fullDescription,
+      whyItMatters: payload.whyItMatters,
+      timeline: payload.timeline,
       startedAt: payload.startedAt ? new Date(payload.startedAt) : undefined,
       completedAt: payload.completedAt ? new Date(payload.completedAt) : undefined,
       completedQuarter: payload.completedQuarter,
@@ -91,8 +94,11 @@ export async function updateRoadmapFeatureController(
       title: payload.title,
       description: payload.description,
       status: payload.status as RoadmapStatus | undefined,
-      eta: payload.eta,
+      eta: payload.eta ?? undefined,
       tags: payload.tags,
+      fullDescription: payload.fullDescription,
+      whyItMatters: payload.whyItMatters,
+      timeline: payload.timeline,
       startedAt: parseDateInput(payload.startedAt),
       completedAt: parseDateInput(payload.completedAt),
       completedQuarter: payload.completedQuarter,

@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 
-import { config } from "@/config";
+import { config } from "#config";
 
-import { logger } from "@/utils/logger";
-import { ApiError, createErrorResponse } from "@/utils/errors";
+import { logger } from "#utils/logger";
+import { ApiError, createErrorResponse } from "#utils/errors";
 
 export function errorHandler(error: unknown, req: Request, res: Response, _next: NextFunction) {
   if (error instanceof ApiError) {

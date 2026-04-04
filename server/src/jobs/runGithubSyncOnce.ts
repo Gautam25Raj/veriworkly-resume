@@ -1,10 +1,10 @@
-import { config } from "@/config";
+import { config } from "#config";
 
-import { logger } from "@/utils/logger";
-import { prisma } from "@/utils/prisma";
-import { initRedis, closeRedis } from "@/utils/redis";
+import { logger } from "#utils/logger";
+import { prisma } from "#utils/prisma";
+import { initRedis, closeRedis } from "#utils/redis";
 
-import { syncGitHubStatsFromGitHub } from "@/services/statsService";
+import { syncGitHubStatsFromGitHub } from "#services/statsService";
 
 async function run() {
   try {

@@ -1,8 +1,8 @@
-import { config } from "@/config";
+import { config } from "#config";
 
-import { prisma } from "@/utils/prisma";
-import { ApiError } from "@/utils/errors";
-import { cacheDel, cacheGet, cacheSet } from "@/utils/redis";
+import { prisma } from "#utils/prisma";
+import { ApiError } from "#utils/errors";
+import { cacheDel, cacheGet, cacheSet } from "#utils/redis";
 
 interface GitHubIssue {
   id: number;

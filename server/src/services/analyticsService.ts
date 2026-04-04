@@ -1,7 +1,7 @@
-import { config } from "@/config";
+import { config } from "#config";
 
-import { prisma } from "@/utils/prisma";
-import { cacheGet, cacheSet, getRedis } from "@/utils/redis";
+import { prisma } from "#utils/prisma";
+import { cacheGet, cacheSet, getRedis } from "#utils/redis";
 
 /**
  * List of officially tracked events to ensure consistency.

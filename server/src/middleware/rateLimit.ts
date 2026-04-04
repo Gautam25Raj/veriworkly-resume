@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 
-import { config } from "@/config";
-import { logger } from "@/utils/logger";
-import { prisma } from "@/utils/prisma";
-import { getRedis } from "@/utils/redis";
-import { createErrorResponse } from "@/utils/errors";
+import { config } from "#config";
+import { logger } from "#utils/logger";
+import { prisma } from "#utils/prisma";
+import { getRedis } from "#utils/redis";
+import { createErrorResponse } from "#utils/errors";
 
 type RateLimitEntry = {
   count: number;
