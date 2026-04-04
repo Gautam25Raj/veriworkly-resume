@@ -12,14 +12,14 @@ import { loggingMiddleware } from "@/middleware/logging";
 import { rateLimitMiddleware } from "@/middleware/rateLimit";
 import { errorHandler, notFoundHandler } from "@/middleware/errorHandler";
 
-import shareRoutes from "@/routes/share";
+// import shareRoutes from "@/routes/share";
 import statsRoutes from "@/routes/stats";
 import healthRoutes from "@/routes/health";
-import resumeRoutes from "@/routes/resumes";
+// import resumeRoutes from "@/routes/resumes";
 import roadmapRoutes from "@/routes/roadmap";
 
-import { authNodeHandler } from "@/auth";
-import { ensureAdminUserExists, validateAuthRuntimeConfig } from "@/auth/runtime";
+// import { authNodeHandler } from "@/auth";
+// import { ensureAdminUserExists, validateAuthRuntimeConfig } from "@/auth/runtime";
 
 import { startGitHubSyncJob, stopGitHubSyncJob } from "@/jobs/githubSyncJob";
 import { startUsageMetricsJob, stopUsageMetricsJob } from "@/jobs/usageMetricsJob";
@@ -46,12 +46,12 @@ app.use(loggingMiddleware);
 app.set("trust proxy", 1);
 
 // Versioned API routes (primary)
-app.use("/api/v1/health", healthRoutes);
-app.use("/api/v1/roadmap", roadmapRoutes);
 app.use("/api/v1/stats", statsRoutes);
-app.use("/api/v1/resumes", resumeRoutes);
-app.use("/api/v1/share-links", shareRoutes);
-app.all("/api/v1/auth/*", authNodeHandler);
+app.use("/api/v1/health", healthRoutes);
+// app.use("/api/v1/resumes", resumeRoutes);
+app.use("/api/v1/roadmap", roadmapRoutes);
+// app.use("/api/v1/share-links", shareRoutes);
+// app.all("/api/v1/auth/*", authNodeHandler);
 
 // 404 handler
 app.use(notFoundHandler);
@@ -81,7 +81,7 @@ process.on("SIGINT", shutdown);
 // Start server
 async function main() {
   try {
-    validateAuthRuntimeConfig();
+    // validateAuthRuntimeConfig();
 
     // Initialize Redis
     await initRedis();
@@ -90,7 +90,7 @@ async function main() {
     // Test database connection
     logger.info("Database connected");
 
-    await ensureAdminUserExists();
+    // await ensureAdminUserExists();
 
     // Start listening
     const server = app.listen(config.port, () => {
