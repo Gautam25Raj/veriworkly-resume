@@ -48,7 +48,7 @@ Built with privacy as a core principle, VeriWorkly gives you complete ownership 
 
 - **Public Roadmap:** Built by the community. Vote on features and track progress.
 - **Self-Hostable:** Run it locally or in production via Docker with minimal configuration.
-- **Modern Tech:** Built with Next.js 15, TypeScript, and Tailwind CSS 4.
+- **Modern Tech:** Built with Next.js 16 (App Router), TypeScript, and Tailwind CSS 4.
 
 ## 🎨 Templates
 
