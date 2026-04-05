@@ -1,6 +1,6 @@
 {
   "name": "veriworkly-resume",
-  "version": "1.0.1",
+  "version": "1.2.2",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -14,6 +14,7 @@
     "format:write": "prettier --write ."
   },
   "dependencies": {
+    "better-auth": "^1.5.6",
     "clsx": "^2.1.1",
     "docx": "^9.5.1",
     "html2canvas": "^1.4.1",
@@ -25,6 +26,7 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "tailwind-merge": "^3.5.0",
+    "zod": "^3.25.76",
     "zustand": "^5.0.12"
   },
   "devDependencies": {

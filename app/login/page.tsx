@@ -2,8 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-
-import { useAuth } from "@/hooks/use-auth";
+import { authClient } from "@/lib/auth-client";
 
 import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
@@ -18,22 +17,31 @@ const LoginPage = () => {
   const [sent, setSent] = useState(false);
   const [sentTo, setSentTo] = useState("");
 
-  const { requestEmailOtp, isLoading, error, clearError } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    clearError();
 
-    if (!email) {
+    if (isLoading || !email) return;
+
+    setIsLoading(true);
+    setError(null);
+
+    const { error: authError } = await authClient.emailOtp.sendVerificationOtp({
+      email,
+      type: "sign-in",
+    });
+
+    if (authError) {
+      setError(authError.message || "Failed to send code. Please try again.");
+      setIsLoading(false);
       return;
     }
 
-    const success = await requestEmailOtp(email);
-    if (success) {
-      setSentTo(email);
-      setSent(true);
-      setOtp("");
-    }
+    setSentTo(email);
+    setSent(true);
+    setIsLoading(false);
   };
 
   if (sent)
@@ -87,15 +95,19 @@ const LoginPage = () => {
               placeholder="hello@veriworkly.com"
               onChange={(e) => {
                 setEmail(e.target.value);
-                clearError();
+                if (error) setError(null);
               }}
             />
           </div>
 
           {error && (
-            <div className="rounded-2xl border border-red-200/60 bg-red-50 p-3 text-sm text-red-700 dark:border-red-900/80 dark:bg-red-950/40 dark:text-red-300">
-              {error.message}
-            </div>
+            <section
+              role="alert"
+              aria-live="polite"
+              className="rounded-2xl border border-red-200/60 bg-red-50 p-3 text-sm text-red-700 dark:border-red-900/80 dark:bg-red-950/40 dark:text-red-300"
+            >
+              {error}
+            </section>
           )}
 
           <Button

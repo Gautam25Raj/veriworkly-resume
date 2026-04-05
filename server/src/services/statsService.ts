@@ -125,10 +125,20 @@ function classifyIssue(issue: GitHubIssue): "todo" | "in-progress" | "done" {
  * Processes raw GitHub issues into categorized snapshots for the frontend.
  */
 
+interface GitHubIssueSnapshot {
+  id: string;
+  title: string;
+  status: "todo" | "in-progress" | "done";
+  url: string;
+  createdAt: string;
+  updatedAt: string;
+  labels: string[];
+}
+
 function buildGitHubIssuesSnapshot(issues: GitHubIssue[]) {
-  const todoIssues: any[] = [];
-  const inProgressIssues: any[] = [];
-  const doneIssues: any[] = [];
+  const todoIssues: GitHubIssueSnapshot[] = [];
+  const inProgressIssues: GitHubIssueSnapshot[] = [];
+  const doneIssues: GitHubIssueSnapshot[] = [];
 
   for (const issue of issues) {
     const status = classifyIssue(issue);
