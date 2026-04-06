@@ -6,10 +6,10 @@ import { Container } from "@/components/layout/Container";
 
 const DashboardLayout = ({ children }: { children: ReactNode }) => {
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex flex-col">
       <Navbar />
 
-      <Container as="main" className="flex-1">
+      <Container as="main" className="min-h-screen flex-1">
         {children}
       </Container>
 

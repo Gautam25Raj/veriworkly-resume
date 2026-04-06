@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { Container } from "@/components/layout/Container";
+import { Badge } from "@/components/ui/Badge";
 
 import { siteConfig } from "@/config/site";
 
@@ -8,72 +9,101 @@ const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="border-border/40 bg-card/30 border-t py-12">
-      <Container className="grid gap-8 md:grid-cols-2 md:items-start">
-        <div className="space-y-4">
+    <footer className="border-border/60 bg-card/70 relative overflow-hidden border-t">
+      <div className="via-accent/40 absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent to-transparent" />
+
+      <Container className="relative grid gap-10 py-14 lg:grid-cols-[1.2fr_0.8fr_0.8fr]">
+        <div className="space-y-5">
           <Link
             href="/"
-            className="text-foreground text-lg font-bold tracking-tight"
+            className="border-border/60 bg-background/70 hover:bg-card inline-flex items-center rounded-full border px-4 py-2 text-sm font-semibold tracking-tight backdrop-blur transition-colors"
           >
             {siteConfig.name}
           </Link>
 
-          <p className="text-muted max-w-xs text-sm leading-relaxed">
-            A premium, local-first resume builder designed for speed, privacy,
-            and long-term maintainability.
+          <p className="text-muted max-w-md text-sm leading-relaxed">
+            A local-first resume studio with cloud sync, public roadmap views,
+            and a cleaner workflow for people who want control over their data.
           </p>
 
-          <p className="text-muted/60 text-xs">
-            © {currentYear} {siteConfig.name}. Built for the community.
-          </p>
+          <div className="flex flex-wrap gap-2">
+            <Badge className="bg-background/80 text-muted">Local-first</Badge>
+            <Badge className="bg-background/80 text-muted">Cloud sync</Badge>
+            <Badge className="bg-background/80 text-muted">Open source</Badge>
+          </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-8 sm:gap-4 md:justify-items-end">
-          <div className="flex flex-col gap-3">
-            <p className="text-foreground text-xs font-semibold tracking-wider uppercase">
-              Product
-            </p>
+        <div className="flex flex-col gap-4">
+          <p className="text-foreground text-xs font-semibold tracking-[0.2em] uppercase">
+            Product
+          </p>
 
-            <Link
-              href="/dashboard"
-              className="text-muted hover:text-accent text-sm transition-colors"
-            >
-              Dashboard
-            </Link>
+          <Link
+            href="/dashboard"
+            className="text-muted hover:text-foreground w-fit text-sm transition-colors"
+          >
+            Dashboard
+          </Link>
 
-            <Link
-              href="/templates"
-              className="text-muted hover:text-accent text-sm transition-colors"
-            >
-              Templates
-            </Link>
-          </div>
+          <Link
+            href="/templates"
+            className="text-muted hover:text-foreground w-fit text-sm transition-colors"
+          >
+            Templates
+          </Link>
 
-          <div className="flex flex-col gap-3">
-            <p className="text-foreground text-xs font-semibold tracking-wider uppercase">
-              Connect
-            </p>
+          <Link
+            href="/roadmap"
+            className="text-muted hover:text-foreground w-fit text-sm transition-colors"
+          >
+            Roadmap
+          </Link>
 
-            <Link
-              target="_blank"
-              rel="noreferrer"
-              href={siteConfig.links.github}
-              className="text-muted hover:text-accent text-sm transition-colors"
-            >
-              GitHub
-            </Link>
+          <Link
+            href="/stats"
+            className="text-muted hover:text-foreground w-fit text-sm transition-colors"
+          >
+            Development
+          </Link>
+        </div>
 
-            <Link
-              target="_blank"
-              rel="noreferrer"
-              href={siteConfig.links.twitter}
-              className="text-muted hover:text-accent text-sm transition-colors"
-            >
-              Twitter
-            </Link>
-          </div>
+        <div className="flex flex-col gap-4">
+          <p className="text-foreground text-xs font-semibold tracking-[0.2em] uppercase">
+            Connect
+          </p>
+
+          <Link
+            target="_blank"
+            rel="noreferrer"
+            href={siteConfig.links.github}
+            className="text-muted hover:text-foreground w-fit text-sm transition-colors"
+          >
+            GitHub
+          </Link>
+
+          <Link
+            target="_blank"
+            rel="noreferrer"
+            href={siteConfig.links.twitter}
+            className="text-muted hover:text-foreground w-fit text-sm transition-colors"
+          >
+            Twitter
+          </Link>
+
+          <p className="text-muted/70 text-xs leading-relaxed">
+            Built to keep resume data portable, private, and easy to audit.
+          </p>
         </div>
       </Container>
+
+      <div className="border-border/50 border-t">
+        <Container className="text-muted/70 flex flex-col gap-2 py-5 text-xs sm:flex-row sm:items-center sm:justify-between">
+          <p>
+            © {currentYear} {siteConfig.name}. Built for the community.
+          </p>
+          <p>Designed for fast editing, syncing, and sharing.</p>
+        </Container>
+      </div>
     </footer>
   );
 };

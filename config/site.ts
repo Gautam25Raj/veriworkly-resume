@@ -12,7 +12,7 @@ export const siteConfig = {
   tagline: "Free resume builder. No login. 100% private.",
 
   links: {
-    github: "https://github.com/Gautam25Raj/veriworkly",
+    github: "https://github.com/Gautam25Raj/veriworkly-resume",
     twitter: "https://x.com/veriworkly",
   },
 
@@ -47,5 +47,6 @@ export const siteConfig = {
     { href: "/dashboard", label: "Dashboard" },
     { href: "/templates", label: "Templates" },
     { href: "/roadmap", label: "Roadmap" },
+    { href: "/stats", label: "Development" },
   ],
 } as const;
