@@ -2,7 +2,6 @@ import { v4 as uuidv4 } from "uuid";
 import cron, { ScheduledTask } from "node-cron";
 
 import { config } from "#config";
-
 import { logger } from "#utils/logger";
 import { getRedis } from "#utils/redis";
 
@@ -10,18 +9,13 @@ import { shouldSyncGitHubStats, syncGitHubStatsFromGitHub } from "#services/gith
 
 let job: ScheduledTask | null = null;
 
-/**
- * Orchestrates the GitHub synchronization with distributed locking.
- * * reason: Context of the trigger (startup vs scheduled cron).
- */
-
 async function runSync(reason: "startup" | "cron") {
   const redis = getRedis();
+  const lockValue = uuidv4();
 
   const lockKey = "github:sync:lock";
 
-  const lockValue = uuidv4();
-  const lockTTL = 60 * 10;
+  const lockTTL = 600;
 
   let lockAcquired = false;
 
@@ -34,27 +28,26 @@ async function runSync(reason: "startup" | "cron") {
     lockAcquired = lockResult === "OK";
 
     if (!lockAcquired) {
-      logger.warn(`Skipping GitHub stats sync (${reason}): lock already held by another instance`);
+      logger.debug(`GitHub sync (${reason}) locked by another instance. Skipping.`);
       return;
     }
 
-    const shouldSync = await shouldSyncGitHubStats();
+    const needsSync = await shouldSyncGitHubStats();
 
-    if (!shouldSync) {
-      logger.info(`Skipping GitHub stats sync (${reason}): data is already up to date`);
+    if (!needsSync) {
+      logger.info(`GitHub sync (${reason}) skipped: Data is fresh.`);
       return;
     }
 
     const result = await syncGitHubStatsFromGitHub();
 
-    logger.info(`GitHub stats sync (${reason}) completed`, {
-      issueCount: result.issueCount,
+    logger.info(`GitHub sync (${reason}) success`, {
+      itemsSynced: result.issueCount,
       syncedAt: result.syncedAt,
     });
   } catch (error) {
-    logger.error(`GitHub stats sync (${reason}) failed`, {
-      error: error instanceof Error ? error.message : error,
-      stack: error instanceof Error ? error.stack : undefined,
+    logger.error(`GitHub sync (${reason}) failed`, {
+      message: error instanceof Error ? error.message : "Unknown error",
     });
   } finally {
     if (lockAcquired) {
@@ -64,49 +57,35 @@ async function runSync(reason: "startup" | "cron") {
         if (currentLockValue === lockValue) {
           await redis.del(lockKey);
         }
-      } catch (releaseError) {
-        logger.error("Failed to release GitHub sync lock cleanly", releaseError);
+      } catch (err) {
+        logger.error("Lock release error", err);
       }
     }
   }
 }
 
-/**
- * Initializes and schedules the GitHub sync cron job.
- * Runs once on startup if enabled.
- */
-
 export function startGitHubSyncJob() {
   const { syncEnabled, syncCron, syncTimezone } = config.github;
 
   if (!syncEnabled) {
-    logger.info("GitHub sync job is globally disabled via config");
+    logger.warn("GitHub sync is disabled in config.");
     return;
   }
 
   if (job) return;
 
-  job = cron.schedule(
-    syncCron,
-    () => {
-      void runSync("cron");
-    },
-    { timezone: syncTimezone },
-  );
+  job = cron.schedule(syncCron, () => void runSync("cron"), { timezone: syncTimezone });
 
-  logger.info("GitHub sync job scheduled", { cron: syncCron, timezone: syncTimezone });
+  logger.info("GitHub sync cron started", { schedule: syncCron });
 
   void runSync("startup");
 }
-
-/**
- * Stops the scheduled cron job and clears the job reference.
- */
 
 export function stopGitHubSyncJob() {
   if (job) {
     job.stop();
     job = null;
-    logger.info("GitHub sync job stopped");
+
+    logger.info("GitHub sync cron stopped.");
   }
 }
