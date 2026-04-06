@@ -6,7 +6,7 @@ import { config } from "#config";
 import { logger } from "#utils/logger";
 import { getRedis } from "#utils/redis";
 
-import { shouldSyncGitHubStats, syncGitHubStatsFromGitHub } from "#services/statsService";
+import { shouldSyncGitHubStats, syncGitHubStatsFromGitHub } from "#services/githubService";
 
 let job: ScheduledTask | null = null;
 

@@ -3,7 +3,7 @@ import { Request, Response, NextFunction } from "express";
 
 import { createSuccessResponse } from "#utils/errors";
 
-import { getGitHubStats, syncGitHubStatsFromGitHub } from "#services/statsService";
+import { getGitHubStats } from "#services/githubService";
 import { getAdminDashboardMetrics, incrementUsageMetric } from "#services/analyticsService";
 
 /**
@@ -15,54 +15,6 @@ const usageMetricEventSchema = z.object({
   event: z.string().trim().min(1),
   value: z.number().int().positive().max(1000).optional(),
 });
-
-/**
- * Return the latest GitHub stats snapshot stored in the database/cache.
- *
- * res:
- * - 200: Returns the latest stats object or null if no snapshot exists.
- *
- * next:
- * - Forwards runtime/database errors to the global error handler.
- */
-
-const getGitHubStatsController = async (_req: Request, res: Response, next: NextFunction) => {
-  try {
-    const stats = await getGitHubStats();
-
-    const message = stats ? "GitHub stats fetched successfully" : "No GitHub stats available yet";
-
-    res.json(createSuccessResponse(stats, message));
-  } catch (error) {
-    next(error);
-  }
-};
-
-/**
- * Trigger an immediate GitHub sync via the Admin Dashboard.
- *
- * req:
- * - (unused, protected by adminAuthMiddleware)
- *
- * res:
- * - 200: Returns the freshly synced GitHub snapshot.
- *
- * next:
- * - Forwards GitHub API errors or database upsert errors to the global error handler.
- */
-
-const syncGitHubStatsAsAdminController = async (
-  _req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const sync = await syncGitHubStatsFromGitHub();
-    res.json(createSuccessResponse(sync, "GitHub stats synced successfully"));
-  } catch (error) {
-    next(error);
-  }
-};
 
 /**
  * Record a single usage metric (e.g., resume_created) into Redis.
@@ -123,9 +75,4 @@ const getAdminDashboardStatsController = async (
   }
 };
 
-export {
-  getGitHubStatsController,
-  recordUsageMetricController,
-  getAdminDashboardStatsController,
-  syncGitHubStatsAsAdminController,
-};
+export { recordUsageMetricController, getAdminDashboardStatsController };

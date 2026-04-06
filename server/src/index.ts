@@ -18,8 +18,11 @@ import healthRoutes from "#routes/health";
 // import resumeRoutes from "#routes/resumes";
 import roadmapRoutes from "#routes/roadmap";
 
-// import { authNodeHandler } from "#auth";
-// import { ensureAdminUserExists, validateAuthRuntimeConfig } from "#auth/runtime";
+import { authNodeHandler } from "#auth";
+import { ensureAdminUserExists, validateAuthRuntimeConfig } from "#auth/runtime";
+
+// import { closeExportBrowser } from "#services/exportService";
+// import { stopExportQueueCleanup } from "#services/exportQueueService";
 
 import { startGitHubSyncJob, stopGitHubSyncJob } from "#jobs/githubSyncJob";
 import { startUsageMetricsJob, stopUsageMetricsJob } from "#jobs/usageMetricsJob";
@@ -51,7 +54,7 @@ app.use("/api/v1/health", healthRoutes);
 // app.use("/api/v1/resumes", resumeRoutes);
 app.use("/api/v1/roadmap", roadmapRoutes);
 // app.use("/api/v1/share-links", shareRoutes);
-// app.all("/api/v1/auth/*", authNodeHandler);
+app.all("/api/v1/auth/*", authNodeHandler);
 
 // 404 handler
 app.use(notFoundHandler);
@@ -66,6 +69,9 @@ async function shutdown() {
   try {
     stopGitHubSyncJob();
     stopUsageMetricsJob();
+    // stopExportQueueCleanup();
+
+    // await closeExportBrowser();
     await closeRedis();
     await prisma.$disconnect();
     process.exit(0);
@@ -81,7 +87,7 @@ process.on("SIGINT", shutdown);
 // Start server
 async function main() {
   try {
-    // validateAuthRuntimeConfig();
+    validateAuthRuntimeConfig();
 
     // Initialize Redis
     await initRedis();
@@ -90,7 +96,7 @@ async function main() {
     // Test database connection
     logger.info("Database connected");
 
-    // await ensureAdminUserExists();
+    await ensureAdminUserExists();
 
     // Start listening
     const server = app.listen(config.port, () => {

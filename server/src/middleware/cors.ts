@@ -1,11 +1,17 @@
 import cors from "cors";
 
-import { config, isDevelopment } from "#config";
+import { config } from "#config";
 import { ApiError } from "#utils/errors";
 
 export const corsMiddleware = cors({
   origin: (origin, callback) => {
-    if ((!origin && isDevelopment) || config.allowedOrigins.includes(origin || "")) {
+    // Allow requests without Origin header (SSR/server-to-server/curl/health checks).
+    if (!origin) {
+      callback(null, true);
+      return;
+    }
+
+    if (config.allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
       callback(new ApiError(403, "Not allowed by CORS"));

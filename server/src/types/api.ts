@@ -44,11 +44,16 @@ export interface GitHubStatsResponse {
   projectName: string;
   projectUrl: string;
   stats: {
+    totalItems: number;
     totalIssues: number;
+    issues: number;
+    pullRequests: number;
     todo: number;
     inProgress: number;
     done: number;
+    completionRate: string;
   };
   syncedAt: string;
+  nextSyncAt?: string | null;
   data?: Record<string, unknown>;
 }
