@@ -1,10 +1,10 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 
 import type { SessionUser } from "@/features/auth/services/current-user";
 
-import { useUserStore } from "../store/useUserStore";
+import { clearLegacyUserStorage, useUserStore } from "../store/useUserStore";
 
 export function AuthInitializer({
   initialUser,
@@ -13,6 +13,10 @@ export function AuthInitializer({
 }) {
   const setUser = useUserStore((state) => state.setUser);
   const initialized = useRef(false);
+
+  useEffect(() => {
+    clearLegacyUserStorage();
+  }, []);
 
   if (!initialized.current) {
     setUser(initialUser);

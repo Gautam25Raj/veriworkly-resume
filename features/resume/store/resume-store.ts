@@ -27,6 +27,8 @@ import {
   createAdditionalItem,
 } from "@/features/resume/utils/factories";
 import {
+  type SaveResumeResult,
+  type SaveResumeOptions,
   saveResumeToLocalStorage,
   loadResumeFromLocalStorage,
 } from "@/features/resume/services/local-storage";
@@ -38,7 +40,7 @@ interface ResumeStoreState {
   selectedSection: ResumeSectionId;
   setResume: (resume: ResumeData) => void;
   hydrateFromStorage: () => void;
-  saveToStorage: () => void;
+  saveToStorage: (options?: SaveResumeOptions) => SaveResumeResult;
   resetResume: () => void;
   selectSection: (section: ResumeSectionId) => void;
   setSectionVisibility: (section: ResumeSectionId, visible: boolean) => void;
@@ -130,9 +132,7 @@ export const useResumeStore = create<ResumeStoreState>((set, get) => ({
     set({ resume: normalizeResumeData(storedResume) });
   },
 
-  saveToStorage: () => {
-    saveResumeToLocalStorage(get().resume);
-  },
+  saveToStorage: (options) => saveResumeToLocalStorage(get().resume, options),
 
   resetResume: () => {
     const activeResume = get().resume;

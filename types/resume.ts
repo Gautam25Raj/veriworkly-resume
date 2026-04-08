@@ -138,6 +138,7 @@ export interface ResumeCustomization {
 export type ResumeSyncStatus =
   | "local-only"
   | "pending"
+  | "syncing"
   | "synced"
   | "conflicted";
 

@@ -177,6 +177,10 @@ export function normalizeResumeData(
       ...defaultResume.customization,
       ...value?.customization,
     },
+    sync: {
+      ...defaultResume.sync,
+      ...value?.sync,
+    },
     updatedAt: value?.updatedAt ?? new Date().toISOString(),
   };
 }
