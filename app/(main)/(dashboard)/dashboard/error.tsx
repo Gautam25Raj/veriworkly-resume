@@ -16,9 +16,11 @@ export default function DashboardPageError({
           <p className="text-accent text-xs font-semibold tracking-[0.2em] uppercase">
             Resume Workspace
           </p>
+
           <h1 className="text-foreground mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
             We could not load your resumes
           </h1>
+
           <p className="text-muted mt-2 max-w-xl text-sm leading-6">
             Browser storage may be blocked or temporarily unavailable. Retry
             this view, or open templates to start a fresh resume.
@@ -26,6 +28,7 @@ export default function DashboardPageError({
 
           <div className="mt-6 flex flex-wrap items-center gap-3">
             <Button onClick={() => reset()}>Retry</Button>
+
             <Button
               variant="secondary"
               onClick={() => (window.location.href = "/templates")}

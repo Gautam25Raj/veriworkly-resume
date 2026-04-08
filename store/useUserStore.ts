@@ -1,7 +1,8 @@
 import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
 
 import type { SessionUser } from "@/features/auth/services/current-user";
+
+const LEGACY_USER_STORAGE_KEY = "veriworkly-user-storage";
 
 interface UserState {
   user: SessionUser | null;
@@ -14,37 +15,32 @@ interface UserState {
   logout: () => void;
 }
 
-export const useUserStore = create<UserState>()(
-  persist(
-    (set) => ({
-      user: null,
-      loading: true,
-      isLoggedIn: false,
+export const useUserStore = create<UserState>()((set) => ({
+  user: null,
+  loading: true,
+  isLoggedIn: false,
 
-      setUser: (user) =>
-        set({
-          user,
-          isLoggedIn: !!user?.email,
-          loading: false,
-        }),
-
-      setLoading: (loading) => set({ loading }),
-
-      logout: () =>
-        set({
-          user: null,
-          isLoggedIn: false,
-          loading: false,
-        }),
+  setUser: (user) =>
+    set({
+      user,
+      isLoggedIn: !!user?.email,
+      loading: false,
     }),
 
-    {
-      name: "veriworkly-user-storage",
-      storage: createJSONStorage(() => localStorage),
-      partialize: (state) => ({
-        user: state.user,
-        isLoggedIn: state.isLoggedIn,
-      }),
-    },
-  ),
-);
+  setLoading: (loading) => set({ loading }),
+
+  logout: () =>
+    set({
+      user: null,
+      isLoggedIn: false,
+      loading: false,
+    }),
+}));
+
+export function clearLegacyUserStorage() {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  window.localStorage.removeItem(LEGACY_USER_STORAGE_KEY);
+}

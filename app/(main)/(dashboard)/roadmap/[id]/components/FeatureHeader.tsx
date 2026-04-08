@@ -74,7 +74,7 @@ const FeatureHeader = ({ feature }: { feature: RoadmapFeature }) => {
           <p className="text-foreground mt-1 text-sm font-semibold">
             {feature.completedAt
               ? new Date(feature.completedAt).toLocaleDateString()
-              : "In progress"}
+              : statusLabels[feature.status as keyof typeof statusLabels]}
           </p>
         </div>
 

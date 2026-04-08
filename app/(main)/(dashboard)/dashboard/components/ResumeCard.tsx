@@ -1,17 +1,46 @@
+"use client";
+
+import { memo } from "react";
 import Link from "next/link";
+import { CalendarClock, FileText, Palette } from "lucide-react";
 
 import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
 
 import { templateSummaries } from "@/config/templates";
+
+import ResumeCardMenu from "./ResumeCardMenu";
+
 import { ResumeListItem } from "@/features/resume/services/resume-service";
+import type { ResumeSyncTelemetry } from "@/features/resume/services/resume-sync";
+
+import {
+  getSyncTone,
+  getSyncLabel,
+  getSyncActivityLabel,
+} from "./resume-card-utils";
 
 interface ResumeCardProps {
   resume: ResumeListItem;
+  syncTelemetry: ResumeSyncTelemetry | null;
+  syncing: boolean;
+  onOpen: (id: string) => void;
+  onShare: (id: string) => void;
+  onSyncNow: (id: string) => void;
+  onSyncDetails: (id: string) => void;
   onDelete: (id: string) => void;
 }
 
-const ResumeCard = ({ resume, onDelete }: ResumeCardProps) => {
+const ResumeCard = ({
+  resume,
+  syncTelemetry,
+  syncing,
+  onOpen,
+  onShare,
+  onSyncNow,
+  onSyncDetails,
+  onDelete,
+}: ResumeCardProps) => {
   const template =
     templateSummaries.find((t) => t.id === resume.templateId) ??
     templateSummaries[0];
@@ -23,55 +52,102 @@ const ResumeCard = ({ resume, onDelete }: ResumeCardProps) => {
     <div className="group relative h-full">
       <Link
         href={`/editor/${resume.id}`}
-        className="focus-visible:ring-accent block h-full rounded-3xl outline-none focus-visible:ring-2"
+        className="focus-visible:ring-accent block h-full rounded-2xl outline-none focus-visible:ring-2 sm:rounded-3xl"
       >
-        <Card className="border-border group-hover:border-accent/30 h-full space-y-4 border transition-colors duration-300">
+        <Card className="border-border group-hover:border-accent/40 relative h-full overflow-hidden border p-0 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:shadow-[0_26px_70px_-36px_rgba(30,41,59,0.45)]">
           <div
-            className="h-2 w-full rounded-full transition-opacity group-hover:opacity-80"
+            className="absolute inset-x-0 top-0 h-24 opacity-10 transition-opacity duration-300 group-hover:opacity-20"
+            style={{
+              background: `linear-gradient(90deg, ${template.accentColor}55 0%, transparent 74%), linear-gradient(180deg, ${template.accentColor}40 0%, transparent 72%)`,
+            }}
+          />
+
+          <div
+            className="h-1.5 w-full"
             style={{ backgroundColor: template.accentColor }}
           />
 
-          <div className="space-y-1">
-            <h3 className="text-foreground truncate text-lg font-semibold">
-              {resume.title}
-            </h3>
+          <div className="relative flex h-full flex-col gap-3.5 p-4 sm:gap-5 sm:p-5">
+            <div className="flex items-start gap-4 pr-12 sm:pr-11">
+              <div className="min-w-0 flex-1 space-y-2">
+                <h3 className="text-foreground truncate text-[15px] leading-tight font-semibold sm:text-lg">
+                  {resume.title}
+                </h3>
 
-            <p className="text-muted truncate text-sm">
-              {resume.role || "Role not set"}
+                <p className="text-muted truncate text-[12px] leading-snug sm:text-sm">
+                  {resume.role || "Role not set"}
+                </p>
+              </div>
+
+              <Badge
+                className={`${getSyncTone(resume.sync)} shrink-0 text-[11px] sm:text-xs`}
+              >
+                {getSyncLabel(resume.sync)}
+              </Badge>
+            </div>
+
+            <div className="grid gap-1.5 rounded-2xl border border-zinc-700/10 bg-zinc-500/5 p-3 text-[11px] leading-snug sm:grid-cols-2 sm:gap-2 sm:text-xs">
+              <div className="text-muted inline-flex min-w-0 items-center gap-2">
+                <Palette className="h-3.5 w-3.5" />
+
+                <span className="truncate">
+                  Template:{" "}
+                  <span className="text-foreground font-medium">
+                    {template.name}
+                  </span>
+                </span>
+              </div>
+
+              <div className="text-muted inline-flex min-w-0 items-center gap-2">
+                <FileText className="h-3.5 w-3.5" />
+
+                <span className="truncate">
+                  Resume:{" "}
+                  <span className="text-foreground font-medium">Ready</span>
+                </span>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge className="border-border bg-background/70 text-[10px] tracking-[0.16em] uppercase">
+                Activity
+              </Badge>
+
+              <p className="text-muted text-[11px] leading-snug sm:text-xs">
+                {getSyncActivityLabel(resume.sync, syncTelemetry)}
+              </p>
+            </div>
+
+            <p
+              className="text-muted/80 mt-auto inline-flex items-center gap-2 text-[11px] sm:text-xs"
+              suppressHydrationWarning
+            >
+              <CalendarClock className="h-3.5 w-3.5" />
+              {isValidDate
+                ? dateObj.toLocaleString(undefined, {
+                    dateStyle: "medium",
+                    timeStyle: "short",
+                  })
+                : "Updated recently"}
             </p>
-
-            <p className="text-muted text-xs">Template: {template.name}</p>
           </div>
-
-          <p className="text-muted/60 text-xs" suppressHydrationWarning>
-            Updated{" "}
-            {isValidDate
-              ? dateObj.toLocaleString(undefined, {
-                  dateStyle: "medium",
-                  timeStyle: "short",
-                })
-              : "Recently"}
-          </p>
         </Card>
       </Link>
 
-      <div className="absolute right-4 bottom-4">
-        <Button
-          size="sm"
-          variant="ghost"
-          aria-label={`Delete ${resume.title}`}
-          className="text-muted hover:text-destructive hover:bg-destructive/10 h-8 px-2 text-xs transition-colors"
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            onDelete(resume.id);
-          }}
-        >
-          Delete
-        </Button>
+      <div className="absolute top-3 right-3 sm:top-4 sm:right-4">
+        <ResumeCardMenu
+          syncing={syncing}
+          resumeId={resume.id}
+          resumeTitle={resume.title}
+          onDelete={onDelete}
+          onOpen={() => onOpen(resume.id)}
+          onShare={() => onShare(resume.id)}
+          onSyncNow={() => onSyncNow(resume.id)}
+          onSyncDetails={() => onSyncDetails(resume.id)}
+        />
       </div>
     </div>
   );
 };
 
-export default ResumeCard;
+export default memo(ResumeCard);

@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
+import { notFound } from "next/navigation";
 
 import { Container } from "@/components/layout/Container";
 
@@ -18,12 +18,6 @@ interface RoadmapDetailPageProps {
 }
 
 export const dynamic = "force-dynamic";
-
-const statusLabels = {
-  todo: "To Do",
-  "in-progress": "In Progress",
-  done: "Done",
-};
 
 export const metadata = {
   title: "Roadmap Item | VeriWorkly Resume",
@@ -60,7 +54,7 @@ export default async function RoadmapDetailPage({
 
           <div className="md:col-span-1">
             <SuggestedItemsSidebar
-              currentStatus={feature.status as keyof typeof statusLabels}
+              currentStatus={feature.status as "todo" | "in-progress" | "done"}
               suggestedItems={suggestedItems}
             />
           </div>
