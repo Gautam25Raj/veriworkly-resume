@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+
 import {
   type RoadmapSort,
   type RoadmapResponse,
@@ -18,12 +20,9 @@ interface RoadmapPageShellProps {
   title: string;
   description: string;
   data: RoadmapResponse;
-  basePath:
-    | "/roadmap"
-    | "/roadmap/todo"
-    | "/roadmap/in-progress"
-    | "/roadmap/done";
+  basePath: string;
   activeStatus: "all" | "todo" | "in-progress" | "done";
+  rootPath?: string;
 }
 
 export const buildHref = (
@@ -47,14 +46,18 @@ export const buildHref = (
   return query ? `${path}?${query}` : path;
 };
 
+const INITIAL_REFRESH_TIMESTAMP = Date.now().toString();
+
 const RoadmapPageShell = ({
   title,
   description,
   data,
   basePath,
   activeStatus,
+  rootPath = "/roadmap",
 }: RoadmapPageShellProps) => {
   const currentSort = data.query.sort;
+  const normalizedRootPath = rootPath.replace(/\/$/, "");
 
   const columns: KanbanColumn[] = data.sections.map((section) => ({
     title: section.title,
@@ -73,20 +76,26 @@ const RoadmapPageShell = ({
     })),
   }));
 
-  const refreshHrefMap = Object.fromEntries(
-    data.sections.map((section) => [
-      section.title,
-      buildHref(basePath, currentSort, {
-        refresh: section.status,
-        r: Date.now().toString(),
-      }),
-    ]),
+  const refreshTimestamp = useMemo(() => INITIAL_REFRESH_TIMESTAMP, []);
+
+  const refreshHrefMap = useMemo(
+    () =>
+      Object.fromEntries(
+        data.sections.map((section) => [
+          section.title,
+          buildHref(basePath, currentSort, {
+            refresh: section.status,
+            r: refreshTimestamp,
+          }),
+        ]),
+      ),
+    [data.sections, basePath, currentSort, refreshTimestamp],
   );
 
   const columnHrefMap = {
-    "To Do": "/roadmap/todo",
-    "In Progress": "/roadmap/in-progress",
-    Done: "/roadmap/done",
+    "To Do": `${normalizedRootPath}/todo`,
+    "In Progress": `${normalizedRootPath}/in-progress`,
+    Done: `${normalizedRootPath}/done`,
   };
 
   return (
@@ -98,6 +107,7 @@ const RoadmapPageShell = ({
           <RoadmapStatusFilters
             currentSort={currentSort}
             activeStatus={activeStatus}
+            rootPath={normalizedRootPath}
           />
 
           <RoadmapSortControls basePath={basePath} currentSort={currentSort} />

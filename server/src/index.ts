@@ -12,17 +12,18 @@ import { loggingMiddleware } from "#middleware/logging";
 import { rateLimitMiddleware } from "#middleware/rateLimit";
 import { errorHandler, notFoundHandler } from "#middleware/errorHandler";
 
-// import shareRoutes from "#routes/share";
+import shareRoutes from "#routes/share";
 import statsRoutes from "#routes/stats";
+import githubRoutes from "#routes/github";
 import healthRoutes from "#routes/health";
-// import resumeRoutes from "#routes/resumes";
+import resumeRoutes from "#routes/resumes";
 import roadmapRoutes from "#routes/roadmap";
 
 import { authNodeHandler } from "#auth";
 import { ensureAdminUserExists, validateAuthRuntimeConfig } from "#auth/runtime";
 
-// import { closeExportBrowser } from "#services/exportService";
-// import { stopExportQueueCleanup } from "#services/exportQueueService";
+import { closeExportBrowser } from "#services/exportService";
+import { stopExportQueueCleanup } from "#services/exportQueueService";
 
 import { startGitHubSyncJob, stopGitHubSyncJob } from "#jobs/githubSyncJob";
 import { startUsageMetricsJob, stopUsageMetricsJob } from "#jobs/usageMetricsJob";
@@ -50,10 +51,12 @@ app.set("trust proxy", 1);
 
 // Versioned API routes (primary)
 app.use("/api/v1/stats", statsRoutes);
+app.use("/api/v1/github", githubRoutes);
 app.use("/api/v1/health", healthRoutes);
-// app.use("/api/v1/resumes", resumeRoutes);
+app.use("/api/v1/resumes", resumeRoutes);
 app.use("/api/v1/roadmap", roadmapRoutes);
-// app.use("/api/v1/share-links", shareRoutes);
+app.use("/api/v1/share-links", shareRoutes);
+
 app.all("/api/v1/auth/*", authNodeHandler);
 
 // 404 handler
@@ -69,9 +72,9 @@ async function shutdown() {
   try {
     stopGitHubSyncJob();
     stopUsageMetricsJob();
-    // stopExportQueueCleanup();
+    stopExportQueueCleanup();
 
-    // await closeExportBrowser();
+    await closeExportBrowser();
     await closeRedis();
     await prisma.$disconnect();
     process.exit(0);

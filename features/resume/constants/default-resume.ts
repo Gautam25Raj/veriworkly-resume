@@ -228,5 +228,11 @@ export const defaultResume: ResumeData = {
     headingLineHeight: 1.2,
   },
 
+  sync: {
+    enabled: false,
+    status: "local-only",
+    cloudResumeId: null,
+    lastSyncedAt: null,
+  },
   updatedAt: new Date().toISOString(),
 };
