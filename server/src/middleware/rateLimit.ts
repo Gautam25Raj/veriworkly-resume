@@ -17,7 +17,6 @@ const MAX_MEMORY_ENTRIES = process.env.MAX_MEMORY_ENTRIES
 const bucket = new Map<string, RateLimitEntry>();
 
 function getClientKey(req: Request): string {
-  // Try X-Forwarded-For first (Express trust proxy handles this via req.ip)
   const ip = req.ip || req.headers["x-forwarded-for"] || req.socket.remoteAddress || "unknown";
 
   if (Array.isArray(ip)) return ip[0];
