@@ -9,6 +9,7 @@ interface ResumeCardMenuProps {
   resumeTitle: string;
   resumeId: string;
   syncing: boolean;
+  hasConflict: boolean;
   onOpen: () => void;
   onShare: () => void;
   onSyncNow: () => void;
@@ -20,6 +21,7 @@ const ResumeCardMenu = ({
   resumeTitle,
   resumeId,
   syncing,
+  hasConflict,
   onOpen,
   onShare,
   onSyncNow,
@@ -58,9 +60,11 @@ const ResumeCardMenu = ({
 
         return (
           <>
-            <MenuItem onClick={handleAction(onOpen)}>
+            <MenuItem
+              onClick={handleAction(hasConflict ? onSyncDetails : onOpen)}
+            >
               <Eye className="h-4 w-4" />
-              Open Resume
+              {hasConflict ? "Resolve Conflict" : "Open Resume"}
             </MenuItem>
 
             <MenuItem onClick={handleAction(onShare)}>

@@ -1,11 +1,12 @@
 "use client";
 
-import { memo } from "react";
 import Link from "next/link";
+import { memo } from "react";
 import { CalendarClock, FileText, Palette } from "lucide-react";
 
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
 
 import { templateSummaries } from "@/config/templates";
 
@@ -137,6 +138,7 @@ const ResumeCard = ({
       <div className="absolute top-3 right-3 sm:top-4 sm:right-4">
         <ResumeCardMenu
           syncing={syncing}
+          hasConflict={resume.sync.status === "conflicted"}
           resumeId={resume.id}
           resumeTitle={resume.title}
           onDelete={onDelete}
@@ -146,8 +148,55 @@ const ResumeCard = ({
           onSyncDetails={() => onSyncDetails(resume.id)}
         />
       </div>
+
+      {resume.sync.status === "conflicted" ? (
+        <div className="absolute bottom-3 left-3 sm:bottom-4 sm:left-4">
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+              onSyncDetails(resume.id);
+            }}
+          >
+            Resolve Conflict
+          </Button>
+        </div>
+      ) : null}
     </div>
   );
 };
 
-export default memo(ResumeCard);
+const isSameTelemetry = (
+  left: ResumeSyncTelemetry | null,
+  right: ResumeSyncTelemetry | null,
+) => {
+  if (left === right) {
+    return true;
+  }
+
+  if (!left || !right) {
+    return left === right;
+  }
+
+  return (
+    left.lastAttemptAt === right.lastAttemptAt &&
+    left.lastSuccessAt === right.lastSuccessAt &&
+    left.lastErrorAt === right.lastErrorAt &&
+    left.lastErrorMessage === right.lastErrorMessage
+  );
+};
+
+const areResumeCardPropsEqual = (
+  previous: ResumeCardProps,
+  next: ResumeCardProps,
+) => {
+  return (
+    previous.syncing === next.syncing &&
+    previous.resume === next.resume &&
+    isSameTelemetry(previous.syncTelemetry, next.syncTelemetry)
+  );
+};
+
+export default memo(ResumeCard, areResumeCardPropsEqual);

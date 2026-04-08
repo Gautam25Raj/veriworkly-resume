@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+
 import { Modal } from "@/components/ui/Modal";
 import { Button } from "@/components/ui/Button";
 
@@ -37,6 +38,7 @@ export default function SyncDetailsModal({
       <Modal.Content>
         <Modal.Header>
           <Modal.Title>Sync Details</Modal.Title>
+
           <Modal.Description>
             Check the current cloud sync state for this resume.
           </Modal.Description>
@@ -48,11 +50,13 @@ export default function SyncDetailsModal({
               <p className="text-muted text-xs font-semibold tracking-[0.2em] uppercase">
                 Resume
               </p>
+
               <p className="text-foreground mt-1 font-medium">{resume.title}</p>
             </div>
 
             <div className="space-y-1">
               <p className="text-muted">Status</p>
+
               <p className="text-foreground font-medium">
                 {!resume.sync.enabled
                   ? "Local only"
@@ -70,6 +74,7 @@ export default function SyncDetailsModal({
 
             <div className="space-y-1">
               <p className="text-muted">Last Synced</p>
+
               <p className="text-foreground font-medium">
                 {resume.sync.lastSyncedAt
                   ? new Date(resume.sync.lastSyncedAt).toLocaleString()
@@ -79,6 +84,7 @@ export default function SyncDetailsModal({
 
             <div className="space-y-1">
               <p className="text-muted">Last Sync Attempt</p>
+
               <p className="text-foreground font-medium">
                 {telemetry?.lastAttemptAt
                   ? new Date(telemetry.lastAttemptAt).toLocaleString()
@@ -113,12 +119,14 @@ export default function SyncDetailsModal({
               >
                 Use Local (Overwrite Cloud)
               </Button>
+
               <Button
                 variant="secondary"
                 onClick={() => onResolveUseCloud(resume.id)}
               >
                 Use Cloud
               </Button>
+
               <Button
                 variant="secondary"
                 onClick={() => {
@@ -130,6 +138,7 @@ export default function SyncDetailsModal({
               >
                 Merge Manually
               </Button>
+
               <Button
                 variant="secondary"
                 onClick={() => onKeepLocalOnly(resume.id)}
@@ -142,6 +151,7 @@ export default function SyncDetailsModal({
               <Link href="/profile">Open Profile</Link>
             </Button>
           )}
+
           <Button
             loading={syncingResumeId === resume.id}
             onClick={() => onSyncNow(resume.id)}

@@ -1,6 +1,7 @@
 "use client";
 
 import { memo } from "react";
+
 import ResumeCard from "./ResumeCard";
 import EmptyState from "./EmptyState";
 
@@ -40,19 +41,17 @@ const ResumeGrid = ({
         <ResumeCard
           key={resume.id}
           resume={resume}
-          syncTelemetry={syncTelemetryById[resume.id] ?? null}
           syncing={syncingResumeId === resume.id}
-          // Notice we pass the raw function references directly now
           onOpen={onOpen}
           onShare={onShare}
+          onDelete={onDelete}
           onSyncNow={onSyncNow}
           onSyncDetails={onSyncDetails}
-          onDelete={onDelete}
+          syncTelemetry={syncTelemetryById[resume.id] ?? null}
         />
       ))}
     </div>
   );
 };
 
-// Memoize the grid itself so it doesn't re-render unless the resume list changes
 export default memo(ResumeGrid);

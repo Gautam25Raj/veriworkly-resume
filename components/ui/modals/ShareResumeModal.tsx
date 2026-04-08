@@ -1,17 +1,19 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+
 import { Modal } from "@/components/ui/Modal";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
+
+import {
+  type ResumeShareLinkItem,
+  listResumeShareLinks,
+  createResumeShareLink,
+  revokeResumeShareLink,
+} from "@/features/resume/services/share-links";
 import { loadResumeById } from "@/features/resume/services/resume-service";
 import { trackUsageEvent } from "@/features/analytics/services/usage-metrics";
-import {
-  createResumeShareLink,
-  listResumeShareLinks,
-  revokeResumeShareLink,
-  type ResumeShareLinkItem,
-} from "@/features/resume/services/share-links";
 
 interface ShareResumeModalProps {
   resumeId: string | null;
@@ -26,24 +28,31 @@ export default function ShareResumeModal({
   onClose,
   onNotice,
 }: ShareResumeModalProps) {
-  const [password, setPassword] = useState("");
-  const [expiry, setExpiry] = useState("");
-  const [noExpiry, setNoExpiry] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [expiry, setExpiry] = useState("");
+  const [password, setPassword] = useState("");
+  const [noExpiry, setNoExpiry] = useState(false);
+
   const [error, setError] = useState<string | null>(null);
   const [shareUrl, setShareUrl] = useState<string | null>(null);
   const [shareLinks, setShareLinks] = useState<ResumeShareLinkItem[]>([]);
+
   const [linksLoading, setLinksLoading] = useState(false);
 
   const refreshShareLinks = useCallback(async (id: string) => {
     setLinksLoading(true);
+
     try {
       const links = await listResumeShareLinks(id);
       setShareLinks(links);
+
+      return true;
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Could not load share links.",
       );
+
+      return false;
     } finally {
       setLinksLoading(false);
     }
@@ -55,6 +64,7 @@ export default function ShareResumeModal({
 
   const handleCreate = async () => {
     if (!resumeId) return;
+
     const fullResume = loadResumeById(resumeId);
 
     if (!fullResume) {
@@ -78,12 +88,24 @@ export default function ShareResumeModal({
       });
 
       const nextShareUrl = `${window.location.origin}/share/${shareLink.token}`;
-      await navigator.clipboard.writeText(nextShareUrl);
-
       setShareUrl(nextShareUrl);
-      onNotice("Share link created and copied to clipboard.");
+
+      try {
+        await navigator.clipboard.writeText(nextShareUrl);
+        onNotice("Share link created and copied to clipboard.");
+      } catch {
+        onNotice("Share link created. Copy it from the field below.");
+      }
+
       trackUsageEvent({ event: "share_link_created" });
-      await refreshShareLinks(resumeId);
+
+      const refreshed = await refreshShareLinks(resumeId);
+
+      if (!refreshed) {
+        setError(
+          "Share link was created successfully, but the links list could not be refreshed. You can still use the link shown above.",
+        );
+      }
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Unable to create share link.",
@@ -95,8 +117,10 @@ export default function ShareResumeModal({
 
   const handleRevoke = async (linkId: string) => {
     if (!resumeId) return;
+
     try {
       await revokeResumeShareLink(resumeId, linkId);
+
       setShareLinks((prev) => prev.filter((item) => item.id !== linkId));
       onNotice("Share link revoked.");
     } catch (err) {
@@ -124,6 +148,7 @@ export default function ShareResumeModal({
       <Modal.Content>
         <Modal.Header>
           <Modal.Title>Share Resume</Modal.Title>
+
           <Modal.Description>
             Create a share link for {resumeTitle ?? "this resume"}.
           </Modal.Description>
@@ -138,6 +163,7 @@ export default function ShareResumeModal({
               placeholder="Optional password"
               autoComplete="new-password"
             />
+
             <label className="text-muted flex items-center gap-2 text-sm">
               <input
                 type="checkbox"
@@ -146,6 +172,7 @@ export default function ShareResumeModal({
               />
               No expiry
             </label>
+
             <Input
               value={expiry}
               onChange={(e) => setExpiry(e.target.value)}
@@ -160,6 +187,7 @@ export default function ShareResumeModal({
                 <p className="text-muted text-xs font-semibold tracking-[0.2em] uppercase">
                   Share Link
                 </p>
+
                 <Input value={shareUrl} readOnly />
               </div>
             )}
@@ -168,6 +196,7 @@ export default function ShareResumeModal({
               <p className="text-muted text-xs font-semibold tracking-[0.2em] uppercase">
                 Existing Share Links
               </p>
+
               {linksLoading ? (
                 <p className="text-muted text-sm">Loading links...</p>
               ) : shareLinks.length === 0 ? (
@@ -184,6 +213,7 @@ export default function ShareResumeModal({
                         <p className="text-foreground truncate text-sm font-medium">
                           {link.resumeTitle}
                         </p>
+
                         <p className="text-muted text-xs">
                           {link.expiresAt
                             ? `Expires ${new Date(link.expiresAt).toLocaleString()}`
@@ -191,22 +221,31 @@ export default function ShareResumeModal({
                           {link.passwordRequired && " • Password protected"}
                           {` • ${link.viewCount} views`}
                         </p>
+
                         <div className="flex flex-wrap gap-2">
                           <Button
                             size="sm"
                             variant="ghost"
                             onClick={async () => {
-                              await navigator.clipboard.writeText(linkUrl);
-                              onNotice("Share link copied.");
+                              try {
+                                await navigator.clipboard.writeText(linkUrl);
+                                onNotice("Share link copied.");
+                              } catch {
+                                onNotice(
+                                  "Could not copy automatically. Open the link and copy from the browser address bar.",
+                                );
+                              }
                             }}
                           >
                             Copy
                           </Button>
+
                           <Button size="sm" variant="ghost" asChild>
                             <a href={linkUrl} target="_blank" rel="noreferrer">
                               Open
                             </a>
                           </Button>
+
                           <Button
                             size="sm"
                             variant="ghost"
@@ -224,10 +263,12 @@ export default function ShareResumeModal({
             </div>
           </div>
         </Modal.Body>
+
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose} disabled={busy}>
             Close
           </Button>
+
           <Button loading={busy} onClick={handleCreate}>
             Create Link
           </Button>

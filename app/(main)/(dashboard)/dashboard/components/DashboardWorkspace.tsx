@@ -16,6 +16,7 @@ import {
   getResumeSyncTelemetry,
   resolveConflictUseCloud,
   resolveConflictUseLocal,
+  getResumeSyncTelemetryByIds,
   RESUME_SYNC_OUTBOX_UPDATED_EVENT,
   hydrateCloudResumesToLocalStorage,
 } from "@/features/resume/services/resume-sync";
@@ -28,6 +29,11 @@ import { listSavedResumes } from "@/features/resume/services/resume-core";
 import { trackUsageEvent } from "@/features/analytics/services/usage-metrics";
 import { RESUME_STORAGE_UPDATED_EVENT } from "@/features/resume/services/local-storage";
 
+import {
+  RESUME_ACTIVE_ID_STORAGE_KEY,
+  RESUME_COLLECTION_STORAGE_KEY,
+} from "@/lib/constants";
+
 import { useUserStore } from "@/store/useUserStore";
 
 import ResumeGrid from "./ResumeGrid";
@@ -39,6 +45,19 @@ import SyncDetailsModal from "@/components/ui/modals/SyncDetailsModal";
 
 const EMPTY_RESUMES: ResumeListItem[] = [];
 let resumeCache = { data: EMPTY_RESUMES, key: "" };
+let resumeItemCacheById = new Map<string, ResumeListItem>();
+const SYNC_OUTBOX_STORAGE_KEY = "veriworkly:resume-sync-outbox";
+
+const isSameResumeListItem = (left: ResumeListItem, right: ResumeListItem) =>
+  left.id === right.id &&
+  left.title === right.title &&
+  left.templateId === right.templateId &&
+  left.role === right.role &&
+  left.updatedAt === right.updatedAt &&
+  left.sync.enabled === right.sync.enabled &&
+  left.sync.status === right.sync.status &&
+  left.sync.cloudResumeId === right.sync.cloudResumeId &&
+  left.sync.lastSyncedAt === right.sync.lastSyncedAt;
 
 const subscribe = (onStoreChange: () => void) => {
   if (typeof window === "undefined") return () => {};
@@ -55,16 +74,47 @@ const subscribe = (onStoreChange: () => void) => {
 };
 
 const getResumeSnapshot = () => {
-  const next = listSavedResumes();
-  const nextKey = JSON.stringify(next);
+  if (typeof window === "undefined") {
+    return resumeCache.data;
+  }
 
-  if (nextKey !== resumeCache.key) resumeCache = { data: next, key: nextKey };
+  const storage = window.localStorage;
+
+  const nextKey = [
+    storage.getItem(RESUME_COLLECTION_STORAGE_KEY) ?? "",
+    storage.getItem(RESUME_ACTIVE_ID_STORAGE_KEY) ?? "",
+    storage.getItem(SYNC_OUTBOX_STORAGE_KEY) ?? "",
+  ].join("::");
+
+  if (nextKey !== resumeCache.key) {
+    const nextList = listSavedResumes();
+    const nextItemCacheById = new Map<string, ResumeListItem>();
+
+    const stabilizedList = nextList.map((item) => {
+      const cachedItem = resumeItemCacheById.get(item.id);
+
+      if (cachedItem && isSameResumeListItem(cachedItem, item)) {
+        nextItemCacheById.set(item.id, cachedItem);
+        return cachedItem;
+      }
+
+      nextItemCacheById.set(item.id, item);
+      return item;
+    });
+
+    resumeItemCacheById = nextItemCacheById;
+    resumeCache = {
+      data: stabilizedList,
+      key: nextKey,
+    };
+  }
 
   return resumeCache.data;
 };
 
 const DashboardWorkspace = () => {
   const router = useRouter();
+
   const isLoggedIn = useUserStore((state) => state.isLoggedIn);
 
   const [shareTargetId, setShareTargetId] = useState<string | null>(null);
@@ -116,11 +166,15 @@ const DashboardWorkspace = () => {
   );
 
   const syncTelemetryById = useMemo(
-    () =>
-      Object.fromEntries(
-        resumes.map((r) => [r.id, getResumeSyncTelemetry(r.id)]),
-      ),
+    () => getResumeSyncTelemetryByIds(resumes.map((resume) => resume.id)),
     [resumes],
+  );
+
+  const handleOpen = useCallback(
+    (id: string) => {
+      router.push(`/editor/${id}`);
+    },
+    [router],
   );
 
   const handleCreate = useCallback(() => {
@@ -201,6 +255,7 @@ const DashboardWorkspace = () => {
 
       <ResumeGrid
         resumes={resumes}
+        onOpen={handleOpen}
         onCreate={handleCreate}
         onSyncNow={handleSyncNow}
         onShare={setShareTargetId}
@@ -208,7 +263,6 @@ const DashboardWorkspace = () => {
         syncingResumeId={syncingResumeId}
         syncTelemetryById={syncTelemetryById}
         onSyncDetails={setSyncDetailsTargetId}
-        onOpen={(id) => router.push(`/editor/${id}`)}
       />
 
       {syncNotice && (
