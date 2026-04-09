@@ -10,9 +10,9 @@
   <p>
     <a href="https://veriworkly.com"><strong>Get Started</strong></a>
     ·
-    <a href="https://docs.veriworkly.com"><strong>Learn More</strong></a>
+    <a href="#"><strong>Learn More</strong></a>
     ·
-    <a href="https://roadmap.veriworkly.com"><strong>Public Roadmap</strong></a>
+    <a href="https://veriworkly.com/roadmap"><strong>Public Roadmap</strong></a>
   </p>
 
   <p>
@@ -48,7 +48,7 @@ Built with privacy as a core principle, VeriWorkly gives you complete ownership 
 
 - **Public Roadmap:** Built by the community. Vote on features and track progress.
 - **Self-Hostable:** Run it locally or in production via Docker with minimal configuration.
-- **Modern Tech:** Built with Next.js 15, TypeScript, and Tailwind CSS 4.
+- **Modern Tech:** Built with Next.js 16 (App Router), TypeScript, and Tailwind CSS 4.
 
 ## 🎨 Templates
 
@@ -110,7 +110,7 @@ For dockerized production setups and backend services, see the [Local Setup Guid
 
 | Category         | Technology                     |
 | ---------------- | ------------------------------ |
-| Framework        | Next.js 15 (App Router)        |
+| Framework        | Next.js 16 (App Router)        |
 | Runtime          | Node.js                        |
 | Language         | TypeScript                     |
 | Database         | PostgreSQL (Neon) with Prisma  |

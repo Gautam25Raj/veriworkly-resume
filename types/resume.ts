@@ -135,6 +135,20 @@ export interface ResumeCustomization {
   headingLineHeight: number;
 }
 
+export type ResumeSyncStatus =
+  | "local-only"
+  | "pending"
+  | "syncing"
+  | "synced"
+  | "conflicted";
+
+export interface ResumeSyncState {
+  enabled: boolean;
+  status: ResumeSyncStatus;
+  cloudResumeId: string | null;
+  lastSyncedAt: string | null;
+}
+
 export interface ResumeData {
   id: string;
   templateId: string;
@@ -148,5 +162,6 @@ export interface ResumeData {
   customSections: ResumeCustomSection[];
   sections: ResumeSection[];
   customization: ResumeCustomization;
+  sync: ResumeSyncState;
   updatedAt: string;
 }

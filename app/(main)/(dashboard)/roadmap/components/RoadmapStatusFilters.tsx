@@ -8,19 +8,23 @@ import { buttonClassName } from "@/components/ui/Button";
 const RoadmapStatusFilters = ({
   currentSort,
   activeStatus,
+  rootPath = "/roadmap",
 }: {
   currentSort: RoadmapSort;
   activeStatus: string;
+  rootPath?: string;
 }) => {
+  const normalizedRoot = rootPath.replace(/\/$/, "");
+
   const statuses = [
-    { label: "All", value: "all", path: "/roadmap" },
-    { label: "To Do", value: "todo", path: "/roadmap/todo" },
+    { label: "All", value: "all", path: `${normalizedRoot}` },
+    { label: "To Do", value: "todo", path: `${normalizedRoot}/todo` },
     {
       label: "In Progress",
       value: "in-progress",
-      path: "/roadmap/in-progress",
+      path: `${normalizedRoot}/in-progress`,
     },
-    { label: "Done", value: "done", path: "/roadmap/done" },
+    { label: "Done", value: "done", path: `${normalizedRoot}/done` },
   ];
 
   return (

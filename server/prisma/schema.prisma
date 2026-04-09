@@ -229,9 +229,34 @@ model GitHubSync {
   nextSyncAt      DateTime?
   syncedAt        DateTime  @updatedAt
   createdAt       DateTime  @default(now())
+  items           GitHubSyncItem[]
 
   @@unique([projectUrl])
   @@index([syncedAt])
+}
+
+model GitHubSyncItem {
+  id         String     @id @default(cuid())
+  syncId     String
+  sync       GitHubSync @relation(fields: [syncId], references: [id], onDelete: Cascade)
+  githubId   String
+  number     Int
+  title      String
+  status     String
+  kind       String
+  url        String
+  labels     String[]   @default([])
+  createdAt  DateTime
+  updatedAt  DateTime
+  insertedAt DateTime   @default(now())
+
+  @@index([syncId])
+  @@index([status])
+  @@index([kind])
+  @@index([createdAt])
+  @@index([updatedAt])
+  @@index([syncId, status, kind, updatedAt])
+  @@unique([syncId, githubId])
 }
 
 // API Keys for rate limiting and access control

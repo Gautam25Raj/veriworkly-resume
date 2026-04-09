@@ -1,41 +1,179 @@
+import type { ResumeData } from "@/types/resume";
+
 import {
   RESUME_STORAGE_KEY,
   RESUME_ACTIVE_ID_STORAGE_KEY,
   RESUME_COLLECTION_STORAGE_KEY,
 } from "@/lib/constants";
 
-import type { ResumeData } from "@/types/resume";
+import {
+  parseResumeDataInput,
+  parseResumeCollectionInput,
+  type ResumeCollection,
+} from "@/features/resume/schemas/resume-storage-schema";
+import {
+  safeSetLocalStorageItem,
+  type LocalStorageWriteResult,
+} from "@/features/resume/services/storage/safe-local-storage";
 
-interface ResumeCollection {
-  version: 1;
-  items: Record<string, ResumeData>;
+export interface SaveResumeOptions {
+  debounceMs?: number;
+  flush?: boolean;
+}
+
+export type SaveResumeResult =
+  | { ok: true; queued: boolean }
+  | { ok: false; reason: "quota-exceeded" | "unknown" };
+
+export const RESUME_STORAGE_UPDATED_EVENT = "veriworkly:resume-storage-updated";
+
+let pendingResume: ResumeData | null = null;
+let pendingSaveTimer: number | null = null;
+
+function toComparableResumePayload(resume: ResumeData | null | undefined) {
+  if (!resume) {
+    return null;
+  }
+
+  const { updatedAt, sync, ...payload } = resume;
+  void updatedAt;
+  void sync;
+
+  return payload;
+}
+
+function hasResumePayloadChanged(
+  previousResume: ResumeData | null | undefined,
+  nextResume: ResumeData,
+) {
+  const previousPayload = toComparableResumePayload(previousResume);
+  const nextPayload = toComparableResumePayload(nextResume);
+
+  return JSON.stringify(previousPayload) !== JSON.stringify(nextPayload);
 }
 
 function isBrowser() {
   return typeof window !== "undefined";
 }
 
+function emitResumeStorageUpdatedEvent() {
+  if (!isBrowser()) {
+    return;
+  }
+
+  window.dispatchEvent(new Event(RESUME_STORAGE_UPDATED_EVENT));
+}
+
 function toCollection(items: Record<string, ResumeData>): ResumeCollection {
-  return {
+  return parseResumeCollectionInput({
     version: 1,
     items,
-  };
+  });
+}
+
+function clearPendingSaveTimer() {
+  if (pendingSaveTimer === null || !isBrowser()) {
+    return;
+  }
+
+  window.clearTimeout(pendingSaveTimer);
+  pendingSaveTimer = null;
+}
+
+function writeCollection(
+  collection: ResumeCollection,
+): LocalStorageWriteResult {
+  if (!isBrowser()) return { ok: true };
+
+  const payload = JSON.stringify(collection);
+
+  const firstAttempt = safeSetLocalStorageItem(
+    window.localStorage,
+    RESUME_COLLECTION_STORAGE_KEY,
+    payload,
+  );
+
+  if (firstAttempt.ok || firstAttempt.reason !== "quota-exceeded") {
+    return firstAttempt;
+  }
+
+  window.localStorage.removeItem(RESUME_STORAGE_KEY);
+
+  return safeSetLocalStorageItem(
+    window.localStorage,
+    RESUME_COLLECTION_STORAGE_KEY,
+    payload,
+  );
+}
+
+function persistResume(resume: ResumeData): SaveResumeResult {
+  if (!isBrowser()) return { ok: true, queued: false };
+
+  const normalizedResume = parseResumeDataInput(resume);
+
+  if (!normalizedResume) {
+    return { ok: false, reason: "unknown" };
+  }
+
+  const collection = loadResumeCollectionFromLocalStorage();
+
+  const existingResume = collection.items[normalizedResume.id];
+  const shouldMarkPending =
+    normalizedResume.sync.enabled &&
+    hasResumePayloadChanged(existingResume, normalizedResume);
+
+  const resumeToPersist: ResumeData = shouldMarkPending
+    ? {
+        ...normalizedResume,
+        sync: {
+          ...normalizedResume.sync,
+          status: "pending",
+          lastSyncedAt:
+            existingResume?.sync.lastSyncedAt ??
+            normalizedResume.sync.lastSyncedAt,
+        },
+      }
+    : normalizedResume;
+
+  collection.items[resumeToPersist.id] = resumeToPersist;
+
+  const collectionSaveResult = saveResumeCollectionToLocalStorage(collection);
+
+  if (!collectionSaveResult.ok)
+    return {
+      ok: false,
+      reason: collectionSaveResult.reason,
+    };
+
+  setActiveResumeIdInLocalStorage(resumeToPersist.id);
+
+  const legacyWriteResult = safeSetLocalStorageItem(
+    window.localStorage,
+    RESUME_STORAGE_KEY,
+    JSON.stringify(resumeToPersist),
+  );
+
+  if (!legacyWriteResult.ok && legacyWriteResult.reason === "quota-exceeded") {
+    window.localStorage.removeItem(RESUME_STORAGE_KEY);
+  }
+
+  return { ok: true, queued: false };
 }
 
 export function getActiveResumeIdFromLocalStorage() {
-  if (!isBrowser()) {
-    return null;
-  }
+  if (!isBrowser()) return null;
 
   return window.localStorage.getItem(RESUME_ACTIVE_ID_STORAGE_KEY);
 }
 
 export function setActiveResumeIdInLocalStorage(resumeId: string) {
-  if (!isBrowser()) {
-    return;
-  }
+  if (!isBrowser()) return;
 
-  window.localStorage.setItem(RESUME_ACTIVE_ID_STORAGE_KEY, resumeId);
+  safeSetLocalStorageItem(
+    window.localStorage,
+    RESUME_ACTIVE_ID_STORAGE_KEY,
+    resumeId,
+  );
 }
 
 export function loadResumeCollectionFromLocalStorage() {
@@ -65,13 +203,7 @@ export function loadResumeCollectionFromLocalStorage() {
   }
 
   try {
-    const parsed = JSON.parse(rawCollection) as ResumeCollection;
-
-    if (!parsed || typeof parsed !== "object" || !parsed.items) {
-      return toCollection({});
-    }
-
-    return toCollection(parsed.items);
+    return parseResumeCollectionInput(JSON.parse(rawCollection));
   } catch {
     window.localStorage.removeItem(RESUME_COLLECTION_STORAGE_KEY);
     return toCollection({});
@@ -82,13 +214,17 @@ export function saveResumeCollectionToLocalStorage(
   collection: ResumeCollection,
 ) {
   if (!isBrowser()) {
-    return;
+    return { ok: true } as const;
   }
 
-  window.localStorage.setItem(
-    RESUME_COLLECTION_STORAGE_KEY,
-    JSON.stringify(collection),
-  );
+  const normalizedCollection = parseResumeCollectionInput(collection);
+  const writeResult = writeCollection(normalizedCollection);
+
+  if (writeResult.ok) {
+    emitResumeStorageUpdatedEvent();
+  }
+
+  return writeResult;
 }
 
 function loadLegacyResumeFromLocalStorage() {
@@ -103,25 +239,61 @@ function loadLegacyResumeFromLocalStorage() {
   }
 
   try {
-    return JSON.parse(rawValue) as ResumeData;
+    return parseResumeDataInput(JSON.parse(rawValue));
   } catch {
     window.localStorage.removeItem(RESUME_STORAGE_KEY);
     return null;
   }
 }
 
-export function saveResumeToLocalStorage(resume: ResumeData) {
-  if (!isBrowser()) {
-    return;
+export function flushPendingResumeSaveToLocalStorage() {
+  clearPendingSaveTimer();
+
+  if (!pendingResume) {
+    return { ok: true, queued: false } as const;
   }
 
-  const collection = loadResumeCollectionFromLocalStorage();
+  const resumeToSave = pendingResume;
+  pendingResume = null;
 
-  collection.items[resume.id] = resume;
-  saveResumeCollectionToLocalStorage(collection);
-  setActiveResumeIdInLocalStorage(resume.id);
+  return persistResume(resumeToSave);
+}
 
-  window.localStorage.setItem(RESUME_STORAGE_KEY, JSON.stringify(resume));
+export function saveResumeToLocalStorage(
+  resume: ResumeData,
+  options?: SaveResumeOptions,
+): SaveResumeResult {
+  if (!isBrowser()) {
+    return { ok: true, queued: false };
+  }
+
+  const normalizedResume = parseResumeDataInput(resume);
+
+  if (!normalizedResume) {
+    return { ok: false, reason: "unknown" };
+  }
+
+  if (options?.flush) {
+    pendingResume = null;
+    return persistResume(normalizedResume);
+  }
+
+  const debounceMs = Math.max(0, options?.debounceMs ?? 0);
+
+  if (debounceMs > 0) {
+    pendingResume = normalizedResume;
+    clearPendingSaveTimer();
+    pendingSaveTimer = window.setTimeout(() => {
+      flushPendingResumeSaveToLocalStorage();
+    }, debounceMs);
+
+    return {
+      ok: true,
+      queued: true,
+    };
+  }
+
+  return persistResume(normalizedResume);
 }
 
 export function loadResumeFromLocalStorage() {
@@ -170,14 +342,21 @@ export function deleteResumeFromLocalStorage(resumeId: string) {
   }
 
   delete collection.items[resumeId];
-  saveResumeCollectionToLocalStorage(collection);
+  const saveResult = saveResumeCollectionToLocalStorage(collection);
+
+  if (!saveResult.ok) {
+    return getActiveResumeIdFromLocalStorage();
+  }
+
+  emitResumeStorageUpdatedEvent();
 
   const remainingIds = Object.keys(collection.items);
   const nextId = remainingIds[0] ?? null;
 
   if (nextId) {
     setActiveResumeIdInLocalStorage(nextId);
-    window.localStorage.setItem(
+    safeSetLocalStorageItem(
+      window.localStorage,
       RESUME_STORAGE_KEY,
       JSON.stringify(collection.items[nextId]),
     );
@@ -194,7 +373,12 @@ export function clearResumeFromLocalStorage() {
     return;
   }
 
+  pendingResume = null;
+  clearPendingSaveTimer();
+
   window.localStorage.removeItem(RESUME_STORAGE_KEY);
   window.localStorage.removeItem(RESUME_COLLECTION_STORAGE_KEY);
   window.localStorage.removeItem(RESUME_ACTIVE_ID_STORAGE_KEY);
+
+  emitResumeStorageUpdatedEvent();
 }
