@@ -7,7 +7,7 @@ import { NextFunction, Request, Response } from "express";
 import { prisma } from "#utils/prisma";
 import { ApiError, createSuccessResponse, handleValidationError } from "#utils/errors";
 
-import { convertNodeHeadersToWebHeaders, getSessionFromRequestHeaders } from "#auth";
+import { convertNodeHeadersToWebHeaders, getSessionFromRequestHeaders } from "#auth/index";
 
 import {
   type ExportFormat,

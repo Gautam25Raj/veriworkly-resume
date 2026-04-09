@@ -62,9 +62,6 @@ export default async function StatsPage({ searchParams }: StatsPageProps) {
     }).catch(() => null),
   ]);
 
-  console.log("Fetched stats:", stats);
-  console.log("Fetched issue page:", issuePage);
-
   const projectName =
     stats?.projectName ?? `${siteConfig.shortName} GitHub Board`;
   const projectUrl = stats?.projectUrl ?? siteConfig.links.github;

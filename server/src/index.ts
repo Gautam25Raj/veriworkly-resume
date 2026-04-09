@@ -19,7 +19,7 @@ import healthRoutes from "#routes/health";
 import resumeRoutes from "#routes/resumes";
 import roadmapRoutes from "#routes/roadmap";
 
-import { authNodeHandler } from "#auth";
+import { authNodeHandler } from "#auth/index";
 import { ensureAdminUserExists, validateAuthRuntimeConfig } from "#auth/runtime";
 
 import { closeExportBrowser } from "#services/exportService";
