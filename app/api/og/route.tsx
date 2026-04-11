@@ -4,16 +4,18 @@ export const runtime = "edge";
 
 export async function GET(request: Request) {
   try {
-    const url = new URL(request.url);
-    const origin = url.origin; // e.g., http://localhost:3000 or your production domain
+    const { searchParams } = new URL(request.url);
 
-    const title = url.searchParams.get("title") ?? "VeriWorkly";
-    const description =
-      url.searchParams.get("description") ??
-      "The ultimate tool for building modern applications at scale.";
+    const title = searchParams.get("title") ?? "VeriWorkly";
+    const description = searchParams.get("description");
+    const showDescription = searchParams.get("showDesc") !== "false";
 
-    // Absolute URL for your public logo
-    const logoUrl = `${origin}/veriworkly-logo.png`;
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://veriworkly.com";
+    const logoUrl = `${baseUrl}/veriworkly-logo.png`;
+
+    const displayDescription =
+      description ||
+      "Building the future of professional resumes, one sync at a time.";
 
     return new ImageResponse(
       <div
@@ -21,15 +23,15 @@ export async function GET(request: Request) {
           height: "100%",
           width: "100%",
           display: "flex",
-          flexDirection: "column",
+          color: "#171717",
           alignItems: "center",
-          justifyContent: "center",
-          backgroundColor: "#f5f4ef", // Light mode --background
-          color: "#171717", // Light mode --foreground
           position: "relative",
+          flexDirection: "column",
+          fontFamily: "sans-serif",
+          justifyContent: "center",
+          backgroundColor: "#f5f4ef",
         }}
       >
-        {/* Layer 1: Top Left Radial Gradient */}
         <div
           style={{
             position: "absolute",
@@ -42,7 +44,6 @@ export async function GET(request: Request) {
           }}
         />
 
-        {/* Layer 2: Top Right Radial Gradient */}
         <div
           style={{
             position: "absolute",
@@ -55,7 +56,6 @@ export async function GET(request: Request) {
           }}
         />
 
-        {/* Layer 3: Denser, Lighter Grid Pattern */}
         <svg
           style={{
             position: "absolute",
@@ -67,14 +67,12 @@ export async function GET(request: Request) {
           xmlns="http://www.w3.org/2000/svg"
         >
           <defs>
-            {/* Changed width/height to 16 to make the gaps smaller */}
             <pattern
               id="grid"
               width="16"
               height="16"
               patternUnits="userSpaceOnUse"
             >
-              {/* Updated the path dimensions to 16 and lowered opacity to 0.035 */}
               <path
                 d="M 16 0 L 0 0 0 16"
                 fill="none"
@@ -86,56 +84,83 @@ export async function GET(request: Request) {
           <rect width="100%" height="100%" fill="url(#grid)" />
         </svg>
 
-        {/* Layer 4: Content Container */}
         <div
           style={{
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            padding: "40px",
+            padding: "80px",
             zIndex: 10,
             textAlign: "center",
           }}
         >
-          {/* Logo and Brand Name */}
           <div
             style={{
-              fontSize: 36,
-              fontWeight: "bold",
-              marginBottom: 32,
+              fontSize: 32,
+              fontWeight: 700,
+              marginBottom: 48,
               display: "flex",
               alignItems: "center",
+              letterSpacing: "-0.02em",
+              opacity: 0.9,
             }}
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={logoUrl}
-              alt="VeriWorkly Logo"
-              width="48"
-              height="48"
-              style={{ marginRight: 16, objectFit: "contain" }}
+              alt="Logo"
+              width="44"
+              height="44"
+              style={{ marginRight: 14, objectFit: "contain" }}
             />
             VeriWorkly
           </div>
 
-          {/* Title Text */}
           <div
             style={{
-              fontSize: 72,
-              fontWeight: 800,
-              letterSpacing: "-0.02em",
-              marginBottom: 24,
-              maxWidth: "80%",
+              fontSize: title.length > 40 ? 60 : 84,
+              fontWeight: 900,
+              lineHeight: 1.1,
+              letterSpacing: "-0.04em",
+              marginBottom: showDescription ? 28 : 0,
+              maxWidth: "1000px",
+              display: "flex",
             }}
           >
             {title}
           </div>
 
-          {/* Description Text */}
-          <div style={{ fontSize: 32, color: "#5f5c54", maxWidth: "70%" }}>
-            {description}
-          </div>
+          {showDescription && (
+            <div
+              style={{
+                fontSize: 34,
+                color: "#4b5563",
+                maxWidth: "800px",
+                lineHeight: 1.4,
+                fontWeight: 500,
+                display: "flex",
+              }}
+            >
+              {displayDescription}
+            </div>
+          )}
+        </div>
+
+        <div
+          style={{
+            position: "absolute",
+            bottom: 40,
+            width: "100%",
+            display: "flex",
+            justifyContent: "center",
+            opacity: 0.4,
+            fontSize: 20,
+            fontWeight: 600,
+            letterSpacing: "0.05em",
+            textTransform: "uppercase",
+          }}
+        >
+          veriworkly.com
         </div>
       </div>,
       {
@@ -143,9 +168,7 @@ export async function GET(request: Request) {
         height: 630,
       },
     );
-  } catch (e: any) {
-    return new Response(`Failed to generate image: ${e.message}`, {
-      status: 500,
-    });
+  } catch (error: unknown) {
+    return new Response(`Error generating image`, { status: 500 });
   }
 }

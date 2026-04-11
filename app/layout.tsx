@@ -95,6 +95,7 @@ export default function RootLayout({
           attribute="class"
           defaultTheme="system"
           disableTransitionOnChange
+          storageKey="veriworkly-theme"
         >
           {children}
         </ThemeProvider>

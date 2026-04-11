@@ -320,9 +320,7 @@ export async function fetchRoadmapFeatureById(
   id: string,
 ): Promise<RoadmapFeature | null> {
   try {
-    const feature = await fetchApiData<RoadmapFeature>(`/roadmap/${id}`, {
-      cache: "no-store",
-    });
+    const feature = await fetchApiData<RoadmapFeature>(`/roadmap/${id}`);
 
     return normalizeFeature(feature);
   } catch {
