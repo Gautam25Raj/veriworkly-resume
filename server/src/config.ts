@@ -83,6 +83,16 @@ export const config = {
     syncEnabled: (process.env.GITHUB_SYNC_ENABLED || "true") === "true",
     syncApiKey: process.env.INTERNAL_SYNC_API_KEY || "",
   },
+
+  exportQueue: {
+    name: process.env.EXPORT_QUEUE_NAME || "resume-export",
+    enableWorker: (process.env.EXPORT_QUEUE_ENABLE_WORKER || "true") === "true",
+    artifactPrefix: process.env.EXPORT_ARTIFACT_PREFIX || "export:artifact:",
+    maxConcurrentExports: parseInt(process.env.EXPORT_MAX_CONCURRENCY || "2", 10),
+    maxQueuedExports: parseInt(process.env.EXPORT_MAX_QUEUED || "120", 10),
+    timeoutMs: parseInt(process.env.EXPORT_TIMEOUT_MS || "45000", 10),
+    resultTtlMs: parseInt(process.env.EXPORT_RESULT_TTL_MS || "900000", 10),
+  },
 };
 
 export const isDevelopment = config.nodeEnv === "development";

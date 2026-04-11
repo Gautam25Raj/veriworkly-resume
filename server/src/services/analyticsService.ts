@@ -86,9 +86,7 @@ export async function incrementUsageMetric(payload: UsageIncrementPayload) {
 
   const ttl = Math.max(1, config.metrics.redisRetentionDays) * 24 * 60 * 60;
 
-  // Use a pipeline if you need to set more than one command for performance
-  await redis.hIncrBy(key, event, amount);
-  await redis.expire(key, ttl);
+  await redis.multi().hIncrBy(key, event, amount).expire(key, ttl).exec();
 }
 
 /**
@@ -115,26 +113,37 @@ export async function flushUsageMetricsForDate(date: Date) {
   const key = usageRedisKey(dateKey);
 
   const snapshot = await redis.hGetAll(key);
-
   const entries = Object.entries(snapshot);
 
   if (entries.length === 0) return { dateKey, flushedEvents: 0 };
 
   const metricDate = fromDateKeyToUtcDate(dateKey);
 
-  await prisma.$transaction(
-    entries.map(([event, rawCount]) => {
+  await prisma.$transaction(async (tx) => {
+    for (const [event, rawCount] of entries) {
       const count = parseInt(rawCount, 10);
 
-      return prisma.usageMetricDaily.upsert({
-        where: { date_event: { date: metricDate, event } },
-        create: { date: metricDate, event, count },
-        update: { count: { increment: count } },
+      await tx.usageMetricDaily.upsert({
+        where: {
+          date_event: {
+            date: metricDate,
+            event,
+          },
+        },
+        create: {
+          date: metricDate,
+          event,
+          count,
+        },
+        update: {
+          count: { increment: count },
+        },
       });
-    }),
-  );
+    }
+  });
 
   await redis.del(key);
+
   return { dateKey, flushedEvents: entries.length };
 }
 
@@ -157,32 +166,23 @@ export async function getAdminDashboardMetrics() {
     }),
   ]);
 
-  const totalByEvent = Object.fromEntries(totals.map((row) => [row.event, row._sum.count ?? 0]));
+  const postgresTotals = Object.fromEntries(totals.map((row) => [row.event, row._sum.count ?? 0]));
 
-  const parseToday = (key: string) => parseInt(todaySnapshot[key] ?? "0", 10);
+  const allEvents = new Set([...Object.keys(todaySnapshot), ...Object.keys(postgresTotals)]);
+  const combinedTotals: Record<string, number> = {};
+
+  allEvents.forEach((event) => {
+    const todayCount = parseInt(todaySnapshot[event] ?? "0", 10);
+    const historicalCount = postgresTotals[event] ?? 0;
+    combinedTotals[event] = todayCount + historicalCount;
+  });
 
   const response = {
     generatedAt: new Date().toISOString(),
-
-    today: {
-      resumeCreated: parseToday("resume_created"),
-      resumeExported: parseToday("resume_exported"),
-      loginSuccess: parseToday("auth_login_success"),
-      raw: todaySnapshot,
-    },
-
-    totals: {
-      resumeCreated: totalByEvent.resume_created ?? 0,
-      resumeDeleted: totalByEvent.resume_deleted ?? 0,
-      resumeExported: totalByEvent.resume_exported ?? 0,
-      loginSuccess: totalByEvent.auth_login_success ?? 0,
-      otpSent: totalByEvent.auth_otp_sent ?? 0,
-      dashboardOpened: totalByEvent.dashboard_opened ?? 0,
-      roadmapViewed: totalByEvent.roadmap_viewed ?? 0,
-    },
+    today: todaySnapshot,
+    totals: combinedTotals,
   };
 
   await cacheSet(cacheKey, response, 1800);
-
   return response;
 }
