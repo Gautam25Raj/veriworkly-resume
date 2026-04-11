@@ -210,6 +210,10 @@ async function getBrowser() {
       headless: true,
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
+    browserInstance.on("disconnected", () => {
+      browserInstance = null;
+    });
+
     return browserInstance;
   } catch (error) {
     throw new ApiError(
@@ -225,12 +229,13 @@ export async function exportResumeSnapshot(
   format: ExportFormat,
 ): Promise<ExportResult> {
   const browser = await getBrowser();
-  const page = await browser.newPage({
+  const context = await browser.newContext({
     viewport: {
       width: 1280,
       height: 1800,
     },
   });
+  const page = await context.newPage();
 
   try {
     await page.setContent(buildHtml(snapshot), {
@@ -283,6 +288,7 @@ export async function exportResumeSnapshot(
     };
   } finally {
     await page.close();
+    await context.close();
   }
 }
 

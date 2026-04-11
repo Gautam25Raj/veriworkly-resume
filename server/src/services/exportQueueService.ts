@@ -1,4 +1,10 @@
-import { randomUUID } from "node:crypto";
+import { Queue, Worker, type Job } from "bullmq";
+import IORedis from "ioredis";
+
+import { config } from "#config";
+
+import { ApiError } from "#utils/errors";
+import { getRedis } from "#utils/redis";
 
 import {
   type ExportFormat,
@@ -6,46 +12,9 @@ import {
   exportResumeSnapshot,
 } from "#services/exportService";
 
-import { ApiError } from "#utils/errors";
-
 type ExportJobStatus = "queued" | "processing" | "completed" | "failed";
+
 type ExportJobOwnerType = "user" | "public-share";
-
-type ExportArtifact = {
-  buffer: Buffer;
-  contentType: string;
-  extension: string;
-};
-
-type BaseExportJob = {
-  id: string;
-  status: ExportJobStatus;
-  ownerType: ExportJobOwnerType;
-  format: ExportFormat;
-  fileNameBase: string;
-  createdAt: number;
-  startedAt: number | null;
-  finishedAt: number | null;
-  expiresAt: number;
-  errorCode: string | null;
-  errorMessage: string | null;
-  artifact: ExportArtifact | null;
-};
-
-type UserExportJob = BaseExportJob & {
-  ownerType: "user";
-  userId: string;
-  resumeId: string;
-  snapshot: ResumeSnapshot;
-};
-
-type PublicShareExportJob = BaseExportJob & {
-  ownerType: "public-share";
-  shareToken: string;
-  snapshot: ResumeSnapshot;
-};
-
-type ExportJob = UserExportJob | PublicShareExportJob;
 
 type QueueMeta = {
   id: string;
@@ -53,17 +22,39 @@ type QueueMeta = {
   createdAt: string;
 };
 
-const MAX_CONCURRENT_EXPORTS = 2;
-const MAX_QUEUED_EXPORTS = 120;
-const EXPORT_TIMEOUT_MS = 45_000;
-const EXPORT_RESULT_TTL_MS = 15 * 60 * 1000;
-const CLEANUP_INTERVAL_MS = 60_000;
+type ExportJobData =
+  | {
+      ownerType: "user";
+      userId: string;
+      resumeId: string;
+      snapshot: ResumeSnapshot;
+      format: ExportFormat;
+      fileNameBase: string;
+    }
+  | {
+      ownerType: "public-share";
+      shareToken: string;
+      snapshot: ResumeSnapshot;
+      format: ExportFormat;
+      fileNameBase: string;
+    };
 
-const jobs = new Map<string, ExportJob>();
-const queue: string[] = [];
-let activeCount = 0;
+type StoredArtifact = {
+  ownerType: ExportJobOwnerType;
+  userId?: string;
+  shareToken?: string;
+  fileNameBase: string;
+  contentType: string;
+  extension: string;
+  bufferBase64: string;
+  expiresAt: string;
+};
 
-let cleanupTimer: NodeJS.Timeout | null = null;
+const EXPORT_JOB_NAME = "render-export";
+
+let queue: Queue<ExportJobData> | null = null;
+let worker: Worker<ExportJobData> | null = null;
+let redisConnection: IORedis | null = null;
 
 function withTimeout<T>(promise: Promise<T>, timeoutMs: number) {
   return new Promise<T>((resolve, reject) => {
@@ -83,262 +74,309 @@ function withTimeout<T>(promise: Promise<T>, timeoutMs: number) {
   });
 }
 
-function ensureCapacity() {
-  if (queue.length + activeCount >= MAX_QUEUED_EXPORTS) {
+function getArtifactKey(jobId: string) {
+  return `${config.exportQueue.artifactPrefix}${jobId}`;
+}
+
+function getBullRedisConnection() {
+  if (redisConnection) {
+    return redisConnection;
+  }
+
+  redisConnection = new IORedis(config.redis.url, {
+    maxRetriesPerRequest: null,
+    enableReadyCheck: false,
+  });
+
+  return redisConnection;
+}
+
+function getExportQueue() {
+  if (queue) {
+    return queue;
+  }
+
+  queue = new Queue<ExportJobData>(config.exportQueue.name, {
+    connection: getBullRedisConnection(),
+  });
+
+  return queue;
+}
+
+function toQueueStatus(state: string): ExportJobStatus {
+  if (state === "active") {
+    return "processing";
+  }
+
+  if (state === "completed") {
+    return "completed";
+  }
+
+  if (state === "failed") {
+    return "failed";
+  }
+
+  return "queued";
+}
+
+async function ensureWorkerStarted() {
+  if (!config.exportQueue.enableWorker) {
+    return;
+  }
+
+  if (worker) {
+    return;
+  }
+
+  worker = new Worker<ExportJobData>(
+    config.exportQueue.name,
+    async (job) => {
+      const rendered = await withTimeout(
+        exportResumeSnapshot(job.data.snapshot, job.data.format),
+        config.exportQueue.timeoutMs,
+      );
+      const expiresAtMs = Date.now() + config.exportQueue.resultTtlMs;
+
+      const artifact: StoredArtifact = {
+        ownerType: job.data.ownerType,
+        fileNameBase: job.data.fileNameBase,
+        contentType: rendered.contentType,
+        extension: rendered.extension,
+        bufferBase64: rendered.buffer.toString("base64"),
+        expiresAt: new Date(expiresAtMs).toISOString(),
+        ...(job.data.ownerType === "user"
+          ? {
+              userId: job.data.userId,
+            }
+          : {
+              shareToken: job.data.shareToken,
+            }),
+      };
+
+      const redis = getRedis();
+      await redis.setEx(
+        getArtifactKey(job.id!),
+        Math.ceil(config.exportQueue.resultTtlMs / 1000),
+        JSON.stringify(artifact),
+      );
+
+      return true;
+    },
+    {
+      connection: getBullRedisConnection(),
+      concurrency: config.exportQueue.maxConcurrentExports,
+    },
+  );
+}
+
+export async function startExportQueueWorker() {
+  await ensureWorkerStarted();
+}
+
+async function ensureCapacity() {
+  const exportQueue = getExportQueue();
+  const counts = await exportQueue.getJobCounts("waiting", "active", "delayed", "paused");
+  const queued =
+    (counts.waiting ?? 0) + (counts.active ?? 0) + (counts.delayed ?? 0) + (counts.paused ?? 0);
+
+  if (queued >= config.exportQueue.maxQueuedExports) {
     throw new ApiError(429, "Export queue is full. Please retry in a moment.");
   }
 }
 
-function toMeta(job: ExportJob): QueueMeta {
-  return {
-    id: job.id,
-    status: job.status,
-    createdAt: new Date(job.createdAt).toISOString(),
-  };
-}
-
-function cleanExpiredJobs() {
-  const now = Date.now();
-
-  for (const [jobId, job] of jobs.entries()) {
-    if (job.status === "queued" || job.status === "processing") {
-      continue;
-    }
-
-    if (job.expiresAt <= now) {
-      jobs.delete(jobId);
-    }
-  }
-}
-
-function ensureCleanupLoopStarted() {
-  if (cleanupTimer) {
-    return;
-  }
-
-  cleanupTimer = setInterval(() => {
-    cleanExpiredJobs();
-  }, CLEANUP_INTERVAL_MS);
-}
-
-async function processJob(jobId: string) {
-  const job = jobs.get(jobId);
-
-  if (!job) {
-    return;
-  }
-
-  job.status = "processing";
-  job.startedAt = Date.now();
-  job.errorCode = null;
-  job.errorMessage = null;
-
-  try {
-    const rendered = await withTimeout(
-      exportResumeSnapshot(job.snapshot, job.format),
-      EXPORT_TIMEOUT_MS,
-    );
-
-    job.status = "completed";
-    job.finishedAt = Date.now();
-    job.artifact = {
-      buffer: rendered.buffer,
-      contentType: rendered.contentType,
-      extension: rendered.extension,
-    };
-
-    job.expiresAt = Date.now() + EXPORT_RESULT_TTL_MS;
-  } catch (error) {
-    job.status = "failed";
-    job.finishedAt = Date.now();
-    job.artifact = null;
-    job.expiresAt = Date.now() + EXPORT_RESULT_TTL_MS;
-
-    job.errorCode = error instanceof ApiError ? `E${error.statusCode}` : "E_EXPORT_FAILED";
-    job.errorMessage = error instanceof Error ? error.message : "Could not render export.";
-  }
-}
-
-function pumpQueue() {
-  while (activeCount < MAX_CONCURRENT_EXPORTS && queue.length > 0) {
-    const nextJobId = queue.shift();
-
-    if (!nextJobId) {
-      break;
-    }
-
-    activeCount += 1;
-
-    void processJob(nextJobId).finally(() => {
-      activeCount = Math.max(0, activeCount - 1);
-      pumpQueue();
-    });
-  }
-}
-
-function createBaseJob(format: ExportFormat, fileNameBase: string): BaseExportJob {
-  const now = Date.now();
-
-  return {
-    id: randomUUID(),
-    status: "queued",
-    format,
-    fileNameBase,
-    ownerType: "user",
-    createdAt: now,
-    startedAt: null,
-    finishedAt: null,
-    expiresAt: now + EXPORT_RESULT_TTL_MS,
-    errorCode: null,
-    errorMessage: null,
-    artifact: null,
-  };
-}
-
-export function enqueueUserExportJob(input: {
-  userId: string;
-  resumeId: string;
-  snapshot: ResumeSnapshot;
-  format: ExportFormat;
-  fileNameBase: string;
-}) {
-  ensureCapacity();
-  ensureCleanupLoopStarted();
-
-  const base = createBaseJob(input.format, input.fileNameBase);
-  const job: UserExportJob = {
-    ...base,
-    ownerType: "user",
-    userId: input.userId,
-    resumeId: input.resumeId,
-    snapshot: input.snapshot,
-  };
-
-  jobs.set(job.id, job);
-  queue.push(job.id);
-  pumpQueue();
-
-  return toMeta(job);
-}
-
-export function enqueuePublicShareExportJob(input: {
-  shareToken: string;
-  snapshot: ResumeSnapshot;
-  format: ExportFormat;
-  fileNameBase: string;
-}) {
-  ensureCapacity();
-  ensureCleanupLoopStarted();
-
-  const base = createBaseJob(input.format, input.fileNameBase);
-  const job: PublicShareExportJob = {
-    ...base,
-    ownerType: "public-share",
-    shareToken: input.shareToken,
-    snapshot: input.snapshot,
-  };
-
-  jobs.set(job.id, job);
-  queue.push(job.id);
-  pumpQueue();
-
-  return toMeta(job);
-}
-
-function getJobOrThrow(jobId: string) {
-  const job = jobs.get(jobId);
+async function getJobOrThrow(jobId: string) {
+  const exportQueue = getExportQueue();
+  const job = await exportQueue.getJob(jobId);
 
   if (!job) {
     throw new ApiError(404, "Export job not found");
-  }
-
-  if (job.expiresAt <= Date.now()) {
-    jobs.delete(jobId);
-    throw new ApiError(410, "Export job expired");
   }
 
   return job;
 }
 
-export function getUserExportJobStatus(jobId: string, userId: string) {
-  const job = getJobOrThrow(jobId);
+async function getArtifact(jobId: string) {
+  const redis = getRedis();
+  const raw = await redis.get(getArtifactKey(jobId));
 
-  if (job.ownerType !== "user" || job.userId !== userId) {
-    throw new ApiError(404, "Export job not found");
+  if (!raw) {
+    return null;
   }
 
+  return JSON.parse(raw) as StoredArtifact;
+}
+
+async function toStatusPayload(job: Job<ExportJobData>) {
+  const state = await job.getState();
+  const artifact = await getArtifact(job.id!);
+
   return {
-    id: job.id,
-    status: job.status,
-    createdAt: new Date(job.createdAt).toISOString(),
-    startedAt: job.startedAt ? new Date(job.startedAt).toISOString() : null,
-    finishedAt: job.finishedAt ? new Date(job.finishedAt).toISOString() : null,
-    errorCode: job.errorCode,
-    errorMessage: job.errorMessage,
-    ready: job.status === "completed" && Boolean(job.artifact),
-    expiresAt: new Date(job.expiresAt).toISOString(),
+    id: job.id!,
+    status: toQueueStatus(state),
+    createdAt: new Date(job.timestamp).toISOString(),
+    startedAt: job.processedOn ? new Date(job.processedOn).toISOString() : null,
+    finishedAt: job.finishedOn ? new Date(job.finishedOn).toISOString() : null,
+    errorCode: state === "failed" ? "E_EXPORT_FAILED" : null,
+    errorMessage: state === "failed" ? (job.failedReason ?? "Could not render export.") : null,
+    ready: state === "completed" && Boolean(artifact),
+    expiresAt:
+      artifact?.expiresAt ?? new Date(job.timestamp + config.exportQueue.resultTtlMs).toISOString(),
   };
 }
 
-export function getPublicShareExportJobStatus(jobId: string, shareToken: string) {
-  const job = getJobOrThrow(jobId);
+export async function enqueueUserExportJob(input: {
+  userId: string;
+  resumeId: string;
+  snapshot: ResumeSnapshot;
+  format: ExportFormat;
+  fileNameBase: string;
+}): Promise<QueueMeta> {
+  await ensureWorkerStarted();
+  await ensureCapacity();
 
-  if (job.ownerType !== "public-share" || job.shareToken !== shareToken) {
-    throw new ApiError(404, "Export job not found");
-  }
+  const exportQueue = getExportQueue();
+  const job = await exportQueue.add(
+    EXPORT_JOB_NAME,
+    {
+      ownerType: "user",
+      userId: input.userId,
+      resumeId: input.resumeId,
+      snapshot: input.snapshot,
+      format: input.format,
+      fileNameBase: input.fileNameBase,
+    },
+    {
+      removeOnComplete: {
+        age: Math.ceil((config.exportQueue.resultTtlMs * 2) / 1000),
+        count: 5000,
+      },
+      removeOnFail: {
+        age: Math.ceil((config.exportQueue.resultTtlMs * 2) / 1000),
+        count: 5000,
+      },
+    },
+  );
 
   return {
-    id: job.id,
-    status: job.status,
-    createdAt: new Date(job.createdAt).toISOString(),
-    startedAt: job.startedAt ? new Date(job.startedAt).toISOString() : null,
-    finishedAt: job.finishedAt ? new Date(job.finishedAt).toISOString() : null,
-    errorCode: job.errorCode,
-    errorMessage: job.errorMessage,
-    ready: job.status === "completed" && Boolean(job.artifact),
-    expiresAt: new Date(job.expiresAt).toISOString(),
+    id: job.id!,
+    status: "queued",
+    createdAt: new Date(job.timestamp).toISOString(),
   };
 }
 
-export function consumeUserExportArtifact(jobId: string, userId: string) {
-  const job = getJobOrThrow(jobId);
+export async function enqueuePublicShareExportJob(input: {
+  shareToken: string;
+  snapshot: ResumeSnapshot;
+  format: ExportFormat;
+  fileNameBase: string;
+}): Promise<QueueMeta> {
+  await ensureWorkerStarted();
+  await ensureCapacity();
 
-  if (job.ownerType !== "user" || job.userId !== userId) {
+  const exportQueue = getExportQueue();
+  const job = await exportQueue.add(
+    EXPORT_JOB_NAME,
+    {
+      ownerType: "public-share",
+      shareToken: input.shareToken,
+      snapshot: input.snapshot,
+      format: input.format,
+      fileNameBase: input.fileNameBase,
+    },
+    {
+      removeOnComplete: {
+        age: Math.ceil((config.exportQueue.resultTtlMs * 2) / 1000),
+        count: 5000,
+      },
+      removeOnFail: {
+        age: Math.ceil((config.exportQueue.resultTtlMs * 2) / 1000),
+        count: 5000,
+      },
+    },
+  );
+
+  return {
+    id: job.id!,
+    status: "queued",
+    createdAt: new Date(job.timestamp).toISOString(),
+  };
+}
+
+export async function getUserExportJobStatus(jobId: string, userId: string) {
+  const job = await getJobOrThrow(jobId);
+
+  if (job.data.ownerType !== "user" || job.data.userId !== userId) {
     throw new ApiError(404, "Export job not found");
   }
 
-  if (job.status !== "completed" || !job.artifact) {
+  return toStatusPayload(job);
+}
+
+export async function getPublicShareExportJobStatus(jobId: string, shareToken: string) {
+  const job = await getJobOrThrow(jobId);
+
+  if (job.data.ownerType !== "public-share" || job.data.shareToken !== shareToken) {
+    throw new ApiError(404, "Export job not found");
+  }
+
+  return toStatusPayload(job);
+}
+
+export async function consumeUserExportArtifact(jobId: string, userId: string) {
+  const job = await getJobOrThrow(jobId);
+  const state = await job.getState();
+  const artifact = await getArtifact(jobId);
+
+  if (job.data.ownerType !== "user" || job.data.userId !== userId) {
+    throw new ApiError(404, "Export job not found");
+  }
+
+  if (state !== "completed" || !artifact) {
     throw new ApiError(409, "Export job is not ready for download");
   }
 
   return {
-    fileNameBase: job.fileNameBase,
-    ...job.artifact,
+    fileNameBase: artifact.fileNameBase,
+    contentType: artifact.contentType,
+    extension: artifact.extension,
+    buffer: Buffer.from(artifact.bufferBase64, "base64"),
   };
 }
 
-export function consumePublicShareExportArtifact(jobId: string, shareToken: string) {
-  const job = getJobOrThrow(jobId);
+export async function consumePublicShareExportArtifact(jobId: string, shareToken: string) {
+  const job = await getJobOrThrow(jobId);
+  const state = await job.getState();
+  const artifact = await getArtifact(jobId);
 
-  if (job.ownerType !== "public-share" || job.shareToken !== shareToken) {
+  if (job.data.ownerType !== "public-share" || job.data.shareToken !== shareToken) {
     throw new ApiError(404, "Export job not found");
   }
 
-  if (job.status !== "completed" || !job.artifact) {
+  if (state !== "completed" || !artifact) {
     throw new ApiError(409, "Export job is not ready for download");
   }
 
   return {
-    fileNameBase: job.fileNameBase,
-    ...job.artifact,
+    fileNameBase: artifact.fileNameBase,
+    contentType: artifact.contentType,
+    extension: artifact.extension,
+    buffer: Buffer.from(artifact.bufferBase64, "base64"),
   };
 }
 
-export function stopExportQueueCleanup() {
-  if (!cleanupTimer) {
-    return;
+export async function stopExportQueueCleanup() {
+  if (worker) {
+    await worker.close();
+    worker = null;
   }
 
-  clearInterval(cleanupTimer);
-  cleanupTimer = null;
+  if (queue) {
+    await queue.close();
+    queue = null;
+  }
+
+  if (redisConnection) {
+    await redisConnection.quit();
+    redisConnection = null;
+  }
 }
