@@ -20,34 +20,29 @@ jobs:
             package-lock.json
             server/package-lock.json
 
-      - name: Install web dependencies
-        run: npm ci
+      - name: Install dependencies
+        run: |
+          npm ci --legacy-peer-deps
+          npm ci --prefix server --legacy-peer-deps
 
-      - name: Install server dependencies
-        run: npm ci --prefix server
+      - name: Lint & Types
+        run: |
+          npm run lint
+          npm run lint --prefix server
 
-      - name: Lint web
-        run: npm run lint
+      - name: Run Tests
+        run: |
+          npm run test:contracts
+          npm run test --prefix server
 
-      - name: Lint server
-        run: npm run lint --prefix server
-
-      - name: Run web contract tests
-        run: npm run test:contracts
-
-      - name: Run server tests
-        run: npm run test --prefix server
-
-      - name: Build web
-        run: npm run build
-
-      - name: Build server
-        run: npm run build --prefix server
+      - name: Build
+        run: |
+          npm run build
+          npm run build --prefix server
 
   visual-tests:
     needs: quality
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
         with:
@@ -60,9 +55,17 @@ jobs:
           cache: "npm"
 
       - name: Install web dependencies
-        run: npm ci
+        run: npm ci --legacy-peer-deps
 
-      - name: Install Playwright
+      - name: Cache Playwright Browsers
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('package-lock.json') }}
+
+      - name: Install Playwright Browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps
 
       - name: Run visual tests
