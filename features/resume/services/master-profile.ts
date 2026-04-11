@@ -1,22 +1,33 @@
 import { z } from "zod";
 
-import type { ResumeData } from "@/types/resume";
-
+import { fetchApiData } from "@/utils/fetchApiData";
 import { MASTER_PROFILE_STORAGE_KEY } from "@/lib/constants";
+import type { MasterProfileData, ResumeData } from "@/types/resume";
 
-import {
-  parseResumeDataInput,
-  parseResumeDataForExport,
-} from "@/features/resume/schemas/resume-storage-schema";
 import { defaultResume } from "@/features/resume/constants/default-resume";
 import { normalizeResumeData } from "@/features/resume/utils/normalize-data";
 import { safeSetLocalStorageItem } from "@/features/resume/services/storage/safe-local-storage";
-
-export type MasterProfileData = Omit<ResumeData, "id" | "sync" | "updatedAt">;
+import { masterProfileDbSchema } from "@/features/resume/schemas/master-profile-db-schema";
 
 interface MasterProfileState {
   updatedAt: string;
   profile: MasterProfileData;
+}
+
+interface MasterProfileSummaryState {
+  id: string;
+  name: string | null;
+  email: string;
+  createdAt: string;
+  emailVerified: boolean;
+  autoSyncEnabled: boolean;
+  shareResumeCount: number;
+}
+
+export interface MasterProfileBundleState {
+  updatedAt: string;
+  profile: MasterProfileData;
+  summary: MasterProfileSummaryState | null;
 }
 
 const masterProfileStateSchema = z
@@ -42,9 +53,18 @@ function getDefaultProfile(): MasterProfileData {
     education: profileData.education,
     projects: profileData.projects,
     skills: profileData.skills,
+    languages: [],
+    interests: [],
+    awards: [],
+    certificates: [],
+    publications: [],
+    volunteer: [],
+    references: [],
+    achievements: [],
     customSections: profileData.customSections,
     sections: profileData.sections,
     customization: profileData.customization,
+    updatedAt: profileData.updatedAt,
   };
 }
 
@@ -53,37 +73,70 @@ function normalizeProfile(
 ) {
   const baseProfile = getDefaultProfile();
 
-  return normalizeResumeData({
+  const nextProfile = {
     ...baseProfile,
     ...value,
-    sync: defaultResume.sync,
-    id: defaultResume.id,
-    updatedAt: new Date().toISOString(),
-  } as ResumeData);
+    basics: {
+      ...baseProfile.basics,
+      ...value?.basics,
+    },
+    links: {
+      ...baseProfile.links,
+      ...value?.links,
+      items: value?.links?.items ?? baseProfile.links.items,
+    },
+    experience: value?.experience?.length
+      ? value.experience
+      : baseProfile.experience,
+    education: value?.education?.length
+      ? value.education
+      : baseProfile.education,
+    projects: value?.projects?.length ? value.projects : baseProfile.projects,
+    skills: value?.skills?.length ? value.skills : baseProfile.skills,
+    languages: value?.languages?.length
+      ? value.languages
+      : baseProfile.languages,
+    interests: value?.interests?.length
+      ? value.interests
+      : baseProfile.interests,
+    awards: value?.awards?.length ? value.awards : baseProfile.awards,
+    certificates: value?.certificates?.length
+      ? value.certificates
+      : baseProfile.certificates,
+    publications: value?.publications?.length
+      ? value.publications
+      : baseProfile.publications,
+    volunteer: value?.volunteer?.length
+      ? value.volunteer
+      : baseProfile.volunteer,
+    references: value?.references?.length
+      ? value.references
+      : baseProfile.references,
+    achievements: value?.achievements?.length
+      ? value.achievements
+      : baseProfile.achievements,
+    customSections: value?.customSections?.length
+      ? value.customSections
+      : baseProfile.customSections,
+    sections: value?.sections?.length ? value.sections : baseProfile.sections,
+    customization: {
+      ...baseProfile.customization,
+      ...value?.customization,
+    },
+    updatedAt: value?.updatedAt ?? new Date().toISOString(),
+  };
+
+  return masterProfileDbSchema.parse(nextProfile);
 }
 
 function toMasterProfileData(value: unknown) {
-  const parsedResume = parseResumeDataInput(value);
+  const parsed = masterProfileDbSchema.safeParse(value);
 
-  if (!parsedResume) {
+  if (!parsed.success) {
     return null;
   }
 
-  const parsed = parseResumeDataForExport(parsedResume);
-
-  return {
-    templateId: parsed.templateId,
-    basics: parsed.basics,
-    links: parsed.links,
-    summary: parsed.summary,
-    experience: parsed.experience,
-    education: parsed.education,
-    projects: parsed.projects,
-    skills: parsed.skills,
-    customSections: parsed.customSections,
-    sections: parsed.sections,
-    customization: parsed.customization,
-  };
+  return normalizeProfile(parsed.data);
 }
 
 export function loadMasterProfileFromLocalStorage(): MasterProfileState {
@@ -172,5 +225,56 @@ export function deriveResumeFromMasterProfile(resumeId: string) {
       cloudResumeId: null,
       lastSyncedAt: null,
     },
+  });
+}
+
+interface MasterProfileApiRecord {
+  profile: {
+    id: string;
+    userId: string;
+    content: unknown;
+    createdAt: string;
+    updatedAt: string;
+  };
+  summary: MasterProfileSummaryState | null;
+}
+
+export async function loadMasterProfileFromDatabase() {
+  try {
+    const profileRecord = await fetchApiData<MasterProfileApiRecord>(
+      "/profiles/master",
+      {
+        method: "GET",
+      },
+    );
+
+    const profile = toMasterProfileData(profileRecord.profile.content);
+
+    if (!profile) {
+      return null;
+    }
+
+    return {
+      updatedAt:
+        profileRecord.profile.updatedAt ??
+        profile.updatedAt ??
+        new Date().toISOString(),
+      profile,
+      summary: profileRecord.summary ?? null,
+    } satisfies MasterProfileBundleState;
+  } catch {
+    return null;
+  }
+}
+
+export async function saveMasterProfileToDatabase(
+  profile: MasterProfileData,
+  expectedUpdatedAt?: string,
+) {
+  const normalized = normalizeProfile(profile);
+
+  return fetchApiData<MasterProfileApiRecord>("/profiles/master", {
+    method: "PUT",
+    body: JSON.stringify({ profile: normalized, expectedUpdatedAt }),
   });
 }
