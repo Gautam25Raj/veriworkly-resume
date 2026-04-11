@@ -56,23 +56,43 @@ async function invalidateRoadmapCache(): Promise<void> {
   }
 }
 
-export async function createRoadmapFeature(input: RoadmapAdminCreateInput) {
-  let startedAt: Date | null | undefined = input.startedAt;
-  let completedAt: Date | null | undefined = input.completedAt;
-
+/**
+ * Shared logic to normalize timestamps based on feature status
+ */
+function resolveStatusTimestamps(
+  status: RoadmapStatus,
+  currentStartedAt?: Date | null,
+  currentCompletedAt?: Date | null,
+) {
+  let startedAt = currentStartedAt;
+  let completedAt = currentCompletedAt;
   let completedQuarter: string | null = null;
 
-  if (input.status === "todo") {
-    startedAt = null;
-    completedAt = null;
-  } else if (input.status === "in-progress") {
-    startedAt = startedAt || new Date();
-    completedAt = null;
-  } else if (input.status === "done") {
-    startedAt = startedAt || new Date();
-    completedAt = completedAt || new Date();
-    completedQuarter = calculateQuarter(completedAt);
+  switch (status) {
+    case "todo":
+      startedAt = null;
+      completedAt = null;
+      break;
+    case "in-progress":
+      startedAt = startedAt || new Date();
+      completedAt = null;
+      break;
+    case "done":
+      startedAt = startedAt || new Date();
+      completedAt = completedAt || new Date();
+      completedQuarter = calculateQuarter(completedAt);
+      break;
   }
+
+  return { startedAt, completedAt, completedQuarter };
+}
+
+export async function createRoadmapFeature(input: RoadmapAdminCreateInput) {
+  const { startedAt, completedAt, completedQuarter } = resolveStatusTimestamps(
+    input.status,
+    input.startedAt,
+    input.completedAt,
+  );
 
   const feature = await prisma.roadmapFeature.create({
     data: {
@@ -82,13 +102,13 @@ export async function createRoadmapFeature(input: RoadmapAdminCreateInput) {
       status: input.status,
       eta: input.eta,
       tags: input.tags ?? [],
-      fullDescription: input.fullDescription ?? null,
-      whyItMatters: input.whyItMatters ?? null,
-      timeline: input.timeline ?? null,
+      fullDescription: input.fullDescription,
+      whyItMatters: input.whyItMatters,
+      timeline: input.timeline,
       startedAt,
       completedAt,
       completedQuarter,
-      details: input.details as object | undefined,
+      details: (input.details as Prisma.InputJsonValue) ?? Prisma.JsonNull,
     },
   });
 
@@ -99,7 +119,7 @@ export async function createRoadmapFeature(input: RoadmapAdminCreateInput) {
 export async function updateRoadmapFeature(id: string, input: RoadmapAdminUpdateInput) {
   const existing = await prisma.roadmapFeature.findUnique({
     where: { id },
-    select: { id: true, status: true, startedAt: true, completedAt: true },
+    select: { status: true, startedAt: true, completedAt: true },
   });
 
   if (!existing) {
@@ -108,45 +128,27 @@ export async function updateRoadmapFeature(id: string, input: RoadmapAdminUpdate
 
   const targetStatus = input.status ?? existing.status;
 
-  let finalStartedAt = input.startedAt !== undefined ? input.startedAt : existing.startedAt;
-  let finalCompletedAt = input.completedAt !== undefined ? input.completedAt : existing.completedAt;
-
-  let finalCompletedQuarter: string | null = null;
-
-  if (targetStatus === "todo") {
-    finalStartedAt = null;
-    finalCompletedAt = null;
-  } else if (targetStatus === "in-progress") {
-    finalStartedAt = finalStartedAt || new Date();
-    finalCompletedAt = null;
-  } else if (targetStatus === "done") {
-    finalStartedAt = finalStartedAt || new Date();
-    finalCompletedAt = finalCompletedAt || new Date();
-    finalCompletedQuarter = calculateQuarter(finalCompletedAt);
-  }
-
-  const normalizedDetails =
-    input.details === undefined
-      ? undefined
-      : input.details === null
-        ? Prisma.JsonNull
-        : (input.details as Prisma.InputJsonValue);
+  const { startedAt, completedAt, completedQuarter } = resolveStatusTimestamps(
+    targetStatus as RoadmapStatus,
+    input.startedAt !== undefined ? input.startedAt : existing.startedAt,
+    input.completedAt !== undefined ? input.completedAt : existing.completedAt,
+  );
 
   const feature = await prisma.roadmapFeature.update({
     where: { id },
     data: {
-      ...(input.title !== undefined ? { title: input.title } : {}),
-      ...(input.description !== undefined ? { description: input.description } : {}),
-      ...(input.status !== undefined ? { status: input.status } : {}),
-      ...(input.eta !== undefined ? { eta: input.eta } : {}),
-      ...(input.tags !== undefined ? { tags: input.tags } : {}),
-      ...(input.fullDescription !== undefined ? { fullDescription: input.fullDescription } : {}),
-      ...(input.whyItMatters !== undefined ? { whyItMatters: input.whyItMatters } : {}),
-      ...(input.timeline !== undefined ? { timeline: input.timeline } : {}),
-      ...(normalizedDetails !== undefined ? { details: normalizedDetails } : {}),
-      startedAt: finalStartedAt,
-      completedAt: finalCompletedAt,
-      completedQuarter: finalCompletedQuarter,
+      title: input.title,
+      description: input.description,
+      status: input.status,
+      eta: input.eta,
+      tags: input.tags,
+      fullDescription: input.fullDescription,
+      whyItMatters: input.whyItMatters,
+      timeline: input.timeline,
+      startedAt,
+      completedAt,
+      completedQuarter,
+      details: input.details === null ? Prisma.JsonNull : (input.details as Prisma.InputJsonValue),
     },
   });
 

@@ -2,10 +2,17 @@ import { config } from "#config";
 
 import { prisma } from "#utils/prisma";
 import { ApiError } from "#utils/errors";
-import { cacheDel, cacheGet, cacheSet } from "#utils/redis";
+import { cacheDel, cacheDelByPrefix, cacheGet, cacheSet } from "#utils/redis";
 
 export type GitHubStatus = "todo" | "in-progress" | "done";
 export type GitHubItemKind = "issue" | "pull-request";
+
+export type GitHubIssuesQuery = {
+  status?: GitHubStatus;
+  kind?: GitHubItemKind | "all";
+  limit: number;
+  offset: number;
+};
 
 interface GitHubIssuePayload {
   id: number;
@@ -33,9 +40,11 @@ export interface GitHubItemSnapshot {
 
 const PROJECT_URL = config.github.projectUrl;
 const REDIS_STATS_KEY = `github:stats:${PROJECT_URL}`;
+const ISSUES_CACHE_PREFIX = `github:issues:${encodeURIComponent(PROJECT_URL)}:`;
 
 export async function getGitHubStats() {
   const cached = await cacheGet(REDIS_STATS_KEY);
+
   if (cached) return cached;
 
   const latest = await prisma.gitHubSync.findUnique({
@@ -96,23 +105,28 @@ function buildGitHubIssuesSnapshot(issues: GitHubIssuePayload[]) {
   };
 }
 
-async function fetchAllGitHubIssues(owner: string, repo: string, token: string) {
+async function fetchAllGitHubIssues(owner: string, repo: string, token: string, since?: Date) {
   const collected: GitHubIssuePayload[] = [];
 
   let page = 1;
   const perPage = 100;
 
-  while (true) {
-    const response = await fetch(
-      `https://api.github.com/repos/${owner}/${repo}/issues?state=all&per_page=${perPage}&page=${page}`,
-      {
-        headers: {
-          Accept: "application/vnd.github+json",
-          Authorization: `Bearer ${token}`,
-          "X-GitHub-Api-Version": "2022-11-28",
-        },
+  let url = `https://api.github.com/repos/${owner}/${repo}/issues?state=all&per_page=${perPage}`;
+
+  if (since) {
+    url += `&since=${since.toISOString()}`;
+  }
+
+  let hasNextPage = true;
+
+  while (hasNextPage) {
+    const response = await fetch(`${url}&page=${page}`, {
+      headers: {
+        Accept: "application/vnd.github+json",
+        Authorization: `Bearer ${token}`,
+        "X-GitHub-Api-Version": "2022-11-28",
       },
-    );
+    });
 
     if (!response.ok) {
       const errorBody = (await response.text()).slice(0, 500);
@@ -123,23 +137,60 @@ async function fetchAllGitHubIssues(owner: string, repo: string, token: string) 
     }
 
     const payload = (await response.json()) as GitHubIssuePayload[];
-    if (payload.length === 0) break;
+    if (payload.length === 0) {
+      hasNextPage = false;
+      continue;
+    }
 
     collected.push(...payload.filter((item) => !item.title.startsWith("[Bot]")));
-    if (payload.length < perPage) break;
-    page += 1;
+
+    hasNextPage = payload.length === perPage;
+
+    if (hasNextPage) {
+      page += 1;
+    }
   }
 
   return collected;
 }
 
-export async function getGitHubIssues(query: any) {
-  const queryKey = `github:issues:${PROJECT_URL}:${Buffer.from(JSON.stringify(query)).toString("base64")}`;
+export async function getGitHubIssues(query: GitHubIssuesQuery) {
+  const sortedQuery = new URLSearchParams();
+  sortedQuery.set("limit", String(query.limit));
+  sortedQuery.set("offset", String(query.offset));
+
+  if (query.status) {
+    sortedQuery.set("status", query.status);
+  }
+
+  if (query.kind) {
+    sortedQuery.set("kind", query.kind);
+  }
+
+  sortedQuery.sort();
+
+  const queryKey = `${ISSUES_CACHE_PREFIX}${sortedQuery.toString()}`;
+
   const cached = await cacheGet(queryKey);
   if (cached) return cached;
 
-  const where: any = {
-    sync: { projectUrl: PROJECT_URL },
+  const sync = await prisma.gitHubSync.findUnique({
+    where: { projectUrl: PROJECT_URL },
+    select: { id: true },
+  });
+
+  if (!sync) {
+    const emptyResult = { items: [], total: 0, limit: query.limit, offset: query.offset };
+    await cacheSet(queryKey, emptyResult, 300);
+    return emptyResult;
+  }
+
+  const where: {
+    syncId: string;
+    status?: GitHubStatus;
+    kind?: GitHubItemKind;
+  } = {
+    syncId: sync.id,
   };
 
   if (query.status) where.status = query.status;
@@ -176,72 +227,105 @@ export async function shouldSyncGitHubStats() {
 export async function syncGitHubStatsFromGitHub() {
   const { owner, repo, token } = config.github;
 
-  const rawIssues = await fetchAllGitHubIssues(owner, repo, token);
+  const existingSync = await prisma.gitHubSync.findUnique({
+    where: { projectUrl: PROJECT_URL },
+    select: { syncedAt: true, id: true },
+  });
+
+  const sinceDate = existingSync?.syncedAt ? new Date(existingSync.syncedAt) : undefined;
+
+  const rawIssues = await fetchAllGitHubIssues(owner, repo, token, sinceDate);
+
+  if (rawIssues.length === 0 && existingSync) {
+    const updatedSync = await prisma.gitHubSync.update({
+      where: { id: existingSync.id },
+      data: { syncedAt: new Date(), nextSyncAt: new Date(Date.now() + 43200000) },
+    });
+
+    await cacheDel(REDIS_STATS_KEY);
+    return updatedSync;
+  }
+
   const snapshot = buildGitHubIssuesSnapshot(rawIssues);
+  const CHUNK_SIZE = 50;
 
   const syncRecord = await prisma.$transaction(
     async (tx) => {
       const sync = await tx.gitHubSync.upsert({
         where: { projectUrl: PROJECT_URL },
-
         create: {
           projectName: `${owner}/${repo}`,
           projectUrl: PROJECT_URL,
-          issueCount: rawIssues.length,
-          todoCount: snapshot.todoIssues.length,
-          inProgressCount: snapshot.inProgressIssues.length,
-          doneCount: snapshot.doneIssues.length,
+          issueCount: 0,
+          todoCount: 0,
+          inProgressCount: 0,
+          doneCount: 0,
           data: { lastSyncedBy: "System" },
           nextSyncAt: new Date(Date.now() + 43200000),
         },
-
         update: {
-          issueCount: rawIssues.length,
-          todoCount: snapshot.todoIssues.length,
-          inProgressCount: snapshot.inProgressIssues.length,
-          doneCount: snapshot.doneIssues.length,
           syncedAt: new Date(),
+          nextSyncAt: new Date(Date.now() + 43200000),
         },
       });
 
-      for (const item of snapshot.issues) {
-        const githubId = item.id.replace("gh-", "");
+      const chunks = [];
 
-        await tx.gitHubSyncItem.upsert({
-          where: {
-            syncId_githubId: {
-              syncId: sync.id,
-              githubId,
-            },
-          },
-          create: {
-            syncId: sync.id,
-            githubId,
-            number: item.number,
-            title: item.title,
-            status: item.status,
-            kind: item.kind,
-            url: item.url,
-            labels: item.labels,
-            createdAt: new Date(item.createdAt),
-            updatedAt: new Date(item.updatedAt),
-          },
-          update: {
-            title: item.title,
-            status: item.status,
-            labels: item.labels,
-            updatedAt: new Date(item.updatedAt),
-          },
-        });
+      for (let i = 0; i < snapshot.issues.length; i += CHUNK_SIZE) {
+        chunks.push(snapshot.issues.slice(i, i + CHUNK_SIZE));
       }
 
-      return sync;
+      for (const chunk of chunks) {
+        await Promise.all(
+          chunk.map((item) => {
+            const githubId = item.id.replace("gh-", "");
+            return tx.gitHubSyncItem.upsert({
+              where: {
+                syncId_githubId: { syncId: sync.id, githubId },
+              },
+
+              create: {
+                syncId: sync.id,
+                githubId,
+                number: item.number,
+                title: item.title,
+                status: item.status,
+                kind: item.kind,
+                url: item.url,
+                labels: item.labels,
+                createdAt: new Date(item.createdAt),
+                updatedAt: new Date(item.updatedAt),
+              },
+
+              update: {
+                title: item.title,
+                status: item.status,
+                labels: item.labels,
+                updatedAt: new Date(item.updatedAt),
+              },
+            });
+          }),
+        );
+      }
+
+      const [todoCount, inProgressCount, doneCount] = await Promise.all([
+        tx.gitHubSyncItem.count({ where: { syncId: sync.id, status: "todo" } }),
+        tx.gitHubSyncItem.count({ where: { syncId: sync.id, status: "in-progress" } }),
+        tx.gitHubSyncItem.count({ where: { syncId: sync.id, status: "done" } }),
+      ]);
+
+      const issueCount = todoCount + inProgressCount + doneCount;
+
+      return tx.gitHubSync.update({
+        where: { id: sync.id },
+        data: { issueCount, todoCount, inProgressCount, doneCount },
+      });
     },
-    {
-      timeout: 30000,
-    },
+    { timeout: 30000 },
   );
 
   await cacheDel(REDIS_STATS_KEY);
+  await cacheDelByPrefix(ISSUES_CACHE_PREFIX);
+
   return syncRecord;
 }
