@@ -10,7 +10,7 @@ import { type RoadmapStatus } from "#services/roadmapService";
 
 import { roadmapAdminCreateSchema, roadmapAdminUpdateSchema } from "#validators/roadmapValidator";
 
-import { ApiError, createSuccessResponse, handleValidationError } from "#utils/errors";
+import { createSuccessResponse, handleValidationError } from "#utils/errors";
 
 /**
  * Create a new roadmap feature (admin only).
@@ -83,8 +83,6 @@ export async function updateRoadmapFeatureController(
   try {
     const { id } = req.params;
 
-    if (!id) throw new ApiError(400, "Feature ID is required");
-
     const payload = roadmapAdminUpdateSchema.parse(req.body);
 
     const parseDateInput = (val?: string | null) =>
@@ -135,10 +133,6 @@ export async function deleteRoadmapFeatureController(
 ) {
   try {
     const { id } = req.params;
-
-    if (!id) {
-      throw new ApiError(400, "Feature ID is required");
-    }
 
     const deleted = await deleteRoadmapFeature(id);
 

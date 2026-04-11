@@ -5,13 +5,21 @@ import { config } from "#config";
 let redisClient: ReturnType<typeof createClient> | null = null;
 
 export async function initRedis() {
+  if (redisClient?.isOpen) return redisClient;
+
   try {
     redisClient = createClient({
       url: config.redis.url,
+      socket: {
+        reconnectStrategy: (retries) => {
+          if (retries > 10) return new Error("Redis reconnection failed");
+          return Math.min(retries * 100, 3000);
+        },
+      },
     });
 
     redisClient.on("error", (err) => {
-      console.error("Redis Client Error", err);
+      console.error("Redis Client Error:", err);
     });
 
     redisClient.on("connect", () => {
@@ -19,6 +27,7 @@ export async function initRedis() {
     });
 
     await redisClient.connect();
+
     return redisClient;
   } catch (error) {
     console.error("Failed to initialize Redis:", error);
@@ -27,23 +36,26 @@ export async function initRedis() {
 }
 
 export function getRedis() {
-  if (!redisClient) {
-    throw new Error("Redis client not initialized");
-  }
+  if (!redisClient || !redisClient.isOpen)
+    throw new Error("Redis client not initialized or connection closed");
+
   return redisClient;
 }
 
 export async function closeRedis() {
   if (redisClient) {
     await redisClient.quit();
+    redisClient = null;
   }
 }
 
-// Helper functions for caching
+// --- Helper functions for caching ---
+
 export async function cacheGet<T>(key: string): Promise<T | null> {
   try {
     const redis = getRedis();
     const data = await redis.get(key);
+
     return data ? JSON.parse(data) : null;
   } catch (error) {
     console.error("Cache get error:", error);

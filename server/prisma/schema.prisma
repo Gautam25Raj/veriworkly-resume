@@ -143,6 +143,7 @@ model ResumeShareLink {
   views        ResumeShareView[]
 
   @@index([userId])
+  @@unique([userId, resumeId])
   @@index([resumeId])
   @@index([expiresAt])
 }
@@ -180,6 +181,9 @@ model RoadmapFeature {
 
   @@index([status])
   @@index([createdAt])
+  @@index([status, createdAt])
+  @@index([completedAt, updatedAt])
+  @@index([status, completedAt, updatedAt])
 }
 
 // Track user interactions with roadmap (votes, bookmarks, comments)
@@ -255,6 +259,9 @@ model GitHubSyncItem {
   @@index([kind])
   @@index([createdAt])
   @@index([updatedAt])
+  @@index([syncId, updatedAt])
+  @@index([syncId, status, updatedAt])
+  @@index([syncId, kind, updatedAt])
   @@index([syncId, status, kind, updatedAt])
   @@unique([syncId, githubId])
 }

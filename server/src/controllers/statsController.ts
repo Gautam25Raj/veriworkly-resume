@@ -31,6 +31,9 @@ const usageMetricEventSchema = z.object({
 
 const recordUsageMetricController = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    if (process.env.NODE_ENV === "development")
+      return res.status(202).json("Skipping metric recording in development mode");
+
     const payload = usageMetricEventSchema.parse(req.body);
     await incrementUsageMetric(payload);
 
