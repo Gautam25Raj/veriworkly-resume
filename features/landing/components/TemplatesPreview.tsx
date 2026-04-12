@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 
 import { templateSummaries } from "@/config/templates";
+import { Badge } from "@/components/ui/Badge";
 
 const TemplatesPreview = () => {
   const featured = templateSummaries.slice(0, 3);
@@ -21,6 +22,11 @@ const TemplatesPreview = () => {
           >
             Pick a style. Keep your content.
           </h2>
+
+          <p className="sr-only">
+            Free resume templates for creating professional and ATS-friendly
+            resumes online.
+          </p>
         </div>
 
         <Link
@@ -37,7 +43,7 @@ const TemplatesPreview = () => {
           <Card className="space-y-4" key={template.id}>
             <div className="flex items-center justify-between gap-3">
               <h3 className="text-foreground text-lg font-semibold">
-                {template.name}
+                {template.name} Resume Template
               </h3>
 
               <span
@@ -51,6 +57,14 @@ const TemplatesPreview = () => {
               {template.description}
             </p>
 
+            <div className="flex flex-wrap gap-2">
+              {template.tags.slice(0, 3).map((tag) => (
+                <Badge key={tag} className="text-muted px-2 py-0.5 text-xs">
+                  {tag}
+                </Badge>
+              ))}
+            </div>
+
             <Link
               href={`/templates/${template.id}`}
               className="text-accent text-sm font-medium"
@@ -61,6 +75,11 @@ const TemplatesPreview = () => {
           </Card>
         ))}
       </div>
+
+      <p className="sr-only">
+        Browse free resume templates including modern, minimal, executive, and
+        ATS-friendly layouts.
+      </p>
     </section>
   );
 };

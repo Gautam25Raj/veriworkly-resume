@@ -35,6 +35,36 @@ const publicRoutes = [
     changeFrequency: "weekly" as const,
     priority: 0.7,
   },
+  {
+    url: `${siteConfig.url}/about`,
+    changeFrequency: "monthly" as const,
+    priority: 0.7,
+  },
+  {
+    url: `${siteConfig.url}/contact`,
+    changeFrequency: "monthly" as const,
+    priority: 0.65,
+  },
+  {
+    url: `${siteConfig.url}/faq`,
+    changeFrequency: "monthly" as const,
+    priority: 0.75,
+  },
+  {
+    url: `${siteConfig.url}/privacy`,
+    changeFrequency: "yearly" as const,
+    priority: 0.5,
+  },
+  {
+    url: `${siteConfig.url}/security`,
+    changeFrequency: "yearly" as const,
+    priority: 0.5,
+  },
+  {
+    url: `${siteConfig.url}/terms`,
+    changeFrequency: "yearly" as const,
+    priority: 0.5,
+  },
 ] satisfies MetadataRoute.Sitemap;
 
 export default function sitemap(): MetadataRoute.Sitemap {
