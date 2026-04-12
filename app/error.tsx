@@ -10,7 +10,7 @@ export default function Error({
   reset: () => void;
 }) {
   return (
-    <main className="flex min-h-[70vh] items-center justify-center">
+    <main className="flex min-h-screen items-center justify-center">
       <Container className="flex flex-col items-center text-center">
         <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-red-500/10 text-red-600">
           <svg

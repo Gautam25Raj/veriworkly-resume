@@ -19,6 +19,11 @@ const FeaturesSection = () => {
           >
             Focused, minimal, powerful
           </h2>
+
+          <p className="sr-only">
+            ATS-friendly resume builder features for creating professional
+            resumes quickly.
+          </p>
         </div>
 
         <Link

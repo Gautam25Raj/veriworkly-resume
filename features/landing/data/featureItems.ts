@@ -1,16 +1,16 @@
 export const featureItems = [
   {
-    title: "Write",
-    body: "Edit with a clean interface built for flow, not friction.",
+    title: "Write resumes",
+    body: "Edit your resume with a clean interface built for fast resume creation.",
   },
 
   {
-    title: "Switch",
-    body: "Jump across templates instantly without losing structure.",
+    title: "Switch templates",
+    body: "Change resume templates instantly without losing structure or content.",
   },
 
   {
-    title: "Export",
-    body: "Generate polished resumes whenever you need them.",
+    title: "Export resumes",
+    body: "Download ATS-friendly resumes whenever you need them.",
   },
 ];

@@ -22,11 +22,11 @@ const HeroSection = () => {
             id="hero-heading"
             className="text-foreground text-4xl font-semibold tracking-tight sm:text-5xl md:text-6xl"
           >
-            Build resumes that feel premium in minutes.
+            Build professional resumes in minutes — no login required.
           </h1>
 
           <p className="text-muted max-w-2xl text-base leading-8 md:text-lg">
-            A modern, local-first resume builder with full control over layout,
+            A modern, ATS-friendly resume builder with full control over layout,
             sections, and structure. Fast by default. Private by design.
           </p>
 

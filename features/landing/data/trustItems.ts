@@ -1,7 +1,7 @@
 export const trustItems = [
-  "Local-first",
-  "No login",
-  "Free forever",
+  "No login required",
+  "Free resume builder",
+  "ATS-friendly templates",
   "Open source",
   "Real-time preview",
 ];
