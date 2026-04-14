@@ -3,6 +3,21 @@
 import type { ResumeData } from "@/types/resume";
 
 import { backendApiUrl } from "@/lib/constants";
+import { ApiRequestError } from "@/utils/fetchApiData";
+
+async function throwApiError(
+  response: Response,
+  fallbackMessage: string,
+): Promise<never> {
+  const payload = (await response.json().catch(() => ({}))) as {
+    message?: string;
+  };
+
+  throw new ApiRequestError(
+    payload.message || fallbackMessage,
+    response.status,
+  );
+}
 
 type CreateResumeShareLinkOptions = {
   resumeTitle?: string;
@@ -33,32 +48,25 @@ export async function createResumeShareLink(
   resume: ResumeData,
   options: CreateResumeShareLinkOptions = {},
 ): Promise<CreateResumeShareLinkResult> {
-  const response = await fetch(
-    backendApiUrl(`/resumes/${resume.id}/share-links`),
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify({
-        resumeId: resume.id,
-        snapshot: resume,
-        resumeTitle:
-          options.resumeTitle || resume.basics.fullName || "Shared Resume",
-        password: options.password || undefined,
-        expiresAt: options.expiresAt ?? null,
-        noExpiry: options.noExpiry ?? false,
-      }),
+  const response = await fetch(backendApiUrl(`/shares/resumes/${resume.id}`), {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
     },
-  );
+    credentials: "include",
+    body: JSON.stringify({
+      resumeId: resume.id,
+      snapshot: resume,
+      resumeTitle:
+        options.resumeTitle || resume.basics.fullName || "Shared Resume",
+      password: options.password || undefined,
+      expiresAt: options.expiresAt ?? null,
+      noExpiry: options.noExpiry ?? false,
+    }),
+  });
 
   if (!response.ok) {
-    const payload = (await response.json().catch(() => ({}))) as {
-      message?: string;
-    };
-
-    throw new Error(payload.message || "Failed to create share link");
+    await throwApiError(response, "Failed to create share link");
   }
 
   const payload = (await response.json()) as {
@@ -71,20 +79,13 @@ export async function createResumeShareLink(
 export async function listResumeShareLinks(
   resumeId: string,
 ): Promise<ResumeShareLinkItem[]> {
-  const response = await fetch(
-    backendApiUrl(`/resumes/${resumeId}/share-links`),
-    {
-      method: "GET",
-      credentials: "include",
-    },
-  );
+  const response = await fetch(backendApiUrl(`/shares/resumes/${resumeId}`), {
+    method: "GET",
+    credentials: "include",
+  });
 
   if (!response.ok) {
-    const payload = (await response.json().catch(() => ({}))) as {
-      message?: string;
-    };
-
-    throw new Error(payload.message || "Failed to load share links");
+    await throwApiError(response, "Failed to load share links");
   }
 
   const payload = (await response.json()) as { data: ResumeShareLinkItem[] };
@@ -97,7 +98,7 @@ export async function revokeResumeShareLink(
   shareLinkId: string,
 ) {
   const response = await fetch(
-    backendApiUrl(`/resumes/${resumeId}/share-links/${shareLinkId}`),
+    backendApiUrl(`/shares/resumes/${resumeId}/links/${shareLinkId}`),
     {
       method: "DELETE",
       credentials: "include",
@@ -105,11 +106,7 @@ export async function revokeResumeShareLink(
   );
 
   if (!response.ok) {
-    const payload = (await response.json().catch(() => ({}))) as {
-      message?: string;
-    };
-
-    throw new Error(payload.message || "Failed to revoke share link");
+    await throwApiError(response, "Failed to revoke share link");
   }
 }
 
@@ -118,7 +115,7 @@ export async function exportResumeViaServer(
   format: "pdf" | "png" | "jpg",
 ) {
   const queueResponse = await fetch(
-    backendApiUrl(`/resumes/${resume.id}/export/jobs`),
+    backendApiUrl(`/exports/resumes/${resume.id}/jobs`),
     {
       method: "POST",
       headers: {
@@ -151,7 +148,7 @@ export async function exportResumeViaServer(
 
   while (Date.now() < pollTimeoutAt) {
     const statusResponse = await fetch(
-      backendApiUrl(`/resumes/export-jobs/${jobId}`),
+      backendApiUrl(`/exports/jobs/${jobId}`),
       {
         method: "GET",
         credentials: "include",
@@ -192,7 +189,7 @@ export async function exportResumeViaServer(
   }
 
   const response = await fetch(
-    backendApiUrl(`/resumes/export-jobs/${jobId}/download`),
+    backendApiUrl(`/exports/jobs/${jobId}/download`),
     {
       method: "GET",
       credentials: "include",

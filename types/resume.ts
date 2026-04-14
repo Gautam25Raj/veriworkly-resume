@@ -10,6 +10,10 @@ export type ResumeSectionId =
   | "awards"
   | "publications"
   | "languages"
+  | "interests"
+  | "volunteer"
+  | "references"
+  | "achievements"
   | "custom";
 
 export interface ResumeSection {
@@ -94,11 +98,84 @@ export interface ResumeSkillGroup {
   keywords: string[];
 }
 
+export interface ResumeLanguage {
+  id: string;
+  language: string;
+  fluency: "elementary" | "limited" | "professional" | "fluent" | "native";
+}
+
+export interface ResumeInterest {
+  id: string;
+  name: string;
+  keywords: string[];
+}
+
+export interface ResumeAward {
+  id: string;
+  title: string;
+  awarder: string;
+  date: string;
+  website?: string;
+  description: string;
+  showLink: boolean;
+}
+
+export interface ResumeCertificate {
+  id: string;
+  title: string;
+  issuer: string;
+  date: string;
+  website?: string;
+  description: string;
+  showLink: boolean;
+}
+
+export interface ResumePublication {
+  id: string;
+  title: string;
+  publisher: string;
+  date: string;
+  website?: string;
+  description: string;
+  showLink: boolean;
+}
+
+export interface ResumeVolunteer {
+  id: string;
+  organization: string;
+  role: string;
+  startDate: string;
+  endDate: string;
+  current: boolean;
+  location: string;
+  summary: string;
+}
+
+export interface ResumeReference {
+  id: string;
+  name: string;
+  title: string;
+  organization: string;
+  email?: string;
+  phone?: string;
+  relationship: string;
+}
+
+export interface ResumeAchievement {
+  id: string;
+  title: string;
+  description: string;
+}
+
 export type ResumeAdditionalSectionKind =
   | "certifications"
   | "awards"
   | "publications"
   | "languages"
+  | "interests"
+  | "volunteer"
+  | "references"
+  | "achievements"
   | "custom";
 
 export interface ResumeAdditionalItem {
@@ -165,3 +242,28 @@ export interface ResumeData {
   sync: ResumeSyncState;
   updatedAt: string;
 }
+
+export interface MasterProfileData {
+  templateId: string;
+  basics: ResumeBasics;
+  links: ResumeLinks;
+  summary: string;
+  experience: ResumeExperienceItem[];
+  education: ResumeEducationItem[];
+  projects: ResumeProjectItem[];
+  skills: ResumeSkillGroup[];
+  languages: ResumeLanguage[];
+  interests: ResumeInterest[];
+  awards: ResumeAward[];
+  certificates: ResumeCertificate[];
+  publications: ResumePublication[];
+  volunteer: ResumeVolunteer[];
+  references: ResumeReference[];
+  achievements: ResumeAchievement[];
+  customSections: ResumeCustomSection[];
+  sections: ResumeSection[];
+  customization: ResumeCustomization;
+  updatedAt?: string;
+}
+
+export type MasterProfile = MasterProfileData;

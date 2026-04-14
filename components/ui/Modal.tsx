@@ -111,7 +111,7 @@ function ModalFooter({
   return (
     <div
       className={cn(
-        "mt-4 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end",
+        "flex flex-col-reverse gap-3 border-t px-4 py-3 sm:flex-row sm:justify-end md:bg-zinc-500/5",
         className,
       )}
       {...props}
