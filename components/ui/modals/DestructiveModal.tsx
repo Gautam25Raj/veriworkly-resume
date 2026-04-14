@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { AlertTriangle, Trash2 } from "lucide-react";
 
 import { Modal } from "@/components/ui/Modal";
 import { Input } from "@/components/ui/Input";
@@ -10,20 +11,10 @@ interface DestructiveModalProps {
   open: boolean;
   onClose: () => void;
   onConfirm: () => void;
-
-  /** What is being deleted (resume, template, etc.) */
   entityName?: string;
-
-  /** Optional custom title */
   title?: string;
-
-  /** Optional custom description */
   description?: string;
-
-  /** Confirmation keyword (default: DELETE) */
   confirmText?: string;
-
-  /** Optional stronger warning */
   warningText?: string;
 }
 
@@ -39,70 +30,98 @@ const DestructiveModal = ({
 }: DestructiveModalProps) => {
   const [value, setValue] = useState("");
 
-  const isValid = value === confirmText;
+  useEffect(() => {
+    if (!open) setValue("");
+  }, [open]);
+
+  const isValid = value.trim().toUpperCase() === confirmText.toUpperCase();
 
   const handleConfirm = () => {
     if (!isValid) return;
     onConfirm();
-    setValue("");
   };
 
   return (
     <Modal open={open} onClose={onClose}>
-      <Modal.Content>
-        <Modal.Header>
-          <Modal.Title>{title ?? `Delete ${entityName}?`}</Modal.Title>
-
-          <Modal.Description>
-            {description ?? `This action is permanent and cannot be undone.`}
-          </Modal.Description>
-        </Modal.Header>
-
-        <Modal.Body className="space-y-5">
-          <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-4">
-            <p className="text-sm font-medium text-red-500">
-              {warningText ??
-                `You are about to permanently delete this ${entityName}.`}
-            </p>
-
-            <p className="text-muted mt-1 text-sm">
-              Local storage and all associated data will be permanently removed.
-              This action cannot be undone.
-            </p>
+      <Modal.Content className="w-full max-w-md overflow-hidden p-0 sm:rounded-xl">
+        <div className="border-destructive/10 bg-destructive/5 flex items-center gap-3 border-b px-4 py-4 md:bg-red-50/50 dark:md:bg-red-950/20">
+          <div className="bg-destructive/10 text-destructive flex h-9 w-9 shrink-0 items-center justify-center rounded-full">
+            <Trash2 className="h-5 w-5" />
           </div>
 
-          <div className="space-y-2">
-            <p className="text-muted text-sm">
-              Type{" "}
-              <span className="text-foreground font-semibold">
-                {confirmText}
-              </span>{" "}
-              to confirm.
+          <div>
+            <Modal.Title className="text-foreground text-base font-bold">
+              {title ?? `Delete ${entityName}?`}
+            </Modal.Title>
+
+            <p className="text-destructive/80 text-[11px] font-medium tracking-wider uppercase">
+              Critical Action
             </p>
+          </div>
+        </div>
+
+        <Modal.Body className="space-y-6 p-4">
+          <div className="border-destructive/20 bg-destructive/5 rounded-lg border p-3.5">
+            <div className="flex gap-3">
+              <AlertTriangle className="text-destructive h-5 w-5 shrink-0" />
+
+              <div className="space-y-1">
+                <p className="text-destructive text-sm leading-none font-bold">
+                  {warningText ?? "This action cannot be undone"}
+                </p>
+
+                <p className="text-muted-foreground text-xs leading-relaxed">
+                  {description ??
+                    `You are about to permanently remove this ${entityName}. Local data and cloud syncs will be purged.`}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <div className="space-y-1">
+              <label className="text-muted-foreground/70 text-[10px] font-bold tracking-widest uppercase">
+                Verification Required
+              </label>
+
+              <p className="text-muted-foreground text-[13px]">
+                To confirm, type{" "}
+                <span className="bg-destructive/10 text-destructive decoration-destructive/30 inline-flex items-center rounded py-0.5 font-mono text-xs font-bold underline underline-offset-2">
+                  {confirmText}
+                </span>{" "}
+                below.
+              </p>
+            </div>
 
             <Input
-              value={value}
-              onChange={(e) => setValue(e.target.value)}
-              placeholder={`Type ${confirmText}`}
               autoFocus
+              value={value}
+              inputSize="sm"
+              variant="outline"
+              onChange={(e) => setValue(e.target.value)}
+              placeholder={`Type ${confirmText} to proceed`}
+              className="border-border hover:border-destructive/30 focus-visible:border-destructive/50 focus-visible:ring-destructive/10 h-10"
             />
           </div>
         </Modal.Body>
 
-        <Modal.Footer>
-          <Button variant="secondary" onClick={onClose}>
+        <div className="flex flex-col-reverse gap-2 border-t bg-zinc-50/50 p-4 sm:flex-row sm:justify-end dark:bg-zinc-900/50">
+          <Button
+            onClick={onClose}
+            variant="secondary"
+            className="h-9 w-full text-xs sm:w-auto"
+          >
             Cancel
           </Button>
 
           <Button
-            variant="primary"
             disabled={!isValid}
             onClick={handleConfirm}
-            className="bg-red-600 text-white hover:bg-red-700"
+            className="h-9 w-full bg-red-600 px-6 text-xs font-bold tracking-widest text-white uppercase shadow-lg shadow-red-600/20 hover:bg-red-700 disabled:opacity-30 sm:w-auto"
           >
-            Permanently Delete
+            Confirm Deletion
           </Button>
-        </Modal.Footer>
+        </div>
       </Modal.Content>
     </Modal>
   );

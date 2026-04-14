@@ -16,6 +16,10 @@ const resumeSectionIdSchema = z.enum([
   "awards",
   "publications",
   "languages",
+  "interests",
+  "volunteer",
+  "references",
+  "achievements",
   "custom",
 ]);
 
@@ -36,6 +40,10 @@ const resumeAdditionalSectionKindSchema = z.enum([
   "awards",
   "publications",
   "languages",
+  "interests",
+  "volunteer",
+  "references",
+  "achievements",
   "custom",
 ]);
 

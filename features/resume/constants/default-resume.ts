@@ -12,7 +12,11 @@ export const defaultSections: ResumeSection[] = [
   { id: "awards", label: "Awards", visible: true, order: 8 },
   { id: "publications", label: "Publications", visible: true, order: 9 },
   { id: "languages", label: "Languages", visible: true, order: 10 },
-  { id: "custom", label: "Custom", visible: true, order: 11 },
+  { id: "interests", label: "Interests", visible: true, order: 11 },
+  { id: "volunteer", label: "Volunteer", visible: true, order: 12 },
+  { id: "references", label: "References", visible: true, order: 13 },
+  { id: "achievements", label: "Achievements", visible: true, order: 14 },
+  { id: "custom", label: "Custom", visible: true, order: 15 },
 ];
 
 export const defaultResume: ResumeData = {
@@ -157,57 +161,67 @@ export const defaultResume: ResumeData = {
 
   customSections: [
     {
-      id: "custom-philosophy",
-      kind: "custom",
-      title: "Build Philosophy",
-      editableTitle: true,
-      items: [
-        {
-          id: "philosophy-1",
-          name: "How I Build Products",
-          issuer: "",
-          date: "",
-          link: "",
-          referenceId: "",
-          description:
-            "I believe software should be fast, simple, and respectful of user privacy.",
-          details: [
-            "Prefer shipping small, iterative improvements over big rewrites.",
-            "Focus on real user problems instead of over-engineering.",
-            "Design for clarity first, then scale.",
-          ],
-        },
-      ],
+      id: "certifications-default",
+      kind: "certifications",
+      title: "Certifications",
+      editableTitle: false,
+      items: [],
     },
-
     {
-      id: "custom-fun",
+      id: "awards-default",
+      kind: "awards",
+      title: "Awards",
+      editableTitle: false,
+      items: [],
+    },
+    {
+      id: "publications-default",
+      kind: "publications",
+      title: "Publications",
+      editableTitle: false,
+      items: [],
+    },
+    {
+      id: "languages-default",
+      kind: "languages",
+      title: "Languages",
+      editableTitle: false,
+      items: [],
+    },
+    {
+      id: "interests-default",
+      kind: "interests",
+      title: "Interests",
+      editableTitle: false,
+      items: [],
+    },
+    {
+      id: "volunteer-default",
+      kind: "volunteer",
+      title: "Volunteer",
+      editableTitle: false,
+      items: [],
+    },
+    {
+      id: "references-default",
+      kind: "references",
+      title: "References",
+      editableTitle: false,
+      items: [],
+    },
+    {
+      id: "achievements-default",
+      kind: "achievements",
+      title: "Achievements",
+      editableTitle: false,
+      items: [],
+    },
+    {
+      id: "custom-default",
       kind: "custom",
-      title: "Fun Facts",
+      title: "Custom Section",
       editableTitle: true,
-      items: [
-        {
-          id: "fun-1",
-          name: "Debugging Skills",
-          issuer: "",
-          date: "",
-          link: "",
-          referenceId: "",
-          description:
-            "Can spend 3 hours debugging and then fix it in 2 minutes.",
-          details: [],
-        },
-        {
-          id: "fun-2",
-          name: "Stack Preference",
-          issuer: "",
-          date: "",
-          link: "",
-          referenceId: "",
-          description: "Strong believer in TypeScript everywhere.",
-          details: [],
-        },
-      ],
+      items: [],
     },
   ],
 
