@@ -1,13 +1,15 @@
 import { z } from "zod";
 
-import { fetchApiData } from "@/utils/fetchApiData";
-import { MASTER_PROFILE_STORAGE_KEY } from "@/lib/constants";
 import type { MasterProfileData, ResumeData } from "@/types/resume";
+
+import { fetchApiData } from "@/utils/fetchApiData";
+
+import { MASTER_PROFILE_STORAGE_KEY } from "@/lib/constants";
 
 import { defaultResume } from "@/features/resume/constants/default-resume";
 import { normalizeResumeData } from "@/features/resume/utils/normalize-data";
-import { safeSetLocalStorageItem } from "@/features/resume/services/storage/safe-local-storage";
 import { masterProfileDbSchema } from "@/features/resume/schemas/master-profile-db-schema";
+import { safeSetLocalStorageItem } from "@/features/resume/services/storage/safe-local-storage";
 
 interface MasterProfileState {
   updatedAt: string;
@@ -239,6 +241,33 @@ interface MasterProfileApiRecord {
   summary: MasterProfileSummaryState | null;
 }
 
+interface MasterProfileUpdatedRecord {
+  id: string;
+  userId: string;
+  content: unknown;
+  createdAt: string;
+  updatedAt: string;
+}
+
+function parseSavedMasterProfileResponse(
+  value: MasterProfileApiRecord | MasterProfileUpdatedRecord,
+  fallbackProfile: MasterProfileData,
+) {
+  const profileRecord = "profile" in value ? value.profile : value;
+
+  const parsedProfile = toMasterProfileData(profileRecord.content);
+
+  return {
+    updatedAt:
+      profileRecord.updatedAt ??
+      parsedProfile?.updatedAt ??
+      fallbackProfile.updatedAt ??
+      new Date().toISOString(),
+    profile: parsedProfile ?? normalizeProfile(fallbackProfile),
+    summary: "summary" in value ? (value.summary ?? null) : null,
+  } satisfies MasterProfileBundleState;
+}
+
 export async function loadMasterProfileFromDatabase() {
   try {
     const profileRecord = await fetchApiData<MasterProfileApiRecord>(
@@ -273,8 +302,12 @@ export async function saveMasterProfileToDatabase(
 ) {
   const normalized = normalizeProfile(profile);
 
-  return fetchApiData<MasterProfileApiRecord>("/profiles/master", {
+  const payload = await fetchApiData<
+    MasterProfileApiRecord | MasterProfileUpdatedRecord
+  >("/profiles/master", {
     method: "PUT",
     body: JSON.stringify({ profile: normalized, expectedUpdatedAt }),
   });
+
+  return parseSavedMasterProfileResponse(payload, normalized);
 }
