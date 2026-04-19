@@ -1,5 +1,6 @@
 import { Queue, Worker, type Job } from "bullmq";
 import IORedis from "ioredis";
+import { createHash } from "node:crypto";
 
 import { config } from "#config";
 
@@ -30,6 +31,7 @@ type ExportJobData =
       snapshot: ResumeSnapshot;
       format: ExportFormat;
       fileNameBase: string;
+      renderHtml?: string;
     }
   | {
       ownerType: "public-share";
@@ -37,6 +39,7 @@ type ExportJobData =
       snapshot: ResumeSnapshot;
       format: ExportFormat;
       fileNameBase: string;
+      renderHtml?: string;
     };
 
 type StoredArtifact = {
@@ -76,6 +79,13 @@ function withTimeout<T>(promise: Promise<T>, timeoutMs: number) {
 
 function getArtifactKey(jobId: string) {
   return `${config.exportQueue.artifactPrefix}${jobId}`;
+}
+
+function getRenderCacheKey(snapshot: ResumeSnapshot, format: ExportFormat, renderHtml?: string) {
+  const payloadHash = createHash("sha256").update(JSON.stringify(snapshot)).digest("hex");
+  const htmlHash = renderHtml ? createHash("sha256").update(renderHtml).digest("hex") : "no-html";
+
+  return `${config.exportQueue.artifactPrefix}render:${format}:${payloadHash}:${htmlHash}`;
 }
 
 function getBullRedisConnection() {
@@ -131,10 +141,45 @@ async function ensureWorkerStarted() {
   worker = new Worker<ExportJobData>(
     config.exportQueue.name,
     async (job) => {
-      const rendered = await withTimeout(
-        exportResumeSnapshot(job.data.snapshot, job.data.format),
-        config.exportQueue.timeoutMs,
+      const redis = getRedis();
+      const renderCacheKey = getRenderCacheKey(
+        job.data.snapshot,
+        job.data.format,
+        job.data.renderHtml,
       );
+      const cachedRenderedRaw = await redis.get(renderCacheKey);
+
+      let rendered: Awaited<ReturnType<typeof exportResumeSnapshot>>;
+
+      if (cachedRenderedRaw) {
+        const cachedRendered = JSON.parse(cachedRenderedRaw) as {
+          contentType: string;
+          extension: string;
+          bufferBase64: string;
+        };
+
+        rendered = {
+          buffer: Buffer.from(cachedRendered.bufferBase64, "base64"),
+          contentType: cachedRendered.contentType,
+          extension: cachedRendered.extension,
+        };
+      } else {
+        rendered = await withTimeout(
+          exportResumeSnapshot(job.data.snapshot, job.data.format, job.data.renderHtml),
+          config.exportQueue.timeoutMs,
+        );
+
+        await redis.setEx(
+          renderCacheKey,
+          Math.ceil(config.exportQueue.renderCacheTtlMs / 1000),
+          JSON.stringify({
+            contentType: rendered.contentType,
+            extension: rendered.extension,
+            bufferBase64: rendered.buffer.toString("base64"),
+          }),
+        );
+      }
+
       const expiresAtMs = Date.now() + config.exportQueue.resultTtlMs;
 
       const artifact: StoredArtifact = {
@@ -153,7 +198,6 @@ async function ensureWorkerStarted() {
             }),
       };
 
-      const redis = getRedis();
       await redis.setEx(
         getArtifactKey(job.id!),
         Math.ceil(config.exportQueue.resultTtlMs / 1000),
@@ -230,6 +274,7 @@ export async function enqueueUserExportJob(input: {
   snapshot: ResumeSnapshot;
   format: ExportFormat;
   fileNameBase: string;
+  renderHtml?: string;
 }): Promise<QueueMeta> {
   await ensureWorkerStarted();
   await ensureCapacity();
@@ -244,6 +289,7 @@ export async function enqueueUserExportJob(input: {
       snapshot: input.snapshot,
       format: input.format,
       fileNameBase: input.fileNameBase,
+      renderHtml: input.renderHtml,
     },
     {
       removeOnComplete: {
@@ -269,6 +315,7 @@ export async function enqueuePublicShareExportJob(input: {
   snapshot: ResumeSnapshot;
   format: ExportFormat;
   fileNameBase: string;
+  renderHtml?: string;
 }): Promise<QueueMeta> {
   await ensureWorkerStarted();
   await ensureCapacity();
@@ -282,6 +329,7 @@ export async function enqueuePublicShareExportJob(input: {
       snapshot: input.snapshot,
       format: input.format,
       fileNameBase: input.fileNameBase,
+      renderHtml: input.renderHtml,
     },
     {
       removeOnComplete: {
@@ -335,6 +383,9 @@ export async function consumeUserExportArtifact(jobId: string, userId: string) {
     throw new ApiError(409, "Export job is not ready for download");
   }
 
+  const redis = getRedis();
+  await redis.del(getArtifactKey(jobId));
+
   return {
     fileNameBase: artifact.fileNameBase,
     contentType: artifact.contentType,
@@ -355,6 +406,9 @@ export async function consumePublicShareExportArtifact(jobId: string, shareToken
   if (state !== "completed" || !artifact) {
     throw new ApiError(409, "Export job is not ready for download");
   }
+
+  const redis = getRedis();
+  await redis.del(getArtifactKey(jobId));
 
   return {
     fileNameBase: artifact.fileNameBase,

@@ -29,11 +29,13 @@ const exportFormatSchema = z.enum(["pdf", "png", "jpg"]);
 const resumeExportSchema = z.object({
   format: exportFormatSchema,
   snapshot: z.record(z.any()),
+  renderHtml: z.string().min(1).max(3_000_000).optional(),
 });
 
 const publicShareExportSchema = z.object({
   format: exportFormatSchema,
   password: z.string().optional(),
+  renderHtml: z.string().min(1).max(3_000_000).optional(),
 });
 
 const scryptAsync = promisify(scrypt);
@@ -146,6 +148,7 @@ export async function createResumeExportJobController(
       snapshot,
       format: body.format as ExportFormat,
       fileNameBase,
+      renderHtml: body.renderHtml,
     });
 
     res.status(202).json(
@@ -269,6 +272,7 @@ export async function createPublicShareExportJobController(
       snapshot: shareLink.snapshot as ResumeSnapshot,
       format: body.format as ExportFormat,
       fileNameBase: shareLink.resumeTitle,
+      renderHtml: body.renderHtml,
     });
 
     res.status(202).json(

@@ -289,7 +289,7 @@ const masterProfileContentSchema = z
         sectionBackgroundColor: z.string().max(32),
         borderColor: z.string().max(32),
         sectionHeadingColor: z.string().max(32),
-        fontFamily: z.enum(["geist", "serif", "mono", "modern"]),
+        fontFamily: z.string().trim().min(1).max(32),
         sectionSpacing: z.number().min(0).max(120),
         pagePadding: z.number().min(0).max(120),
         bodyLineHeight: z.number().min(1).max(3),

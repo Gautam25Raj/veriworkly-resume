@@ -1,16 +1,16 @@
 import { Router } from "express";
 
-import {
-  createResumeExportJobController,
-  getResumeExportJobStatusController,
-  downloadResumeExportJobController,
-  exportResumeDirectController,
-  createPublicShareExportJobController,
-  getPublicShareExportJobStatusController,
-  downloadPublicShareExportJobController,
-  exportPublicShareDirectController,
-} from "#controllers/exportController";
 import { authMiddleware } from "#middleware/auth";
+
+import {
+  exportResumeDirectController,
+  createResumeExportJobController,
+  downloadResumeExportJobController,
+  getResumeExportJobStatusController,
+  createPublicShareExportJobController,
+  downloadPublicShareExportJobController,
+  getPublicShareExportJobStatusController,
+} from "#controllers/exportController";
 
 const router = Router();
 
@@ -59,11 +59,5 @@ router.get("/shares/:token/jobs/:jobId", getPublicShareExportJobStatusController
  * GET /exports/shares/:token/jobs/:jobId/download
  */
 router.get("/shares/:token/jobs/:jobId/download", downloadPublicShareExportJobController);
-
-/**
- * Direct export for public share
- * POST /exports/shares/:token/direct
- */
-router.post("/shares/:token/direct", exportPublicShareDirectController);
 
 export default router;

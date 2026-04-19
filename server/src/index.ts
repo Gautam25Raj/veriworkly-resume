@@ -47,8 +47,8 @@ app.use(rateLimitMiddleware);
 app.use(loggingMiddleware);
 
 // Body parser middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: "4mb" }));
+app.use(express.urlencoded({ extended: true, limit: "4mb" }));
 
 // Trust proxy (for accurate IP addresses behind reverse proxies)
 app.set("trust proxy", true);

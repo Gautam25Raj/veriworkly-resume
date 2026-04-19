@@ -92,6 +92,7 @@ export const config = {
     maxQueuedExports: parseInt(process.env.EXPORT_MAX_QUEUED || "120", 10),
     timeoutMs: parseInt(process.env.EXPORT_TIMEOUT_MS || "45000", 10),
     resultTtlMs: parseInt(process.env.EXPORT_RESULT_TTL_MS || "900000", 10),
+    renderCacheTtlMs: parseInt(process.env.EXPORT_RENDER_CACHE_TTL_MS || "300000", 10),
   },
 };
 
