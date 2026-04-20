@@ -3,6 +3,8 @@ import { promisify } from "node:util";
 import { NextFunction, Request, Response } from "express";
 import { scrypt, timingSafeEqual, createHash } from "node:crypto";
 
+import type { ResumeShareLink } from "@prisma/client";
+
 import { requireAuthUser } from "#middleware/auth";
 
 import { prisma } from "#utils/prisma";
@@ -14,6 +16,11 @@ import {
   type ResumeSnapshot,
   exportResumeSnapshot,
 } from "#services/exportService";
+import {
+  type ArtifactProvider,
+  readExportArtifact,
+  storeExportArtifact,
+} from "#services/exportArtifactStore";
 import {
   enqueueUserExportJob,
   getUserExportJobStatus,
@@ -29,11 +36,13 @@ const exportFormatSchema = z.enum(["pdf", "png", "jpg"]);
 const resumeExportSchema = z.object({
   format: exportFormatSchema,
   snapshot: z.record(z.any()),
+  renderHtml: z.string().min(1).max(3_000_000).optional(),
 });
 
 const publicShareExportSchema = z.object({
   format: exportFormatSchema,
   password: z.string().optional(),
+  renderHtml: z.string().min(1).max(3_000_000).optional(),
 });
 
 const scryptAsync = promisify(scrypt);
@@ -91,31 +100,63 @@ function sendDownload(
  * Hashes the snapshot to prevent redundant Playwright rendering.
  */
 
-async function getOrRenderDirectExport(snapshot: ResumeSnapshot, format: ExportFormat) {
+async function getOrRenderDirectExport(
+  snapshot: ResumeSnapshot,
+  format: ExportFormat,
+  renderHtml?: string,
+) {
   const payloadHash = createHash("sha256").update(JSON.stringify(snapshot)).digest("hex");
-  const cacheKey = `export:direct:${format}:${payloadHash}`;
+  const htmlHash = renderHtml ? createHash("sha256").update(renderHtml).digest("hex") : "no-html";
+  const cacheKey = `export:direct:${format}:${payloadHash}:${htmlHash}`;
 
-  type CachedArtifact = { bufferBase64: string; contentType: string; extension: string };
+  type CachedArtifact = {
+    storageProvider: ArtifactProvider;
+    storageKey: string;
+    contentType: string;
+    extension: string;
+    sizeBytes: number;
+  };
 
   const cached = await cacheGet<CachedArtifact>(cacheKey);
 
   if (cached) {
-    return {
-      buffer: Buffer.from(cached.bufferBase64, "base64"),
-      contentType: cached.contentType,
-      extension: cached.extension,
-    };
+    const cachedBuffer = await readExportArtifact({
+      provider: cached.storageProvider,
+      key: cached.storageKey,
+    });
+
+    if (cachedBuffer) {
+      return {
+        buffer: cachedBuffer,
+        contentType: cached.contentType,
+        extension: cached.extension,
+      };
+    }
+
+    // Cache metadata may outlive file cleanup windows; fall through and re-render.
   }
 
-  const rendered = await exportResumeSnapshot(snapshot, format);
+  const rendered = await exportResumeSnapshot(snapshot, format, renderHtml);
+
+  const directCacheExpiresAt = new Date(Date.now() + 120_000);
+  const pointer = await storeExportArtifact({
+    jobId: `direct-${payloadHash.slice(0, 12)}`,
+    purpose: "direct-cache",
+    extension: rendered.extension,
+    contentType: rendered.contentType,
+    buffer: rendered.buffer,
+    expiresAt: directCacheExpiresAt,
+  });
 
   const artifactToCache: CachedArtifact = {
-    bufferBase64: rendered.buffer.toString("base64"),
+    storageProvider: pointer.provider,
+    storageKey: pointer.key,
+    sizeBytes: pointer.sizeBytes,
     contentType: rendered.contentType,
     extension: rendered.extension,
   };
 
-  await cacheSet(cacheKey, artifactToCache, 300);
+  await cacheSet(cacheKey, artifactToCache, 120);
 
   return rendered;
 }
@@ -146,6 +187,7 @@ export async function createResumeExportJobController(
       snapshot,
       format: body.format as ExportFormat,
       fileNameBase,
+      renderHtml: body.renderHtml,
     });
 
     res.status(202).json(
@@ -218,7 +260,7 @@ export async function exportResumeDirectController(
     const snapshot = body.snapshot as ResumeSnapshot;
     const format = body.format as ExportFormat;
 
-    const rendered = await getOrRenderDirectExport(snapshot, format);
+    const rendered = await getOrRenderDirectExport(snapshot, format, body.renderHtml);
 
     const title = (snapshot.basics?.fullName && String(snapshot.basics.fullName)) || "resume";
     const fileName = buildExportFileName(title, rendered.extension);
@@ -248,7 +290,7 @@ export async function createPublicShareExportJobController(
     const body = publicShareExportSchema.parse(req.body);
 
     const cacheKey = `share:public:${token}`;
-    let shareLink: any = await cacheGet(cacheKey);
+    let shareLink: ResumeShareLink | null = await cacheGet<ResumeShareLink>(cacheKey);
 
     if (!shareLink) {
       shareLink = await prisma.resumeShareLink.findUnique({ where: { token } });
@@ -269,6 +311,7 @@ export async function createPublicShareExportJobController(
       snapshot: shareLink.snapshot as ResumeSnapshot,
       format: body.format as ExportFormat,
       fileNameBase: shareLink.resumeTitle,
+      renderHtml: body.renderHtml,
     });
 
     res.status(202).json(
@@ -336,7 +379,7 @@ export async function exportPublicShareDirectController(
     const parsedQuery = publicShareExportSchema.parse(req.query);
 
     const cacheKey = `share:public:${token}`;
-    let shareLink: any = await cacheGet(cacheKey);
+    let shareLink: ResumeShareLink | null = await cacheGet<ResumeShareLink>(cacheKey);
 
     if (!shareLink) {
       shareLink = await prisma.resumeShareLink.findUnique({ where: { token } });
@@ -355,7 +398,7 @@ export async function exportPublicShareDirectController(
     const snapshot = shareLink.snapshot as ResumeSnapshot;
     const format = parsedQuery.format as ExportFormat;
 
-    const rendered = await getOrRenderDirectExport(snapshot, format);
+    const rendered = await getOrRenderDirectExport(snapshot, format, parsedQuery.renderHtml);
 
     const fileName = buildExportFileName(shareLink.resumeTitle, rendered.extension);
 

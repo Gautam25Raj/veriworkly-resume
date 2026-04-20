@@ -5,7 +5,7 @@ import {
   defaultResume,
   defaultSections,
 } from "@/features/resume/constants/default-resume";
-import { templateRegistry } from "@/templates";
+import { loadTemplateComponentById, templateRegistry } from "@/templates";
 import {
   splitSectionsByPlacement,
   TEMPLATE_SECTION_PLACEMENT,
@@ -22,10 +22,12 @@ describe("template render contract", () => {
     );
   });
 
-  it("renders every registered template for canonical resume data", () => {
+  it("renders every registered template for canonical resume data", async () => {
     for (const template of templateRegistry) {
+      const TemplateComponent = await loadTemplateComponentById(template.id);
+
       const html = renderToStaticMarkup(
-        <template.Component
+        <TemplateComponent
           resume={{
             ...defaultResume,
             templateId: template.id,
@@ -38,7 +40,7 @@ describe("template render contract", () => {
     }
   });
 
-  it("omits basics header when basics section is hidden", () => {
+  it("omits basics header when basics section is hidden", async () => {
     const hiddenBasicsResume = {
       ...defaultResume,
       sections: defaultResume.sections.map((section) =>
@@ -47,8 +49,10 @@ describe("template render contract", () => {
     };
 
     for (const template of templateRegistry) {
+      const TemplateComponent = await loadTemplateComponentById(template.id);
+
       const html = renderToStaticMarkup(
-        <template.Component
+        <TemplateComponent
           resume={{ ...hiddenBasicsResume, templateId: template.id }}
         />,
       );
