@@ -383,9 +383,6 @@ export async function consumeUserExportArtifact(jobId: string, userId: string) {
     throw new ApiError(409, "Export job is not ready for download");
   }
 
-  const redis = getRedis();
-  await redis.del(getArtifactKey(jobId));
-
   return {
     fileNameBase: artifact.fileNameBase,
     contentType: artifact.contentType,
@@ -406,9 +403,6 @@ export async function consumePublicShareExportArtifact(jobId: string, shareToken
   if (state !== "completed" || !artifact) {
     throw new ApiError(409, "Export job is not ready for download");
   }
-
-  const redis = getRedis();
-  await redis.del(getArtifactKey(jobId));
 
   return {
     fileNameBase: artifact.fileNameBase,

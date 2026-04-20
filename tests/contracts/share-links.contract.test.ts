@@ -45,14 +45,14 @@ describe("share links contract", () => {
 
     expect(result.token).toBe("tok_123");
     expect(fetchMock).toHaveBeenCalledWith(
-      `http://localhost:4000/api/v1/resumes/${defaultResume.id}/share-links`,
+      `http://localhost:4000/api/v1/shares/resumes/${defaultResume.id}`,
       expect.objectContaining({
         method: "POST",
         credentials: "include",
       }),
     );
     expect(mockedBackendApiUrl).toHaveBeenCalledWith(
-      `/resumes/${defaultResume.id}/share-links`,
+      `/shares/resumes/${defaultResume.id}`,
     );
   });
 
