@@ -1,5 +1,7 @@
 import { chromium, type Browser } from "playwright";
 
+import { config } from "#config";
+
 import { ApiError } from "#utils/errors";
 
 type ExportFormat = "pdf" | "png" | "jpg";
@@ -96,6 +98,31 @@ function resolveSnapshotFontFamily(snapshot: ResumeSnapshot) {
 }
 
 let browserInstance: Browser | null = null;
+let activeRenderCount = 0;
+const pendingRenderResolvers: Array<() => void> = [];
+
+async function acquireRenderSlot() {
+  if (activeRenderCount < config.exportQueue.maxConcurrentExports) {
+    activeRenderCount += 1;
+    return;
+  }
+
+  await new Promise<void>((resolve) => {
+    pendingRenderResolvers.push(() => {
+      activeRenderCount += 1;
+      resolve();
+    });
+  });
+}
+
+function releaseRenderSlot() {
+  activeRenderCount = Math.max(0, activeRenderCount - 1);
+
+  const next = pendingRenderResolvers.shift();
+  if (next) {
+    next();
+  }
+}
 
 function escapeHtml(value: string) {
   return value
@@ -273,6 +300,8 @@ export async function exportResumeSnapshot(
   format: ExportFormat,
   renderHtml?: string,
 ): Promise<ExportResult> {
+  await acquireRenderSlot();
+
   const browser = await getBrowser();
   const context = await browser.newContext({
     viewport: {
@@ -292,18 +321,10 @@ export async function exportResumeSnapshot(
     });
 
     await page.evaluate(async () => {
-      const doc = (
-        globalThis as {
-          document?: {
-            fonts?: {
-              ready?: Promise<unknown>;
-            };
-          };
-        }
-      ).document;
+      const fontsReady = document.fonts?.ready;
 
-      if (doc?.fonts?.ready) {
-        await doc.fonts.ready;
+      if (fontsReady) {
+        await fontsReady;
       }
     });
 
@@ -392,6 +413,7 @@ export async function exportResumeSnapshot(
   } finally {
     await page.close();
     await context.close();
+    releaseRenderSlot();
   }
 }
 

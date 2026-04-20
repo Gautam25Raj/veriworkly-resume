@@ -3,6 +3,8 @@ import { promisify } from "node:util";
 import { NextFunction, Request, Response } from "express";
 import { randomBytes, scrypt, timingSafeEqual } from "node:crypto";
 
+import type { ResumeShareLink } from "@prisma/client";
+
 import { Prisma } from "@prisma/client";
 
 import { requireAuthUser } from "#middleware/auth";
@@ -272,7 +274,7 @@ export async function getPublicShareLinkController(
     if (!token) throw new ApiError(400, "Share token is required");
 
     const cacheKey = `share:public:${token}`;
-    let shareLink: any = await cacheGet(cacheKey);
+    let shareLink: ResumeShareLink | null = await cacheGet<ResumeShareLink>(cacheKey);
 
     if (!shareLink) {
       shareLink = await prisma.resumeShareLink.findUnique({
@@ -336,7 +338,7 @@ export async function verifyPublicShareLinkController(
     const body = shareLinkPasswordSchema.parse(req.body);
 
     const cacheKey = `share:public:${token}`;
-    let shareLink: any = await cacheGet(cacheKey);
+    let shareLink: ResumeShareLink | null = await cacheGet<ResumeShareLink>(cacheKey);
 
     if (!shareLink) {
       shareLink = await prisma.resumeShareLink.findUnique({ where: { token } });

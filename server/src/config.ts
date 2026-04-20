@@ -2,6 +2,9 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+const defaultAuthSessionCacheEnabled =
+  (process.env.NODE_ENV || "development") === "production" ? "true" : "false";
+
 export const config = {
   nodeEnv: process.env.NODE_ENV || "development",
   port: parseInt(process.env.PORT || "8080", 10),
@@ -29,7 +32,8 @@ export const config = {
     baseUrl: process.env.AUTH_BASE_URL || "http://localhost:8080",
     sessionTtlSeconds: parseInt(process.env.AUTH_SESSION_TTL_SECONDS || "2592000", 10),
     sessionResetTtlOnUse: parseInt(process.env.AUTH_SESSION_RESET_TTL_ON_USE || "86400", 10),
-    sessionCacheEnabled: (process.env.AUTH_SESSION_CACHE_ENABLED || "false") === "true",
+    sessionCacheEnabled:
+      (process.env.AUTH_SESSION_CACHE_ENABLED || defaultAuthSessionCacheEnabled) === "true",
     sessionCacheMaxAgeSeconds: parseInt(
       process.env.AUTH_SESSION_CACHE_MAX_AGE_SECONDS || "900",
       10,
@@ -91,8 +95,30 @@ export const config = {
     maxConcurrentExports: parseInt(process.env.EXPORT_MAX_CONCURRENCY || "2", 10),
     maxQueuedExports: parseInt(process.env.EXPORT_MAX_QUEUED || "120", 10),
     timeoutMs: parseInt(process.env.EXPORT_TIMEOUT_MS || "45000", 10),
-    resultTtlMs: parseInt(process.env.EXPORT_RESULT_TTL_MS || "900000", 10),
+    resultTtlMs: parseInt(process.env.EXPORT_RESULT_TTL_MS || "600000", 10),
     renderCacheTtlMs: parseInt(process.env.EXPORT_RENDER_CACHE_TTL_MS || "300000", 10),
+  },
+
+  exportArtifacts: {
+    provider: (process.env.EXPORT_ARTIFACT_PROVIDER || "local").toLowerCase(),
+    localDir: process.env.EXPORT_ARTIFACT_LOCAL_DIR || "tmp/export-artifacts",
+    localCleanupIntervalMs: parseInt(
+      process.env.EXPORT_ARTIFACT_LOCAL_CLEANUP_INTERVAL_MS || "300000",
+      10,
+    ),
+    localCleanupGraceMs: parseInt(
+      process.env.EXPORT_ARTIFACT_LOCAL_CLEANUP_GRACE_MS || "300000",
+      10,
+    ),
+    oci: {
+      endpoint: process.env.EXPORT_ARTIFACT_OCI_ENDPOINT || "",
+      region: process.env.EXPORT_ARTIFACT_OCI_REGION || "us-ashburn-1",
+      bucket: process.env.EXPORT_ARTIFACT_OCI_BUCKET || "",
+      accessKeyId: process.env.EXPORT_ARTIFACT_OCI_ACCESS_KEY_ID || "",
+      secretAccessKey: process.env.EXPORT_ARTIFACT_OCI_SECRET_ACCESS_KEY || "",
+      keyPrefix: process.env.EXPORT_ARTIFACT_OCI_KEY_PREFIX || "resume-exports/",
+      forcePathStyle: (process.env.EXPORT_ARTIFACT_OCI_FORCE_PATH_STYLE || "true") === "true",
+    },
   },
 };
 

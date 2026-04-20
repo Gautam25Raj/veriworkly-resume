@@ -27,6 +27,7 @@ import { authNodeHandler } from "#auth/index";
 import { ensureAdminUserExists, validateAuthRuntimeConfig } from "#auth/runtime";
 
 import { closeExportBrowser } from "#services/exportService";
+import { initExportArtifactStore, closeExportArtifactStore } from "#services/exportArtifactStore";
 import { startExportQueueWorker, stopExportQueueCleanup } from "#services/exportQueueService";
 
 import { startGitHubSyncJob, stopGitHubSyncJob } from "#jobs/githubSyncJob";
@@ -83,6 +84,7 @@ async function shutdown() {
     stopExportQueueCleanup();
 
     await closeExportBrowser();
+    await closeExportArtifactStore();
     await closeRedis();
     await prisma.$disconnect();
     process.exit(0);
@@ -103,6 +105,9 @@ async function main() {
     // Initialize Redis
     await initRedis();
     logger.info("Redis initialized");
+
+    await initExportArtifactStore();
+    logger.info("Export artifact storage initialized");
 
     // Test database connection
     logger.info("Database connected");
