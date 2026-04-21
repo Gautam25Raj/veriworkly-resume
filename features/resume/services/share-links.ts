@@ -113,7 +113,13 @@ export async function revokeResumeShareLink(
 export async function exportResumeViaServer(
   resume: ResumeData,
   format: "pdf" | "png" | "jpg",
+  renderHtml?: string | null,
 ) {
+  const sleep = (ms: number) =>
+    new Promise<void>((resolve) => {
+      setTimeout(resolve, ms);
+    });
+
   const queueResponse = await fetch(
     backendApiUrl(`/exports/resumes/${resume.id}/jobs`),
     {
@@ -125,6 +131,7 @@ export async function exportResumeViaServer(
       body: JSON.stringify({
         format,
         snapshot: resume,
+        renderHtml: renderHtml || undefined,
       }),
     },
   );
@@ -167,6 +174,7 @@ export async function exportResumeViaServer(
     const statusPayload = (await statusResponse.json()) as {
       data: {
         status: "queued" | "processing" | "completed" | "failed";
+        ready?: boolean;
         errorMessage?: string | null;
       };
     };
@@ -181,23 +189,34 @@ export async function exportResumeViaServer(
       break;
     }
 
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await sleep(2000);
   }
 
   if (Date.now() >= pollTimeoutAt) {
     throw new Error("Server export is taking too long. Please retry.");
   }
 
-  const response = await fetch(
-    backendApiUrl(`/exports/jobs/${jobId}/download`),
-    {
+  let response: Response | null = null;
+
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    response = await fetch(backendApiUrl(`/exports/jobs/${jobId}/download`), {
       method: "GET",
       credentials: "include",
-    },
-  );
+    });
 
-  if (!response.ok) {
-    const payload = (await response.json().catch(() => ({}))) as {
+    if (response.ok) {
+      break;
+    }
+
+    if (response.status !== 409) {
+      break;
+    }
+
+    await sleep(2000);
+  }
+
+  if (!response || !response.ok) {
+    const payload = (await response?.json().catch(() => ({}))) as {
       message?: string;
     };
 

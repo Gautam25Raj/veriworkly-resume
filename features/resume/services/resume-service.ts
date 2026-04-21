@@ -27,12 +27,10 @@ export {
 } from "./resume-core";
 
 export {
-  type ResumeImageFormat,
   exportResumeAsDocx,
   exportResumeAsHtml,
   exportResumeAsJson,
   exportResumeAsText,
-  exportResumeAsImage,
   exportResumeAsMarkdown,
 } from "./resume-export";
 

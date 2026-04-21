@@ -16,6 +16,6 @@ export interface TemplateMeta {
   tags: string[];
 }
 
-export interface TemplateDefinition extends TemplateMeta {
-  Component: ComponentType<TemplateRenderProps>;
-}
+export interface TemplateDefinition extends TemplateMeta {}
+
+export type TemplateComponent = ComponentType<TemplateRenderProps>;

@@ -3,6 +3,7 @@ import { z } from "zod";
 import type { ResumeData } from "@/types/resume";
 
 import { normalizeResumeData } from "@/features/resume/utils/normalize-data";
+import { normalizeResumeFontFamilyId } from "@/features/resume/constants/resume-fonts";
 
 const resumeSectionIdSchema = z.enum([
   "basics",
@@ -55,7 +56,12 @@ const resumeSyncStatusSchema = z.enum([
   "conflicted",
 ]);
 
-const resumeFontFamilySchema = z.enum(["geist", "serif", "mono", "modern"]);
+const resumeFontFamilySchema = z
+  .string()
+  .trim()
+  .min(1)
+  .max(32)
+  .transform((value) => normalizeResumeFontFamilyId(value));
 
 const resumeDataSchemaBase = z
   .object({
@@ -188,7 +194,8 @@ const resumeDataSchemaBase = z
   })
   .passthrough();
 
-export const resumeDataSchema: z.ZodType<ResumeData> = resumeDataSchemaBase;
+export const resumeDataSchema: z.ZodType<ResumeData, z.ZodTypeDef, unknown> =
+  resumeDataSchemaBase;
 
 const resumeDataInputSchema = resumeDataSchemaBase.deepPartial();
 

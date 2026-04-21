@@ -64,8 +64,10 @@ export const roadmapAdminCreateSchema = z.object({
   fullDescription: z.string().nullable().optional(),
   whyItMatters: z.string().nullable().optional(),
   timeline: z.string().nullable().optional(),
+  createdAt: z.string().datetime().optional(),
   startedAt: z.string().datetime().optional(),
   completedAt: z.string().datetime().optional(),
+  updatedAt: z.string().datetime().optional(),
   completedQuarter: z.string().optional(),
   details: roadmapDetailsSchema,
 });

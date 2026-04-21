@@ -15,8 +15,6 @@ import {
   getResumeFileBaseName,
 } from "./resume-formatters";
 
-export { exportResumeAsImage, type ResumeImageFormat } from "./export/image";
-
 function downloadBlob(blob: Blob, fileName: string): void {
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");

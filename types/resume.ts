@@ -1,3 +1,5 @@
+import type { ResumeFontFamilyId } from "@/types/resume-font";
+
 export type ResumeSectionId =
   | "basics"
   | "links"
@@ -205,7 +207,7 @@ export interface ResumeCustomization {
   sectionBackgroundColor: string;
   borderColor: string;
   sectionHeadingColor: string;
-  fontFamily: "geist" | "serif" | "mono" | "modern";
+  fontFamily: ResumeFontFamilyId;
   sectionSpacing: number;
   pagePadding: number;
   bodyLineHeight: number;
