@@ -50,7 +50,13 @@ export async function downloadPublicShareExport(
   token: string,
   format: "pdf" | "png" | "jpg",
   password?: string,
+  renderHtml?: string | null,
 ) {
+  const sleep = (ms: number) =>
+    new Promise<void>((resolve) => {
+      setTimeout(resolve, ms);
+    });
+
   const queueResponse = await fetch(
     backendApiUrl(`/share-links/${token}/export/jobs`),
     {
@@ -62,6 +68,7 @@ export async function downloadPublicShareExport(
       body: JSON.stringify({
         format,
         password,
+        renderHtml: renderHtml || undefined,
       }),
     },
   );
@@ -102,6 +109,7 @@ export async function downloadPublicShareExport(
     const statusPayload = (await statusResponse.json()) as {
       data: {
         status: "queued" | "processing" | "completed" | "failed";
+        ready?: boolean;
         errorMessage?: string | null;
       };
     };
@@ -116,23 +124,37 @@ export async function downloadPublicShareExport(
       break;
     }
 
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await sleep(2000);
   }
 
   if (Date.now() >= pollTimeoutAt) {
     throw new Error("Shared export is taking too long. Please retry.");
   }
 
-  const response = await fetch(
-    backendApiUrl(`/share-links/${token}/export/jobs/${jobId}/download`),
-    {
-      method: "GET",
-      credentials: "include",
-    },
-  );
+  let response: Response | null = null;
 
-  if (!response.ok) {
-    const payload = (await response.json().catch(() => ({}))) as {
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    response = await fetch(
+      backendApiUrl(`/share-links/${token}/export/jobs/${jobId}/download`),
+      {
+        method: "GET",
+        credentials: "include",
+      },
+    );
+
+    if (response.ok) {
+      break;
+    }
+
+    if (response.status !== 409) {
+      break;
+    }
+
+    await sleep(2000);
+  }
+
+  if (!response || !response.ok) {
+    const payload = (await response?.json().catch(() => ({}))) as {
       message?: string;
     };
     throw new Error(payload.message || "Could not download shared export");

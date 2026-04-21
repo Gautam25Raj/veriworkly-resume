@@ -711,13 +711,15 @@ export async function syncResumeNow(
     };
   }
 
-  if (!resume.sync.enabled && !options?.force) {
-    clearOutboxItem(resumeId);
-    return {
-      ok: false,
-      message: "Resume is local-only. Enable sync before syncing.",
-      reason: "unknown",
-    };
+  if (!resume.sync.enabled) {
+    saveResume({
+      ...resume,
+      sync: {
+        ...resume.sync,
+        enabled: true,
+        status: "pending",
+      },
+    });
   }
 
   setLocalSyncState(resumeId, "syncing");

@@ -63,7 +63,7 @@ const AdvancedProfileClient = () => {
       saveMasterProfileToLocalStorage(nextProfile);
       setProfile(nextProfile);
 
-      setUpdatedAt(savedBundle.profile.updatedAt);
+      setUpdatedAt(savedBundle.profile.updatedAt ?? null);
     } finally {
       setSaving(false);
     }
@@ -163,3 +163,4 @@ function AdvancedSkeleton() {
 }
 
 export default AdvancedProfileClient;
+

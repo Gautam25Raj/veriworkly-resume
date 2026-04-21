@@ -8,6 +8,7 @@ import {
   defaultResume,
   defaultSections,
 } from "@/features/resume/constants/default-resume";
+import { normalizeResumeFontFamilyId } from "@/features/resume/constants/resume-fonts";
 
 function isKnownLinkType(value: string): value is ResumeLinkType {
   return [
@@ -152,6 +153,11 @@ export function normalizeResumeData(
   const normalizedTemplateId =
     value?.templateId === "faang" ? "ats" : value?.templateId;
 
+  const incomingCustomization = value?.customization;
+  const incomingFontFamily = (
+    incomingCustomization as { fontFamily?: string } | undefined
+  )?.fontFamily;
+
   return {
     ...defaultResume,
     ...value,
@@ -175,7 +181,8 @@ export function normalizeResumeData(
     sections: normalizeSections(value),
     customization: {
       ...defaultResume.customization,
-      ...value?.customization,
+      ...incomingCustomization,
+      fontFamily: normalizeResumeFontFamilyId(incomingFontFamily),
     },
     sync: {
       ...defaultResume.sync,

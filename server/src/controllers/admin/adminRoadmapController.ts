@@ -43,6 +43,8 @@ export async function createRoadmapFeatureController(
       fullDescription: payload.fullDescription,
       whyItMatters: payload.whyItMatters,
       timeline: payload.timeline,
+      createdAt: payload.createdAt ? new Date(payload.createdAt) : undefined,
+      updatedAt: payload.updatedAt ? new Date(payload.updatedAt) : undefined,
       startedAt: payload.startedAt ? new Date(payload.startedAt) : undefined,
       completedAt: payload.completedAt ? new Date(payload.completedAt) : undefined,
       completedQuarter: payload.completedQuarter,

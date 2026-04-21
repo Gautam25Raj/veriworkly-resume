@@ -18,7 +18,9 @@ interface RoadmapAdminCreateInput {
   fullDescription?: string | null;
   whyItMatters?: string | null;
   timeline?: string | null;
+  createdAt?: Date;
   startedAt?: Date;
+  updatedAt?: Date;
   completedAt?: Date;
   completedQuarter?: string;
   details?: unknown;
@@ -105,6 +107,8 @@ export async function createRoadmapFeature(input: RoadmapAdminCreateInput) {
       fullDescription: input.fullDescription,
       whyItMatters: input.whyItMatters,
       timeline: input.timeline,
+      createdAt: input.createdAt || new Date(),
+      updatedAt: input.updatedAt || new Date(),
       startedAt,
       completedAt,
       completedQuarter,

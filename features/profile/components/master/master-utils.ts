@@ -1,23 +1,26 @@
 import type {
+  ResumeAward,
+  ResumeSection,
+  ResumeLanguage,
+  ResumeInterest,
+  ResumeReference,
+  ResumeVolunteer,
+  ResumeSkillGroup,
   MasterProfileData,
   ResumeAchievement,
-  ResumeAward,
   ResumeCertificate,
+  ResumeProjectItem,
+  ResumePublication,
   ResumeCustomSection,
   ResumeEducationItem,
   ResumeExperienceItem,
-  ResumeInterest,
-  ResumeLanguage,
-  ResumeProjectItem,
-  ResumePublication,
-  ResumeReference,
-  ResumeSection,
-  ResumeSkillGroup,
-  ResumeVolunteer,
 } from "@/types/resume";
 
+import { resumeFontOptions } from "@/features/resume/constants/resume-fonts";
+
 export const linkTypes = ["github", "linkedin", "portfolio"] as const;
-export const fontFamilies = ["geist", "serif", "mono", "modern"] as const;
+export const fontFamilies = resumeFontOptions.map((font) => font.value);
+
 export const fluencyOptions: ResumeLanguage["fluency"][] = [
   "elementary",
   "limited",
@@ -83,6 +86,7 @@ export function isValidAbsoluteUrl(value: string) {
 
 export function normalizeAbsoluteUrl(value: string) {
   const trimmed = value.trim();
+
   if (!trimmed) return "";
 
   if (trimmed.startsWith("//")) {
