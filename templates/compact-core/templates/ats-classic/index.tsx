@@ -20,10 +20,15 @@ import { LinkRow } from "./components/LinkRow";
 import { DateRange } from "./components/DateRange";
 import { SectionHeading } from "./components/SectionHeading";
 
-export default function AtsClassicTemplate({
-  className,
-  resume,
-}: TemplateRenderProps) {
+export default function AtsClassicTemplate(
+  props: TemplateRenderProps | null | undefined = undefined,
+) {
+  const { className, resume } = props ?? {};
+
+  if (!resume) {
+    return null;
+  }
+
   const orderedVisibleSections = getOrderedSections(resume.sections);
   const renderHeading = (title: string) => <SectionHeading title={title} />;
 

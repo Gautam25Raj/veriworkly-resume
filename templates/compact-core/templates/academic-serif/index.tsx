@@ -15,10 +15,15 @@ import {
 import { getOrderedSections } from "@/utils/resume";
 import { BaseShell } from "@/components/resume/BaseShell";
 
-export default function AcademicSerifTemplate({
-  className,
-  resume,
-}: TemplateRenderProps) {
+export default function AcademicSerifTemplate(
+  props: TemplateRenderProps | null | undefined = undefined,
+) {
+  const { className, resume } = props ?? {};
+
+  if (!resume) {
+    return null;
+  }
+
   const orderedVisibleSections = getOrderedSections(resume.sections);
 
   const customSectionTitle =
