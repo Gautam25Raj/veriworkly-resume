@@ -15,10 +15,15 @@ import { HeaderSection } from "./components/HeaderSection";
 import { SectionHeading } from "./components/SectionHeading";
 import { structuredProfessionalStyles } from "./styles";
 
-export default function StructuredProfessionalTemplate({
-  className,
-  resume,
-}: TemplateRenderProps) {
+export default function StructuredProfessionalTemplate(
+  props: TemplateRenderProps | null | undefined = undefined,
+) {
+  const { className, resume } = props ?? {};
+
+  if (!resume) {
+    return null;
+  }
+
   const orderedVisibleSections = getOrderedSections(resume.sections);
   const renderHeading = (title: string) => <SectionHeading title={title} />;
   const showHeader = orderedVisibleSections.some(

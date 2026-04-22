@@ -40,6 +40,20 @@ describe("template render contract", () => {
     }
   });
 
+  it("returns safely for missing template props", async () => {
+    for (const template of templateRegistry) {
+      const TemplateComponent = await loadTemplateComponentById(template.id);
+
+      expect(() =>
+        renderToStaticMarkup(<TemplateComponent {...({} as any)} />),
+      ).not.toThrow();
+
+      expect(() =>
+        renderToStaticMarkup(<TemplateComponent resume={null as any} />),
+      ).not.toThrow();
+    }
+  });
+
   it("omits basics header when basics section is hidden", async () => {
     const hiddenBasicsResume = {
       ...defaultResume,

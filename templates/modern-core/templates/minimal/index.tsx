@@ -23,10 +23,15 @@ import { BaseShell } from "@/components/resume/BaseShell";
 
 import { minimalStyles } from "@/templates/modern-core/templates/minimal/styles";
 
-export default function MinimalTemplate({
-  className,
-  resume,
-}: TemplateRenderProps) {
+export default function MinimalTemplate(
+  props: TemplateRenderProps | null | undefined = undefined,
+) {
+  const { className, resume } = props ?? {};
+
+  if (!resume) {
+    return null;
+  }
+
   const orderedVisibleSections = getOrderedSections(resume.sections);
   const showHeaderLinks = orderedVisibleSections.some(
     (section) => section.id === "links",

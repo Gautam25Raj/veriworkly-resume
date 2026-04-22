@@ -3,15 +3,21 @@
 import { useTheme } from "next-themes";
 import { Sun, Moon } from "lucide-react";
 
+import { cn } from "@/lib/utils";
+
 import { buttonClassName } from "@/components/ui/Button";
 
-export function ThemeToggle() {
+interface ThemeToggleProps {
+  className?: string;
+}
+
+const ThemeToggle = ({ className }: ThemeToggleProps) => {
   const { resolvedTheme, setTheme } = useTheme();
 
   return (
     <button
       aria-label="Toggle theme"
-      className={buttonClassName("ghost")}
+      className={cn(buttonClassName("ghost"), className)}
       onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
     >
       {resolvedTheme === "dark" ? (
@@ -21,4 +27,6 @@ export function ThemeToggle() {
       )}
     </button>
   );
-}
+};
+
+export { ThemeToggle };

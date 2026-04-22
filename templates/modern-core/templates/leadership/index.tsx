@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { Fragment } from "react";
 
 import type { ResumeSectionId } from "@/types/resume";
 import type { TemplateRenderProps } from "@/types/template";
@@ -28,10 +29,15 @@ import {
   TEMPLATE_SECTION_PLACEMENT,
 } from "@/templates/modern-core/shared/section-placement";
 
-export default function ExecutiveTemplate({
-  className,
-  resume,
-}: TemplateRenderProps) {
+export default function ExecutiveTemplate(
+  props: TemplateRenderProps | null | undefined = undefined,
+) {
+  const { className, resume } = props ?? {};
+
+  if (!resume) {
+    return null;
+  }
+
   const orderedVisibleSections = getOrderedSections(resume.sections);
 
   const showHeaderLinks = orderedVisibleSections.some(
@@ -145,7 +151,11 @@ export default function ExecutiveTemplate({
         <aside className={executiveStyles.sidebar}>
           {orderedSidebar.map((section) => {
             const renderSection = sidebarSectionRenderers[section.id];
-            return renderSection ? renderSection() : null;
+            return (
+              <Fragment key={section.id}>
+                {renderSection ? renderSection() : null}
+              </Fragment>
+            );
           })}
         </aside>
 
@@ -161,7 +171,11 @@ export default function ExecutiveTemplate({
           <div className="mt-8 space-y-(--section-gap)">
             {orderedMain.map((section) => {
               const renderSection = mainSectionRenderers[section.id];
-              return renderSection ? renderSection() : null;
+              return (
+                <Fragment key={section.id}>
+                  {renderSection ? renderSection() : null}
+                </Fragment>
+              );
             })}
           </div>
         </main>

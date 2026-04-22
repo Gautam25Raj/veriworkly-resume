@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { Fragment } from "react";
 
 import type { ResumeSectionId } from "@/types/resume";
 import type { TemplateRenderProps } from "@/types/template";
@@ -28,10 +29,15 @@ import {
 } from "@/templates/modern-core/shared/section-placement";
 import { modernStyles } from "@/templates/modern-core/templates/modern/styles";
 
-export default function ModernTemplate({
-  className,
-  resume,
-}: TemplateRenderProps) {
+export default function ModernTemplate(
+  props: TemplateRenderProps | null | undefined = undefined,
+) {
+  const { className, resume } = props ?? {};
+
+  if (!resume) {
+    return null;
+  }
+
   const orderedVisibleSections = getOrderedSections(resume.sections);
   const showHeaderLinks = orderedVisibleSections.some(
     (section) => section.id === "links",
@@ -152,14 +158,22 @@ export default function ModernTemplate({
         <div className={modernStyles.content}>
           {orderedMain.map((section) => {
             const renderSection = mainSectionRenderers[section.id];
-            return renderSection ? renderSection() : null;
+            return (
+              <Fragment key={section.id}>
+                {renderSection ? renderSection() : null}
+              </Fragment>
+            );
           })}
         </div>
 
         <div className={modernStyles.sidebar}>
           {orderedSidebar.map((section) => {
             const renderSection = sidebarSectionRenderers[section.id];
-            return renderSection ? renderSection() : null;
+            return (
+              <Fragment key={section.id}>
+                {renderSection ? renderSection() : null}
+              </Fragment>
+            );
           })}
         </div>
       </div>
