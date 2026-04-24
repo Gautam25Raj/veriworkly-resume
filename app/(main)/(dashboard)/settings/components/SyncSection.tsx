@@ -35,7 +35,8 @@ export default function SyncSection() {
   useEffect(() => {
     const settings = loadWorkspaceSettingsFromLocalStorage();
 
-    setAutoSync(settings.autoSyncEnabled);
+    // Use callback to update state after render
+    const timer = setTimeout(() => setAutoSync(settings.autoSyncEnabled), 0);
 
     const update = () => {
       const data = getWorkspaceSyncTelemetry();
@@ -49,8 +50,10 @@ export default function SyncSection() {
     update();
 
     window.addEventListener(RESUME_SYNC_OUTBOX_UPDATED_EVENT, update);
-    return () =>
+    return () => {
+      clearTimeout(timer);
       window.removeEventListener(RESUME_SYNC_OUTBOX_UPDATED_EVENT, update);
+    };
   }, []);
 
   const handleToggle = async (checked: boolean) => {

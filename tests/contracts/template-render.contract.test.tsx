@@ -45,11 +45,13 @@ describe("template render contract", () => {
       const TemplateComponent = await loadTemplateComponentById(template.id);
 
       expect(() =>
-        renderToStaticMarkup(<TemplateComponent {...({} as any)} />),
+        renderToStaticMarkup(
+          <TemplateComponent {...({} as Record<string, unknown>)} />,
+        ),
       ).not.toThrow();
 
       expect(() =>
-        renderToStaticMarkup(<TemplateComponent resume={null as any} />),
+        renderToStaticMarkup(<TemplateComponent resume={null as unknown} />),
       ).not.toThrow();
     }
   });

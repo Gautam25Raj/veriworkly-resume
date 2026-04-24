@@ -36,12 +36,19 @@ interface ShareResumeModalProps {
   onNotice: (msg: string) => void;
 }
 
+interface LinkItem {
+  token: string;
+  passwordRequired?: boolean;
+  viewCount: number;
+  expiresAt: string | null;
+}
+
 const ActiveLinkRow = ({
   link,
   onRevoke,
   onCopy,
 }: {
-  link: any;
+  link: LinkItem;
   onRevoke: () => void;
   onCopy: (m: string) => void;
 }) => {
@@ -104,7 +111,6 @@ const ActiveLinkRow = ({
 
 const ShareResumeModal = ({
   resumeId,
-  resumeTitle,
   onClose,
   onNotice,
 }: ShareResumeModalProps) => {
@@ -114,7 +120,6 @@ const ShareResumeModal = ({
   const [noExpiry, setNoExpiry] = useState(false);
 
   const [error, setError] = useState<string | null>(null);
-  const [shareUrl, setShareUrl] = useState<string | null>(null);
   const [shareLinks, setShareLinks] = useState<ResumeShareLinkItem[]>([]);
 
   const [linksLoading, setLinksLoading] = useState(false);

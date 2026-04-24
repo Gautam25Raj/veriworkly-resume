@@ -52,8 +52,8 @@ const UseCasesSection = () => {
         </h2>
 
         <p className="text-muted -mt-1 text-base leading-7">
-          Whether you're just starting out or an experienced professional, build
-          resumes tailored to your career stage and goals.
+          Whether you&apos;re just starting out or an experienced professional,
+          build resumes tailored to your career stage and goals.
         </p>
 
         <p className="sr-only">

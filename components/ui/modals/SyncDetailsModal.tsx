@@ -16,8 +16,8 @@ import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 
 interface SyncDetailsModalProps {
-  resume: any;
-  telemetry: any;
+  resume: Record<string, unknown>;
+  telemetry: Record<string, unknown>;
   syncingResumeId: string | null;
   onClose: () => void;
   onResolveUseLocal: (id: string) => void;

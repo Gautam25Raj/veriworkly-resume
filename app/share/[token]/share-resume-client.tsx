@@ -122,7 +122,7 @@ const ShareResumeClient = ({ token }: { token: string }) => {
     return () => {
       isActive = false;
     };
-  }, [resume?.templateId, resume?.customization?.fontFamily]);
+  }, [resume]);
 
   const handleUnlock = useCallback(async () => {
     if (!password) return;
