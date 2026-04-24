@@ -49,10 +49,15 @@ function formatExperienceDate(experience: ResumeExperienceItem) {
   return `${start} - ${end}`;
 }
 
-export default function ClassicAcademicTemplate({
-  className,
-  resume,
-}: TemplateRenderProps) {
+export default function ClassicAcademicTemplate(
+  props: TemplateRenderProps | null | undefined = undefined,
+) {
+  const { className, resume } = props ?? {};
+
+  if (!resume) {
+    return null;
+  }
+
   const orderedVisibleSections = getOrderedSections(resume.sections);
   const renderHeading = (title: string) => <SectionHeading title={title} />;
   const visibleLinks = resume.links.items.filter((item) => Boolean(item.url));

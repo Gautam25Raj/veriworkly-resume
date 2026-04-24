@@ -1,14 +1,23 @@
 "use client";
 
-import Link from "next/link";
+import {
+  Cloud,
+  Monitor,
+  History,
+  CloudOff,
+  RefreshCw,
+  AlertTriangle,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import { Modal } from "@/components/ui/Modal";
 import { Button } from "@/components/ui/Button";
 
+import { cn } from "@/lib/utils";
+
 interface SyncDetailsModalProps {
-  resume: any;
-  telemetry: any;
+  resume: Record<string, unknown>;
+  telemetry: Record<string, unknown>;
   syncingResumeId: string | null;
   onClose: () => void;
   onResolveUseLocal: (id: string) => void;
@@ -18,7 +27,7 @@ interface SyncDetailsModalProps {
   onNotice: (msg: string) => void;
 }
 
-export default function SyncDetailsModal({
+const SyncDetailsModal = ({
   resume,
   telemetry,
   syncingResumeId,
@@ -28,138 +37,240 @@ export default function SyncDetailsModal({
   onKeepLocalOnly,
   onSyncNow,
   onNotice,
-}: SyncDetailsModalProps) {
+}: SyncDetailsModalProps) => {
   const router = useRouter();
+  const isSyncing = syncingResumeId === resume.id;
+  const isConflicted = resume.sync.status === "conflicted";
 
   if (!resume) return null;
 
+  const statusConfig = {
+    synced: {
+      label: "Synced",
+      color: "text-emerald-500",
+      bg: "md:bg-emerald-500/10",
+      icon: Cloud,
+    },
+    syncing: {
+      label: "Syncing",
+      color: "text-accent",
+      bg: "md:bg-accent/10",
+      icon: RefreshCw,
+    },
+    conflicted: {
+      label: "Conflict",
+      color: "text-orange-500",
+      bg: "md:bg-orange-500/10",
+      icon: AlertTriangle,
+    },
+    pending: {
+      label: "Pending",
+      color: "text-zinc-400",
+      bg: "md:bg-zinc-500/10",
+      icon: History,
+    },
+    disabled: {
+      label: "Local only",
+      color: "text-zinc-500",
+      bg: "md:bg-zinc-500/10",
+      icon: CloudOff,
+    },
+  };
+
+  const currentStatus = !resume.sync.enabled
+    ? statusConfig.disabled
+    : statusConfig[resume.sync.status as keyof typeof statusConfig] ||
+      statusConfig.disabled;
+
+  const StatusIcon = currentStatus.icon;
+
   return (
     <Modal open={true} onClose={onClose}>
-      <Modal.Content>
-        <Modal.Header>
-          <Modal.Title>Sync Details</Modal.Title>
-
-          <Modal.Description>
-            Check the current cloud sync state for this resume.
-          </Modal.Description>
-        </Modal.Header>
-
-        <Modal.Body>
-          <div className="space-y-4 text-sm">
-            <div className="rounded-xl border border-zinc-700/20 bg-zinc-500/5 p-3">
-              <p className="text-muted text-xs font-semibold tracking-[0.2em] uppercase">
-                Resume
-              </p>
-
-              <p className="text-foreground mt-1 font-medium">{resume.title}</p>
+      <Modal.Content className="overflow-hidden p-0">
+        <div
+          className={cn(
+            "flex items-center justify-between border-b px-4 py-4 pt-2 md:pt-4",
+            currentStatus.bg,
+          )}
+        >
+          <div className="flex items-center gap-3">
+            <div
+              className={cn(
+                "flex h-8 w-8 items-center justify-center rounded-lg ring-1 ring-inset",
+                currentStatus.color.replace("text", "ring"),
+              )}
+            >
+              <StatusIcon
+                className={cn(
+                  "h-4 w-4",
+                  currentStatus.color,
+                  currentStatus.label === "Syncing" && "animate-spin",
+                )}
+              />
             </div>
 
-            <div className="space-y-1">
-              <p className="text-muted">Status</p>
+            <div>
+              <h2 className="text-sm font-bold tracking-tight">Sync Status</h2>
 
-              <p className="text-foreground font-medium">
-                {!resume.sync.enabled
-                  ? "Local only"
-                  : resume.sync.status === "synced"
-                    ? "Synced"
-                    : resume.sync.status === "syncing"
-                      ? "Syncing"
-                      : resume.sync.status === "pending"
-                        ? "Pending"
-                        : resume.sync.status === "conflicted"
-                          ? "Conflict"
-                          : "Local only"}
+              <p
+                className={cn(
+                  "text-[10px] font-bold tracking-widest uppercase",
+                  currentStatus.color,
+                )}
+              >
+                {currentStatus.label}
               </p>
             </div>
-
-            <div className="space-y-1">
-              <p className="text-muted">Last Synced</p>
-
-              <p className="text-foreground font-medium">
-                {resume.sync.lastSyncedAt
-                  ? new Date(resume.sync.lastSyncedAt).toLocaleString()
-                  : "Not synced yet"}
-              </p>
-            </div>
-
-            <div className="space-y-1">
-              <p className="text-muted">Last Sync Attempt</p>
-
-              <p className="text-foreground font-medium">
-                {telemetry?.lastAttemptAt
-                  ? new Date(telemetry.lastAttemptAt).toLocaleString()
-                  : "No attempt yet"}
-              </p>
-            </div>
-
-            {telemetry?.lastErrorMessage && (
-              <div className="space-y-1">
-                <p className="text-muted">Last Sync Error</p>
-                <p className="text-foreground font-medium">
-                  {telemetry.lastErrorMessage}
-                </p>
-              </div>
-            )}
-
-            {resume.sync.status === "conflicted" && (
-              <p className="text-sm text-red-600">
-                A conflict was detected. Retry sync or review your cloud sync
-                setup.
-              </p>
-            )}
           </div>
+
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={onClose}
+            className="h-8 text-xs"
+          >
+            Close
+          </Button>
+        </div>
+
+        <Modal.Body className="space-y-5 p-4">
+          <div className="space-y-1.5">
+            <label className="text-muted text-[10px] font-bold tracking-widest uppercase">
+              Target Resume
+            </label>
+
+            <div className="rounded-lg border bg-zinc-500/5 px-3 py-2 text-sm font-medium">
+              {resume.title}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1 rounded-lg border p-2.5">
+              <p className="text-muted flex items-center gap-1.5 text-[10px] font-bold tracking-tighter uppercase">
+                <Cloud className="h-3 w-3" /> Last Synced
+              </p>
+
+              <p className="text-xs font-medium">
+                {resume.sync.lastSyncedAt
+                  ? new Date(resume.sync.lastSyncedAt).toLocaleDateString()
+                  : "Never"}
+              </p>
+            </div>
+
+            <div className="space-y-1 rounded-lg border p-2.5">
+              <p className="text-muted flex items-center gap-1.5 text-[10px] font-bold tracking-tighter uppercase">
+                <Monitor className="h-3 w-3" /> Last Attempt
+              </p>
+
+              <p className="text-xs font-medium">
+                {telemetry?.lastAttemptAt
+                  ? new Date(telemetry.lastAttemptAt).toLocaleTimeString()
+                  : "N/A"}
+              </p>
+            </div>
+          </div>
+
+          {telemetry?.lastErrorMessage && (
+            <div className="border-destructive/20 bg-destructive/5 rounded-lg border p-3">
+              <p className="text-destructive mb-1 text-[10px] font-bold tracking-widest uppercase">
+                Last Error
+              </p>
+
+              <p className="text-destructive/80 text-xs leading-relaxed font-medium">
+                {telemetry.lastErrorMessage}
+              </p>
+            </div>
+          )}
+
+          {isConflicted && (
+            <div className="animate-in fade-in slide-in-from-top-2 space-y-3 rounded-xl border border-orange-500/20 bg-orange-500/5 p-4">
+              <div className="flex items-start gap-3 text-orange-600 dark:text-orange-400">
+                <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0" />
+
+                <div className="space-y-1">
+                  <p className="text-sm leading-none font-bold">
+                    Conflict Detected
+                  </p>
+
+                  <p className="text-xs leading-snug opacity-80">
+                    The version in the cloud is different from your local
+                    version. How would you like to resolve this?
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 gap-2 pt-2">
+                <Button
+                  size="sm"
+                  onClick={() => onResolveUseLocal(resume.id)}
+                  className="h-9 justify-between border-orange-500/30 hover:bg-orange-500/10"
+                >
+                  <span className="text-xs">Overwrite Cloud with Local</span>
+                  <Monitor className="h-3.5 w-3.5 opacity-50" />
+                </Button>
+
+                <Button
+                  size="sm"
+                  onClick={() => onResolveUseCloud(resume.id)}
+                  className="h-9 justify-between border-orange-500/30 hover:bg-orange-500/10"
+                >
+                  <span className="text-xs">Use Cloud Version</span>
+                  <Cloud className="h-3.5 w-3.5 opacity-50" />
+                </Button>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="text-[10px] font-bold tracking-tighter uppercase"
+                    onClick={() => {
+                      onNotice(
+                        "Resolve fields in editor, then click Sync Now.",
+                      );
+                      router.push(`/editor/${resume.id}`);
+                    }}
+                  >
+                    Merge Manually
+                  </Button>
+
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => onKeepLocalOnly(resume.id)}
+                    className="text-[10px] font-bold tracking-tighter uppercase"
+                  >
+                    Keep Local Only
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
         </Modal.Body>
 
         <Modal.Footer>
-          {resume.sync.status === "conflicted" ? (
-            <>
-              <Button
-                variant="secondary"
-                onClick={() => onResolveUseLocal(resume.id)}
-              >
-                Use Local (Overwrite Cloud)
-              </Button>
-
-              <Button
-                variant="secondary"
-                onClick={() => onResolveUseCloud(resume.id)}
-              >
-                Use Cloud
-              </Button>
-
-              <Button
-                variant="secondary"
-                onClick={() => {
-                  onNotice(
-                    "Resolve fields in editor, then click Sync Now to finish merge.",
-                  );
-                  router.push(`/editor/${resume.id}`);
-                }}
-              >
-                Merge Manually
-              </Button>
-
-              <Button
-                variant="secondary"
-                onClick={() => onKeepLocalOnly(resume.id)}
-              >
-                Keep Local Only
-              </Button>
-            </>
-          ) : (
-            <Button variant="secondary" asChild>
-              <Link href="/profile">Open Profile</Link>
+          {!isConflicted && (
+            <Button
+              size="sm"
+              variant="secondary"
+              className="text-xs"
+              onClick={() => router.push("/profile")}
+            >
+              Open Profile
             </Button>
           )}
 
           <Button
-            loading={syncingResumeId === resume.id}
+            size="sm"
+            loading={isSyncing}
+            className="shadow-md"
             onClick={() => onSyncNow(resume.id)}
           >
-            Sync Now
+            {isConflicted ? "Retry Sync" : "Sync Now"}
           </Button>
         </Modal.Footer>
       </Modal.Content>
     </Modal>
   );
-}
+};
+
+export default SyncDetailsModal;

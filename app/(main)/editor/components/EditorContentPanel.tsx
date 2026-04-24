@@ -15,8 +15,12 @@ import SkillsSection from "./content/sections/SkillsSection";
 import SummarySection from "./content/sections/SummarySection";
 import ProjectsSection from "./content/sections/ProjectsSection";
 import LanguagesSection from "./content/sections/LanguagesSection";
+import InterestsSection from "./content/sections/InterestsSection";
+import VolunteerSection from "./content/sections/VolunteerSection";
 import EducationSection from "./content/sections/EducationSection";
+import ReferencesSection from "./content/sections/ReferencesSection";
 import ExperienceSection from "./content/sections/ExperienceSection";
+import AchievementsSection from "./content/sections/AchievementsSection";
 import PublicationsSection from "./content/sections/PublicationsSection";
 import CertificationsSection from "./content/sections/CertificationsSection";
 
@@ -141,6 +145,22 @@ const EditorContentPanel = () => {
 
             if (section.id === "languages") {
               return <LanguagesSection key={section.id} {...sectionProps} />;
+            }
+
+            if (section.id === "interests") {
+              return <InterestsSection key={section.id} {...sectionProps} />;
+            }
+
+            if (section.id === "volunteer") {
+              return <VolunteerSection key={section.id} {...sectionProps} />;
+            }
+
+            if (section.id === "references") {
+              return <ReferencesSection key={section.id} {...sectionProps} />;
+            }
+
+            if (section.id === "achievements") {
+              return <AchievementsSection key={section.id} {...sectionProps} />;
             }
 
             if (section.id === "custom") {

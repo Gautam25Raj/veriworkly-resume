@@ -16,6 +16,7 @@ Production-ready Express.js API server for VeriWorkly Resume. Built with TypeScr
 - **Rate Limited:** Smart rate limiting (100 req/15 min) to prevent abuse.
 - **Fast Caching:** Redis integration for features (1h) and stats (30m).
 - **Scale Ready:** Native connection pooling via Prisma.
+- **Export Storage Isolation:** Redis stores only metadata; export binaries are stored via local disk or OCI object storage.
 
 ## 🛠️ Quick Start
 
@@ -56,6 +57,21 @@ npm run dev
 - `npm run build`: Production compilation
 - `npm run db:studio`: GUI for database management
 - `npm test`: Run Vitest suite
+
+## 📤 Export Artifact Storage
+
+Large export files are not stored as base64 blobs in Redis.
+
+- `EXPORT_ARTIFACT_PROVIDER=local`: writes artifacts to local disk (`tmp/export-artifacts` by default)
+- `EXPORT_ARTIFACT_PROVIDER=oci`: writes artifacts to OCI object storage via S3-compatible API
+
+Redis keeps only job state and artifact pointers, which reduces memory pressure under concurrent export traffic.
+
+Recommended production settings:
+
+- `EXPORT_RESULT_TTL_MS=300000..600000`
+- `EXPORT_MAX_CONCURRENCY` tuned to CPU/RAM capacity
+- OCI lifecycle policy enabled for long-term object cleanup
 
 ---
 

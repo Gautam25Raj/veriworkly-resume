@@ -1,6 +1,24 @@
 import TemplateCard from "../components/TemplateCard";
 
-const TemplateGroup = ({ group }: any) => {
+interface TemplateItem {
+  id: string;
+  name: string;
+  description: string;
+  accentColor: string;
+  previewImage: string;
+  family: string;
+  layout: string;
+  tags: string[];
+}
+
+interface TemplateGroupProps {
+  group: {
+    title: string;
+    items: TemplateItem[];
+  };
+}
+
+const TemplateGroup = ({ group }: TemplateGroupProps) => {
   return (
     <section className="space-y-5">
       <h2 className="text-foreground text-2xl font-semibold tracking-tight">
@@ -8,7 +26,7 @@ const TemplateGroup = ({ group }: any) => {
       </h2>
 
       <div className="grid gap-6 md:grid-cols-2">
-        {group.items.map((template: any) => (
+        {group.items.map((template) => (
           <TemplateCard key={template.id} template={template} />
         ))}
       </div>

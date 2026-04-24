@@ -1,68 +1,95 @@
-import ModernTemplate from "@/templates/modern-core/templates/modern";
 import { modernTemplateMeta } from "@/templates/modern-core/templates/modern/meta";
-
-import MinimalTemplate from "@/templates/modern-core/templates/minimal";
 import { minimalTemplateMeta } from "@/templates/modern-core/templates/minimal/meta";
-
-import ExecutiveTemplate from "@/templates/modern-core/templates/leadership";
 import { executiveTemplateMeta } from "@/templates/modern-core/templates/leadership/meta";
 
-import AtsClassicTemplate from "@/templates/compact-core/templates/ats-classic";
 import { atsClassicTemplateMeta } from "@/templates/compact-core/templates/ats-classic/meta";
-
-import ClassicAcademicTemplate from "@/templates/compact-core/templates/professional-classic";
 import { classicAcademicTemplateMeta } from "@/templates/compact-core/templates/professional-classic/meta";
-
-import StructuredProfessionalTemplate from "@/templates/compact-core/templates/structured-professional";
 import { structuredProfessionalTemplateMeta } from "@/templates/compact-core/templates/structured-professional/meta";
-
-import AcademicSerifTemplate from "@/templates/compact-core/templates/academic-serif";
 import { academicSerifTemplateMeta } from "@/templates/compact-core/templates/academic-serif/meta";
 
-import type { TemplateDefinition } from "@/types/template";
+import type { TemplateComponent, TemplateDefinition } from "@/types/template";
 
-export const templateRegistry: TemplateDefinition[] = [
+type TemplateComponentModule = {
+  default: TemplateComponent;
+};
+
+type TemplateComponentLoader = () => Promise<TemplateComponentModule>;
+
+type TemplateEntry = {
+  meta: TemplateDefinition;
+  loadComponent: TemplateComponentLoader;
+};
+
+function normalizeTemplateId(templateId: string) {
+  return templateId === "faang" ? "ats" : templateId;
+}
+
+const templateEntries: TemplateEntry[] = [
   {
-    ...modernTemplateMeta,
-    Component: ModernTemplate,
+    meta: modernTemplateMeta,
+    loadComponent: () => import("@/templates/modern-core/templates/modern"),
   },
-
   {
-    ...minimalTemplateMeta,
-    Component: MinimalTemplate,
+    meta: minimalTemplateMeta,
+    loadComponent: () => import("@/templates/modern-core/templates/minimal"),
   },
-
   {
-    ...executiveTemplateMeta,
-    Component: ExecutiveTemplate,
+    meta: executiveTemplateMeta,
+    loadComponent: () => import("@/templates/modern-core/templates/leadership"),
   },
-
   {
-    ...atsClassicTemplateMeta,
-    Component: AtsClassicTemplate,
+    meta: atsClassicTemplateMeta,
+    loadComponent: () =>
+      import("@/templates/compact-core/templates/ats-classic"),
   },
-
   {
-    ...classicAcademicTemplateMeta,
-    Component: ClassicAcademicTemplate,
+    meta: classicAcademicTemplateMeta,
+    loadComponent: () =>
+      import("@/templates/compact-core/templates/professional-classic"),
   },
-
   {
-    ...structuredProfessionalTemplateMeta,
-    Component: StructuredProfessionalTemplate,
+    meta: structuredProfessionalTemplateMeta,
+    loadComponent: () =>
+      import("@/templates/compact-core/templates/structured-professional"),
   },
-
   {
-    ...academicSerifTemplateMeta,
-    Component: AcademicSerifTemplate,
+    meta: academicSerifTemplateMeta,
+    loadComponent: () =>
+      import("@/templates/compact-core/templates/academic-serif"),
   },
 ];
 
+export const templateRegistry: TemplateDefinition[] = templateEntries.map(
+  (entry) => entry.meta,
+);
+
+const templateComponentLoaders: Record<string, TemplateComponentLoader> =
+  Object.fromEntries(
+    templateEntries.map((entry) => [entry.meta.id, entry.loadComponent]),
+  ) as Record<string, TemplateComponentLoader>;
+
+function getFallbackTemplate() {
+  return templateRegistry[0];
+}
+
 export function getTemplateById(templateId: string) {
-  const normalizedTemplateId = templateId === "faang" ? "ats" : templateId;
+  const normalizedTemplateId = normalizeTemplateId(templateId);
 
   return (
     templateRegistry.find((template) => template.id === normalizedTemplateId) ??
-    templateRegistry[0]
+    getFallbackTemplate()
   );
+}
+
+export async function loadTemplateComponentById(
+  templateId: string,
+): Promise<TemplateComponent> {
+  const normalizedTemplateId = normalizeTemplateId(templateId);
+
+  const loader =
+    templateComponentLoaders[normalizedTemplateId] ??
+    templateComponentLoaders[getFallbackTemplate().id];
+
+  const templateModule = await loader();
+  return templateModule.default;
 }

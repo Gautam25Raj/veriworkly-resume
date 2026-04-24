@@ -12,7 +12,7 @@ const Footer = () => {
     <footer className="border-border/60 bg-card/70 relative overflow-hidden border-t">
       <div className="via-accent/40 absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent to-transparent" />
 
-      <Container className="relative grid gap-10 py-14 lg:grid-cols-[1.2fr_0.8fr_0.8fr]">
+      <Container className="relative grid gap-10 py-14 lg:grid-cols-[1.2fr_0.8fr_0.8fr_0.8fr]">
         <div className="space-y-5">
           <Link
             href="/"
@@ -69,25 +69,55 @@ const Footer = () => {
 
         <div className="flex flex-col gap-4">
           <p className="text-foreground text-xs font-semibold tracking-[0.2em] uppercase">
-            Connect
+            Company
           </p>
 
           <Link
-            target="_blank"
-            rel="noreferrer"
-            href={siteConfig.links.github}
+            href="/about"
             className="text-muted hover:text-foreground w-fit text-sm transition-colors"
           >
-            GitHub
+            About
           </Link>
 
           <Link
-            target="_blank"
-            rel="noreferrer"
-            href={siteConfig.links.twitter}
+            href="/contact"
             className="text-muted hover:text-foreground w-fit text-sm transition-colors"
           >
-            Twitter
+            Contact
+          </Link>
+
+          <Link
+            href="/faq"
+            className="text-muted hover:text-foreground w-fit text-sm transition-colors"
+          >
+            FAQ
+          </Link>
+        </div>
+
+        <div className="flex flex-col gap-4">
+          <p className="text-foreground text-xs font-semibold tracking-[0.2em] uppercase">
+            Legal
+          </p>
+
+          <Link
+            href="/privacy"
+            className="text-muted hover:text-foreground w-fit text-sm transition-colors"
+          >
+            Privacy
+          </Link>
+
+          <Link
+            href="/security"
+            className="text-muted hover:text-foreground w-fit text-sm transition-colors"
+          >
+            Security
+          </Link>
+
+          <Link
+            href="/terms"
+            className="text-muted hover:text-foreground w-fit text-sm transition-colors"
+          >
+            Terms
           </Link>
 
           <p className="text-muted/70 text-xs leading-relaxed">

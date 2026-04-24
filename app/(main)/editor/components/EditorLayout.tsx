@@ -1,19 +1,26 @@
 "use client";
 
-import { useDeferredValue, useEffect, useRef, useState } from "react";
+import type { TemplateComponent } from "@/types/template";
 
-import { getTemplateById } from "@/templates";
+import { useDeferredValue, useEffect, useRef, useState } from "react";
 
 import { Card } from "@/components/ui/Card";
 
-import { useDebounce } from "@/hooks/use-debounce";
-
+import {
+  startResumeSyncWorker,
+  hydrateCloudResumeByIdToLocalStorage,
+} from "@/features/resume/services/resume-sync";
 import { useResume } from "@/features/resume/hooks/use-resume";
 import { loadResumeById } from "@/features/resume/services/resume-service";
+import { loadWorkspaceSettingsFromLocalStorage } from "@/features/resume/services/workspace-settings";
+
+import { loadTemplateComponentById } from "@/templates";
 
 import Toolbar from "./Toolbar";
 import EditorContentPanel from "./EditorContentPanel";
 import EditorSettingsPanel from "./EditorSettingsPanel";
+
+import { useUserStore } from "@/store/useUserStore";
 
 interface EditorLayoutProps {
   resumeId: string;
@@ -24,16 +31,18 @@ const EditorLayout = ({ resumeId }: EditorLayoutProps) => {
 
   const hasHydratedRef = useRef(false);
 
+  const isLoggedIn = useUserStore((state) => state.isLoggedIn);
+
   const [panelOpen, setPanelOpen] = useState(true);
   const [activeTab, setActiveTab] = useState<"editor" | "preview">("editor");
   const [activePanel, setActivePanel] = useState<"content" | "settings">(
     "content",
   );
 
-  const debouncedResume = useDebounce(resume, 450);
-  const deferredResume = useDeferredValue(resume);
+  const [templateComponent, setTemplateComponent] =
+    useState<TemplateComponent | null>(null);
 
-  const Template = getTemplateById(deferredResume.templateId).Component;
+  const deferredResume = useDeferredValue(resume);
 
   const resumePreviewId = `resume-preview-${resume.id}`;
 
@@ -41,18 +50,43 @@ const EditorLayout = ({ resumeId }: EditorLayoutProps) => {
     resume.customization.pagePadding === 0 ? "p-0" : "p-3 md:p-6";
 
   useEffect(() => {
-    if (resumeId) {
-      const routeResume = loadResumeById(resumeId);
+    let cancelled = false;
 
-      if (routeResume) {
-        setResume(routeResume);
-        hasHydratedRef.current = true;
-        return;
+    const hydrate = async () => {
+      if (resumeId) {
+        const routeResume = loadResumeById(resumeId);
+
+        if (routeResume) {
+          setResume(routeResume);
+          hasHydratedRef.current = true;
+          return;
+        }
+
+        const cloudResult =
+          await hydrateCloudResumeByIdToLocalStorage(resumeId);
+
+        if (!cancelled && cloudResult.ok) {
+          const hydratedResume = loadResumeById(resumeId);
+
+          if (hydratedResume) {
+            setResume(hydratedResume);
+            hasHydratedRef.current = true;
+            return;
+          }
+        }
       }
-    }
 
-    hydrateFromStorage();
-    hasHydratedRef.current = true;
+      if (!cancelled) {
+        hydrateFromStorage();
+        hasHydratedRef.current = true;
+      }
+    };
+
+    void hydrate();
+
+    return () => {
+      cancelled = true;
+    };
   }, [hydrateFromStorage, resumeId, setResume]);
 
   useEffect(() => {
@@ -60,8 +94,45 @@ const EditorLayout = ({ resumeId }: EditorLayoutProps) => {
       return;
     }
 
-    saveToStorage();
-  }, [debouncedResume, saveToStorage]);
+    saveToStorage({ debounceMs: 300 });
+  }, [resume, saveToStorage]);
+
+  useEffect(() => {
+    if (!hasHydratedRef.current) {
+      return;
+    }
+
+    if (!isLoggedIn) {
+      return;
+    }
+
+    const workspaceSettings = loadWorkspaceSettingsFromLocalStorage();
+
+    startResumeSyncWorker({
+      enabled: isLoggedIn && workspaceSettings.autoSyncEnabled,
+      idleDelayMs: 12_000,
+    });
+  }, [isLoggedIn, resume.updatedAt]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadTemplate = async () => {
+      const nextTemplate = await loadTemplateComponentById(
+        deferredResume.templateId,
+      );
+
+      if (!cancelled) {
+        setTemplateComponent(() => nextTemplate);
+      }
+    };
+
+    void loadTemplate();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [deferredResume.templateId]);
 
   return (
     <div className="flex h-[calc(100dvh-2rem)] min-h-0 flex-col gap-4 overflow-hidden">
@@ -231,7 +302,12 @@ const EditorLayout = ({ resumeId }: EditorLayoutProps) => {
                 className={`relative flex min-h-[70vh] justify-center rounded-3xl border border-dashed border-[color-mix(in_oklab,var(--border)_70%,transparent)] bg-[color-mix(in_oklab,var(--background)_92%,white)] ${stagePaddingClass}`}
               >
                 <div className="w-full max-w-212.5" id={resumePreviewId}>
-                  <Template resume={deferredResume} />
+                  {templateComponent
+                    ? (() => {
+                        const TemplateComponent = templateComponent;
+                        return <TemplateComponent resume={deferredResume} />;
+                      })()
+                    : null}
                 </div>
               </div>
             </div>

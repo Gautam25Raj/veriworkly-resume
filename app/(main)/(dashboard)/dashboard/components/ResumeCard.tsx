@@ -57,7 +57,7 @@ const ResumeCard = ({
       >
         <Card className="border-border group-hover:border-accent/40 relative h-full overflow-hidden border p-0 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:shadow-[0_26px_70px_-36px_rgba(30,41,59,0.45)]">
           <div
-            className="absolute inset-x-0 top-0 h-24 opacity-10 transition-opacity duration-300 group-hover:opacity-20"
+            className="absolute inset-x-0 top-0 h-28 opacity-10 transition-opacity duration-300 group-hover:opacity-20"
             style={{
               background: `linear-gradient(90deg, ${template.accentColor}55 0%, transparent 74%), linear-gradient(180deg, ${template.accentColor}40 0%, transparent 72%)`,
             }}

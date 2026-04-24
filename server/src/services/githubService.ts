@@ -41,6 +41,81 @@ export interface GitHubItemSnapshot {
 const PROJECT_URL = config.github.projectUrl;
 const REDIS_STATS_KEY = `github:stats:${PROJECT_URL}`;
 const ISSUES_CACHE_PREFIX = `github:issues:${encodeURIComponent(PROJECT_URL)}:`;
+const RETRYABLE_GITHUB_STATUS_CODES = new Set([429, 500, 502, 503, 504]);
+const MAX_GITHUB_FETCH_RETRIES = 3;
+
+function sleep(ms: number) {
+  return new Promise<void>((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
+function resolveRetryDelayMs(response: Response, attempt: number) {
+  const retryAfterHeader = response.headers.get("retry-after");
+
+  if (retryAfterHeader) {
+    const retryAfterSeconds = Number.parseInt(retryAfterHeader, 10);
+
+    if (Number.isFinite(retryAfterSeconds) && retryAfterSeconds > 0) {
+      return Math.min(retryAfterSeconds * 1000, 30_000);
+    }
+  }
+
+  if (response.status === 429) {
+    const rateLimitResetHeader = response.headers.get("x-ratelimit-reset");
+
+    if (rateLimitResetHeader) {
+      const resetEpochSeconds = Number.parseInt(rateLimitResetHeader, 10);
+
+      if (Number.isFinite(resetEpochSeconds)) {
+        const untilResetMs = resetEpochSeconds * 1000 - Date.now();
+
+        if (untilResetMs > 0) {
+          return Math.min(untilResetMs, 30_000);
+        }
+      }
+    }
+  }
+
+  const backoffMs = 1000 * 2 ** attempt;
+  return Math.min(backoffMs, 10_000);
+}
+
+async function fetchGitHubIssuesPage(url: string, token: string) {
+  let attempt = 0;
+
+  while (attempt <= MAX_GITHUB_FETCH_RETRIES) {
+    const response = await fetch(url, {
+      headers: {
+        Accept: "application/vnd.github+json",
+        Authorization: `Bearer ${token}`,
+        "X-GitHub-Api-Version": "2022-11-28",
+      },
+    });
+
+    if (response.ok) {
+      return response;
+    }
+
+    if (
+      !RETRYABLE_GITHUB_STATUS_CODES.has(response.status) ||
+      attempt === MAX_GITHUB_FETCH_RETRIES
+    ) {
+      const errorBody = (await response.text()).slice(0, 500);
+
+      throw new ApiError(502, "GitHub API communication failed", {
+        status: response.status,
+        body: errorBody,
+      });
+    }
+
+    const delayMs = resolveRetryDelayMs(response, attempt);
+    await sleep(delayMs);
+    attempt += 1;
+  }
+
+  throw new ApiError(502, "GitHub API communication failed");
+}
 
 export async function getGitHubStats() {
   const cached = await cacheGet(REDIS_STATS_KEY);
@@ -120,21 +195,7 @@ async function fetchAllGitHubIssues(owner: string, repo: string, token: string, 
   let hasNextPage = true;
 
   while (hasNextPage) {
-    const response = await fetch(`${url}&page=${page}`, {
-      headers: {
-        Accept: "application/vnd.github+json",
-        Authorization: `Bearer ${token}`,
-        "X-GitHub-Api-Version": "2022-11-28",
-      },
-    });
-
-    if (!response.ok) {
-      const errorBody = (await response.text()).slice(0, 500);
-      throw new ApiError(502, "GitHub API communication failed", {
-        status: response.status,
-        body: errorBody,
-      });
-    }
+    const response = await fetchGitHubIssuesPage(`${url}&page=${page}`, token);
 
     const payload = (await response.json()) as GitHubIssuePayload[];
     if (payload.length === 0) {

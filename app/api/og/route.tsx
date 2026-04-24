@@ -106,12 +106,15 @@ export async function GET(request: Request) {
               opacity: 0.9,
             }}
           >
-            <img
-              src={logoUrl}
-              alt="Logo"
-              width="44"
-              height="44"
-              style={{ marginRight: 14, objectFit: "contain" }}
+            <div
+              style={{
+                width: 44,
+                height: 44,
+                marginRight: 14,
+                backgroundImage: `url(${logoUrl})`,
+                backgroundSize: "contain",
+                backgroundRepeat: "no-repeat",
+              }}
             />
             VeriWorkly
           </div>
@@ -168,7 +171,7 @@ export async function GET(request: Request) {
         height: 630,
       },
     );
-  } catch (error: unknown) {
+  } catch {
     return new Response(`Error generating image`, { status: 500 });
   }
 }

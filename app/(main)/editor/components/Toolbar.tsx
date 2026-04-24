@@ -12,20 +12,26 @@ import ToolbarActionsMenu from "@/app/(main)/editor/components/toolbar/ToolbarAc
 import ToolbarDownloadMenu from "@/app/(main)/editor/components/toolbar/ToolbarDownloadMenu";
 
 import {
+  listResumeShareLinks,
+  createResumeShareLink,
+  exportResumeViaServer,
+} from "@/features/resume/services/share-links";
+import {
   saveResume,
   createResume,
   deleteResume,
   exportResumeAsHtml,
   exportResumeAsJson,
   exportResumeAsDocx,
-  exportResumeAsImage,
   exportResumeAsText,
   importResumeFromFile,
   exportResumeAsMarkdown,
 } from "@/features/resume/services/resume-service";
 import { useResume } from "@/features/resume/hooks/use-resume";
-import { generatePDF } from "@/features/resume/utils/generate-pdf";
 import { trackUsageEvent } from "@/features/analytics/services/usage-metrics";
+import { buildExportHtml } from "@/features/resume/utils/build-export-html";
+
+import { ApiRequestError } from "@/utils/fetchApiData";
 
 interface ToolbarProps {
   resumeId: string;
@@ -44,7 +50,22 @@ const Toolbar = ({ resumeId, resumePreviewId }: ToolbarProps) => {
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
 
+  const [shareBusy, setShareBusy] = useState(false);
+  const [shareExpiry, setShareExpiry] = useState("");
+  const [sharePassword, setSharePassword] = useState("");
+  const [shareNoExpiry, setShareNoExpiry] = useState(false);
+  const [shareModalOpen, setShareModalOpen] = useState(false);
+  const [shareUrl, setShareUrl] = useState<string | null>(null);
+  const [shareError, setShareError] = useState<string | null>(null);
   const [activeDownload, setActiveDownload] = useState<string | null>(null);
+
+  function getSaveFailureMessage(reason: "quota-exceeded" | "unknown") {
+    if (reason === "quota-exceeded") {
+      return "Storage is full. Remove older resumes or exports and try again.";
+    }
+
+    return "Unable to save locally right now. Please try again.";
+  }
 
   async function onImportResume(file: File | undefined) {
     if (!file) {
@@ -53,9 +74,14 @@ const Toolbar = ({ resumeId, resumePreviewId }: ToolbarProps) => {
 
     try {
       const importedResume = await importResumeFromFile(file);
+      const saveResult = saveResume(importedResume);
+
+      if (!saveResult.ok) {
+        setMessage(getSaveFailureMessage(saveResult.reason));
+        return;
+      }
 
       setResume(importedResume);
-      saveResume(importedResume);
 
       router.push(`/editor/${importedResume.id}`);
 
@@ -96,46 +122,30 @@ const Toolbar = ({ resumeId, resumePreviewId }: ToolbarProps) => {
   }
 
   async function onDownloadPdf() {
-    setActiveDownload("pdf");
-
-    const didDownload = await generatePDF(
-      resumePreviewId,
-      resume.basics.fullName || "resume",
-    );
-
-    setMessage(
-      didDownload
-        ? "PDF downloaded successfully"
-        : "Could not generate PDF. Try again.",
-    );
-
-    if (didDownload) {
-      trackUsageEvent({ event: "resume_exported" });
-    }
-
-    setActiveDownload(null);
+    await onDownloadServerExport("pdf");
   }
 
   async function onDownloadImage(format: "png" | "jpg") {
+    await onDownloadServerExport(format);
+  }
+
+  async function onDownloadServerExport(format: "pdf" | "png" | "jpg") {
     setActiveDownload(format);
 
-    const didDownload = await exportResumeAsImage(
-      resumePreviewId,
-      resume,
-      format,
-    );
-
-    setMessage(
-      didDownload
-        ? `${format.toUpperCase()} downloaded successfully`
-        : `Could not generate ${format.toUpperCase()}. Try again.`,
-    );
-
-    if (didDownload) {
-      trackUsageEvent({ event: "resume_exported" });
+    try {
+      const renderHtml = buildExportHtml(resumePreviewId);
+      await exportResumeViaServer(resume, format, renderHtml);
+      setMessage(`${format.toUpperCase()} downloaded successfully`);
+      trackUsageEvent({ event: "resume_exported_server" });
+    } catch (error) {
+      setMessage(
+        error instanceof Error
+          ? error.message
+          : `Could not export ${format.toUpperCase()}.`,
+      );
+    } finally {
+      setActiveDownload(null);
     }
-
-    setActiveDownload(null);
   }
 
   async function onDownloadDocx() {
@@ -176,6 +186,65 @@ const Toolbar = ({ resumeId, resumePreviewId }: ToolbarProps) => {
     trackUsageEvent({ event: "resume_exported" });
   }
 
+  async function onCreateShareLink() {
+    setShareBusy(true);
+    setShareError(null);
+
+    try {
+      const shareLink = await createResumeShareLink(resume, {
+        resumeTitle: resume.basics.fullName || "Shared Resume",
+        password: sharePassword.trim() || undefined,
+        expiresAt: shareNoExpiry
+          ? null
+          : shareExpiry
+            ? new Date(shareExpiry).toISOString()
+            : null,
+        noExpiry: shareNoExpiry,
+      });
+
+      const nextShareUrl = `${window.location.origin}/share/${shareLink.token}`;
+      setShareUrl(nextShareUrl);
+
+      await navigator.clipboard.writeText(nextShareUrl);
+
+      setMessage("Share link created and copied to clipboard");
+      trackUsageEvent({ event: "share_link_created" });
+    } catch (error) {
+      if (error instanceof ApiRequestError && error.status === 409) {
+        try {
+          const links = await listResumeShareLinks(resume.id);
+          const existing = links[0];
+
+          if (existing) {
+            const existingUrl = `${window.location.origin}/share/${existing.token}`;
+            setShareUrl(existingUrl);
+          }
+        } catch {
+          // Ignore secondary list errors here and still show the primary conflict message.
+        }
+
+        setShareError(
+          "A share link already exists for this resume. Revoke the current link from the dashboard share modal before creating a new one.",
+        );
+        return;
+      }
+
+      setShareError(
+        error instanceof Error
+          ? error.message
+          : "Could not create share link. Try again.",
+      );
+    } finally {
+      setShareBusy(false);
+    }
+  }
+
+  function openShareModal() {
+    setShareModalOpen(true);
+    setShareError(null);
+    setShareUrl(null);
+  }
+
   return (
     <div className="border-border bg-card/95 flex flex-wrap items-center justify-between gap-3 rounded-3xl border p-4 shadow-sm backdrop-blur">
       <ToolbarHeader
@@ -194,8 +263,13 @@ const Toolbar = ({ resumeId, resumePreviewId }: ToolbarProps) => {
 
         <Button
           onClick={() => {
-            saveResume(resume);
-            saveToStorage();
+            const saveResult = saveToStorage({ flush: true });
+
+            if (!saveResult.ok) {
+              setMessage(getSaveFailureMessage(saveResult.reason));
+              return;
+            }
+
             setMessage("Draft saved locally");
           }}
           size="sm"
@@ -230,6 +304,7 @@ const Toolbar = ({ resumeId, resumePreviewId }: ToolbarProps) => {
           onExport={() => {
             onDownloadJson();
           }}
+          onShare={openShareModal}
           onReset={() => {
             resetResume();
             setMessage("Resume reset to defaults");
@@ -271,6 +346,84 @@ const Toolbar = ({ resumeId, resumePreviewId }: ToolbarProps) => {
               </Button>
             </div>
           </Modal.Body>
+        </Modal.Content>
+      </Modal>
+
+      <Modal
+        onClose={() => {
+          if (shareBusy) {
+            return;
+          }
+
+          setShareModalOpen(false);
+          setShareError(null);
+        }}
+        open={shareModalOpen}
+      >
+        <Modal.Content>
+          <Modal.Header>
+            <Modal.Title>Create Share Link</Modal.Title>
+
+            <Modal.Description>
+              Create a public link for this resume with optional password and
+              expiry.
+            </Modal.Description>
+          </Modal.Header>
+
+          <Modal.Body>
+            <div className="space-y-4">
+              <Input
+                value={sharePassword}
+                onChange={(event) => setSharePassword(event.target.value)}
+                type="password"
+                placeholder="Optional password"
+                autoComplete="new-password"
+              />
+
+              <label className="text-muted flex items-center gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  checked={shareNoExpiry}
+                  onChange={(event) => setShareNoExpiry(event.target.checked)}
+                />
+                No expiry
+              </label>
+
+              <Input
+                value={shareExpiry}
+                onChange={(event) => setShareExpiry(event.target.value)}
+                type="datetime-local"
+                disabled={shareNoExpiry}
+              />
+
+              {shareError ? (
+                <p className="text-destructive text-sm">{shareError}</p>
+              ) : null}
+
+              {shareUrl ? (
+                <div className="space-y-2">
+                  <p className="text-muted text-xs font-semibold uppercase">
+                    Share URL
+                  </p>
+                  <Input value={shareUrl} readOnly />
+                </div>
+              ) : null}
+            </div>
+          </Modal.Body>
+
+          <Modal.Footer>
+            <Button
+              variant="secondary"
+              onClick={() => setShareModalOpen(false)}
+              disabled={shareBusy}
+            >
+              Close
+            </Button>
+
+            <Button onClick={onCreateShareLink} loading={shareBusy}>
+              Create Link
+            </Button>
+          </Modal.Footer>
         </Modal.Content>
       </Modal>
     </div>

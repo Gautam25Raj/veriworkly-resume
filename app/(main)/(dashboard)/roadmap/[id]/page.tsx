@@ -1,6 +1,10 @@
+import type { Metadata } from "next";
+
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { notFound } from "next/navigation";
+
+import { siteConfig } from "@/config/site";
 
 import { Container } from "@/components/layout/Container";
 
@@ -17,15 +21,58 @@ interface RoadmapDetailPageProps {
   params: Promise<{ id: string }>;
 }
 
-export const dynamic = "force-dynamic";
-
-export const metadata = {
-  title: "Roadmap Item | VeriWorkly Resume",
-};
-
-export default async function RoadmapDetailPage({
+export async function generateMetadata({
   params,
-}: RoadmapDetailPageProps) {
+}: RoadmapDetailPageProps): Promise<Metadata> {
+  const { id } = await params;
+  const item = await fetchRoadmapFeatureById(id).catch(() => null);
+
+  if (!item) return { title: "Item Not Found" };
+
+  const ogUrl = new URL("/api/og", siteConfig.url);
+  ogUrl.searchParams.set("title", item.title);
+
+  if (item.description) {
+    ogUrl.searchParams.set("description", item.description);
+  } else {
+    ogUrl.searchParams.set("showDesc", "false");
+  }
+
+  const metadataDescription =
+    item.description ||
+    `View details and progress for ${item.title} on our product roadmap.`;
+
+  return {
+    title: `${item.title} | Roadmap | ${siteConfig.name}`,
+
+    description: metadataDescription,
+
+    openGraph: {
+      title: item.title,
+      description: metadataDescription,
+      url: `${siteConfig.url}/roadmap/${id}`,
+      siteName: siteConfig.name,
+      images: [
+        {
+          url: ogUrl.toString(),
+          width: 1200,
+          height: 630,
+          alt: item.title,
+        },
+      ],
+      type: "article",
+    },
+
+    twitter: {
+      card: "summary_large_image",
+      title: item.title,
+      description: metadataDescription,
+      images: [ogUrl.toString()],
+    },
+  };
+}
+
+const RoadmapDetailPage = async ({ params }: RoadmapDetailPageProps) => {
   const { id } = await params;
   const feature = await fetchRoadmapFeatureById(id);
 
@@ -62,4 +109,6 @@ export default async function RoadmapDetailPage({
       </Container>
     </main>
   );
-}
+};
+
+export default RoadmapDetailPage;

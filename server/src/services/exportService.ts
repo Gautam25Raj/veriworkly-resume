@@ -1,5 +1,7 @@
 import { chromium, type Browser } from "playwright";
 
+import { config } from "#config";
+
 import { ApiError } from "#utils/errors";
 
 type ExportFormat = "pdf" | "png" | "jpg";
@@ -54,9 +56,73 @@ type ResumeSnapshot = {
     name?: string;
     keywords?: string[];
   }>;
+
+  customization?: {
+    fontFamily?: string;
+  };
 };
 
+type KnownResumeFontFamily = "geist" | "serif" | "modern";
+
+const RESUME_FONT_ALIAS_MAP: Record<string, KnownResumeFontFamily> = {
+  mono: "geist",
+};
+
+const RESUME_FONT_FAMILY_CSS_MAP: Record<KnownResumeFontFamily, string> = {
+  geist: '"Geist", "Inter", "Segoe UI", Arial, sans-serif',
+  serif: '"Merriweather", Georgia, Cambria, serif',
+  modern: '"Manrope", "Segoe UI", "Helvetica Neue", Arial, sans-serif',
+};
+
+const RESUME_FONT_STYLESHEET_MAP: Record<KnownResumeFontFamily, string> = {
+  geist: "https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700;800&display=swap",
+  serif: "https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&display=swap",
+  modern: "https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap",
+};
+
+function isKnownResumeFontFamily(value: string): value is KnownResumeFontFamily {
+  return value === "geist" || value === "serif" || value === "modern";
+}
+
+function resolveSnapshotFontFamily(snapshot: ResumeSnapshot) {
+  const rawFontFamily = (snapshot.customization?.fontFamily ?? "").trim().toLowerCase();
+  const normalizedFontFamily = RESUME_FONT_ALIAS_MAP[rawFontFamily] ?? rawFontFamily;
+  const fontFamily: KnownResumeFontFamily = isKnownResumeFontFamily(normalizedFontFamily)
+    ? normalizedFontFamily
+    : "geist";
+
+  return {
+    cssFontFamily: RESUME_FONT_FAMILY_CSS_MAP[fontFamily],
+    stylesheetHref: RESUME_FONT_STYLESHEET_MAP[fontFamily],
+  };
+}
+
 let browserInstance: Browser | null = null;
+let activeRenderCount = 0;
+const pendingRenderResolvers: Array<() => void> = [];
+
+async function acquireRenderSlot() {
+  if (activeRenderCount < config.exportQueue.maxConcurrentExports) {
+    activeRenderCount += 1;
+    return;
+  }
+
+  await new Promise<void>((resolve) => {
+    pendingRenderResolvers.push(() => {
+      activeRenderCount += 1;
+      resolve();
+    });
+  });
+}
+
+function releaseRenderSlot() {
+  activeRenderCount = Math.max(0, activeRenderCount - 1);
+
+  const next = pendingRenderResolvers.shift();
+  if (next) {
+    next();
+  }
+}
 
 function escapeHtml(value: string) {
   return value
@@ -82,6 +148,8 @@ function formatDateRange(start: string | undefined, end: string | undefined, cur
 }
 
 function buildHtml(snapshot: ResumeSnapshot) {
+  const { cssFontFamily, stylesheetHref } = resolveSnapshotFontFamily(snapshot);
+
   const name = escapeHtml(safeText(snapshot.basics?.fullName) || "Your Name");
   const role = escapeHtml(safeText(snapshot.basics?.role));
 
@@ -163,11 +231,14 @@ function buildHtml(snapshot: ResumeSnapshot) {
               <meta charset="utf-8" />
               <meta name="viewport" content="width=device-width, initial-scale=1" />
               <title>${name} - Resume</title>
+              ${stylesheetHref ? `<link rel="preconnect" href="https://fonts.googleapis.com" />` : ""}
+              ${stylesheetHref ? `<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />` : ""}
+              ${stylesheetHref ? `<link rel="stylesheet" href="${stylesheetHref}" />` : ""}
               <style>
                 :root { color-scheme: light; }
                 * { box-sizing: border-box; }
-                body { margin: 0; padding: 36px 20px; font-family: "Segoe UI", Arial, sans-serif; background: #f4f6fb; color: #111827; }
-                main { width: 210mm; max-width: 100%; margin: 0 auto; background: #fff; border: 1px solid #e5e7eb; border-radius: 16px; padding: 28px; }
+                body { margin: 0; padding: 0; font-family: ${cssFontFamily}; background: #ffffff; color: #111827; }
+                main { width: 210mm; max-width: 100%; margin: 0 auto; background: #fff; border: none; border-radius: 0; padding: 20px; }
                 header { border-bottom: 1px solid #e5e7eb; padding-bottom: 16px; }
                 h1 { margin: 0; font-size: 1.9rem; }
                 h2 { margin: 24px 0 10px; font-size: 1rem; text-transform: uppercase; letter-spacing: 0.08em; color: #374151; }
@@ -227,31 +298,46 @@ async function getBrowser() {
 export async function exportResumeSnapshot(
   snapshot: ResumeSnapshot,
   format: ExportFormat,
+  renderHtml?: string,
 ): Promise<ExportResult> {
+  await acquireRenderSlot();
+
   const browser = await getBrowser();
   const context = await browser.newContext({
     viewport: {
       width: 1280,
       height: 1800,
     },
+    javaScriptEnabled: false,
   });
   const page = await context.newPage();
 
   try {
-    await page.setContent(buildHtml(snapshot), {
+    await page.emulateMedia({ media: "screen" });
+
+    await page.setContent(renderHtml || buildHtml(snapshot), {
       waitUntil: "networkidle",
       timeout: 30_000,
+    });
+
+    await page.evaluate(async () => {
+      const fontsReady = document.fonts?.ready;
+
+      if (fontsReady) {
+        await fontsReady;
+      }
     });
 
     if (format === "pdf") {
       const buffer = await page.pdf({
         format: "A4",
         printBackground: true,
+        preferCSSPageSize: true,
         margin: {
-          top: "10mm",
-          right: "10mm",
-          bottom: "10mm",
-          left: "10mm",
+          top: "0mm",
+          right: "0mm",
+          bottom: "0mm",
+          left: "0mm",
         },
       });
 
@@ -262,10 +348,47 @@ export async function exportResumeSnapshot(
       };
     }
 
+    const clip = await page.evaluate(() => {
+      const doc = (
+        globalThis as {
+          document?: {
+            getElementById: (id: string) => {
+              getBoundingClientRect: () => {
+                left: number;
+                top: number;
+                width: number;
+                height: number;
+              };
+            } | null;
+          };
+        }
+      ).document;
+
+      if (!doc) {
+        return null;
+      }
+
+      const exportRoot = doc.getElementById("export-root");
+
+      if (!exportRoot) {
+        return null;
+      }
+
+      const rect = exportRoot.getBoundingClientRect();
+
+      return {
+        x: Math.max(0, Math.floor(rect.left)),
+        y: Math.max(0, Math.floor(rect.top)),
+        width: Math.max(1, Math.ceil(rect.width)),
+        height: Math.max(1, Math.ceil(rect.height)),
+      };
+    });
+
     if (format === "png") {
       const buffer = await page.screenshot({
         type: "png",
-        fullPage: true,
+        fullPage: !clip,
+        ...(clip ? { clip } : {}),
       });
 
       return {
@@ -278,7 +401,8 @@ export async function exportResumeSnapshot(
     const buffer = await page.screenshot({
       type: "jpeg",
       quality: 95,
-      fullPage: true,
+      fullPage: !clip,
+      ...(clip ? { clip } : {}),
     });
 
     return {
@@ -289,6 +413,7 @@ export async function exportResumeSnapshot(
   } finally {
     await page.close();
     await context.close();
+    releaseRenderSlot();
   }
 }
 

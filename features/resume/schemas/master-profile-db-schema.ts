@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { normalizeResumeFontFamilyId } from "@/features/resume/constants/resume-fonts";
+
 const languageSchema = z.object({
   id: z.string(),
   language: z.string().min(1),
@@ -136,7 +138,12 @@ const customizationSchema = z.object({
   sectionBackgroundColor: z.string(),
   borderColor: z.string(),
   sectionHeadingColor: z.string(),
-  fontFamily: z.enum(["geist", "serif", "mono", "modern"]),
+  fontFamily: z
+    .string()
+    .trim()
+    .min(1)
+    .max(32)
+    .transform((value) => normalizeResumeFontFamilyId(value)),
   sectionSpacing: z.number(),
   pagePadding: z.number(),
   bodyLineHeight: z.number(),

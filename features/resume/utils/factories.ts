@@ -127,6 +127,37 @@ export function createAdditionalItem(
     };
   }
 
+  if (kind === "interests") {
+    return {
+      ...base,
+      name: "Interest",
+    };
+  }
+
+  if (kind === "volunteer") {
+    return {
+      ...base,
+      name: "Organization",
+      issuer: "Role",
+    };
+  }
+
+  if (kind === "references") {
+    return {
+      ...base,
+      name: "Reference Name",
+      issuer: "Title",
+      referenceId: "Relationship",
+    };
+  }
+
+  if (kind === "achievements") {
+    return {
+      ...base,
+      name: "Achievement",
+    };
+  }
+
   return {
     ...base,
     name: "Custom Item",
