@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getSessionCookie } from "better-auth/cookies";
 
 export const config = {
   matcher: ["/admin/:path*", "/profile/:path*", "/login"],
@@ -8,9 +7,9 @@ export const config = {
 export default async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  const sessionCookie = getSessionCookie(request, {
-    cookiePrefix: "veriworkly-auth",
-  });
+  const sessionCookie =
+    request.cookies.get("__Secure-veriworkly-auth.session_token")?.value ||
+    request.cookies.get("veriworkly-auth.session_token")?.value;
 
   const isLoginPage = pathname === "/login";
   const isAuthenticated = !!sessionCookie;
