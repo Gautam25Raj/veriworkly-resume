@@ -1,10 +1,12 @@
 import { Request, Response, NextFunction } from "express";
 
 import { config } from "#config";
+
 import { logger } from "#utils/logger";
 import { prisma } from "#utils/prisma";
 import { getRedis } from "#utils/redis";
 import { createErrorResponse } from "#utils/errors";
+import { getRequestIpDetails } from "#utils/requestIp";
 
 type RateLimitEntry = {
   count: number;
@@ -16,13 +18,15 @@ const MAX_MEMORY_ENTRIES = process.env.MAX_MEMORY_ENTRIES
   : 15000;
 const bucket = new Map<string, RateLimitEntry>();
 
+import crypto from "crypto";
+
 function getClientKey(req: Request): string {
-  const ip = req.ip || req.headers["x-forwarded-for"] || req.socket.remoteAddress || "unknown";
+  const ip = getRequestIpDetails(req).resolvedIp;
+  const userAgent = req.headers["user-agent"] || "unknown";
 
-  if (Array.isArray(ip)) return ip[0];
-  if (typeof ip === "string" && ip.includes(",")) return ip.split(",")[0].trim();
+  const uaHash = crypto.createHash("md5").update(userAgent).digest("hex");
 
-  return ip;
+  return `${ip}:${uaHash}`;
 }
 
 function getRouteLimitConfig(req: Request) {

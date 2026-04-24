@@ -10,6 +10,7 @@ import { initRedis, closeRedis } from "#utils/redis";
 import { corsMiddleware } from "#middleware/cors";
 import { loggingMiddleware } from "#middleware/logging";
 import { rateLimitMiddleware } from "#middleware/rateLimit";
+import { authRequestDiagnosticsMiddleware } from "#middleware/authRequestDiagnostics";
 import { errorHandler, notFoundHandler } from "#middleware/errorHandler";
 
 import userRoutes from "#routes/users";
@@ -52,7 +53,7 @@ app.use(express.json({ limit: "4mb" }));
 app.use(express.urlencoded({ extended: true, limit: "4mb" }));
 
 // Trust proxy (for accurate IP addresses behind reverse proxies)
-app.set("trust proxy", true);
+app.set("trust proxy", config.server.trustProxy);
 
 // Versioned API routes (primary)
 app.use("/api/v1/users", userRoutes);
@@ -66,7 +67,8 @@ app.use("/api/v1/profiles", profileRoutes);
 app.use("/api/v1/share-links", shareRoutes);
 app.use("/api/v1/shares", shareControllerRoutes);
 
-app.all("/api/v1/auth/*", authNodeHandler);
+app.all("/api/v1/auth", authRequestDiagnosticsMiddleware, authNodeHandler);
+app.all("/api/v1/auth/*", authRequestDiagnosticsMiddleware, authNodeHandler);
 
 // 404 handler
 app.use(notFoundHandler);
@@ -118,6 +120,10 @@ async function main() {
     // Start listening
     const server = app.listen(config.port, () => {
       logger.info(`Server running on port ${config.port} (${config.nodeEnv})`);
+      logger.info("IP/rate-limit configuration", {
+        trustProxy: config.server.trustProxy,
+        authIpAddressHeaders: config.auth.ipAddressHeaders,
+      });
       startGitHubSyncJob();
       startUsageMetricsJob();
 
