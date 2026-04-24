@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { Save, RotateCcw } from "lucide-react";
@@ -132,72 +133,44 @@ const ProfileMaster = ({ profile, onSave, isSaving }: ProfileMasterProps) => {
 
         <CoreSections
           localProfile={localProfile}
-          updateRepeatableItem={(
-            f: string,
-            id: string,
-            u: Record<string, unknown>,
-          ) =>
+          updateRepeatableItem={(f: string, id: string, u: any) =>
             updateProfile((p) => ({
               ...p,
-              [f]: updateItem(
-                p[f as keyof typeof p] as Record<string, unknown>[],
-                id,
-                u,
-              ),
+              [f]: updateItem(p[f as keyof typeof p] as any, id, u),
             }))
           }
-          addRepeatableItem={(f: string, item: Record<string, unknown>) =>
+          addRepeatableItem={(f: string, item: any) =>
             updateProfile((p) => ({
               ...p,
-              [f]: [
-                ...(p[f as keyof typeof p] as Record<string, unknown>[]),
-                item,
-              ],
+              [f]: [...(p[f as keyof typeof p] as any[]), item],
             }))
           }
           removeRepeatableItem={(f: string, id: string) =>
             updateProfile((p) => ({
               ...p,
-              [f]: removeItem(
-                p[f as keyof typeof p] as Record<string, unknown>[],
-                id,
-              ),
+              [f]: removeItem(p[f as keyof typeof p] as any[], id),
             }))
           }
         />
 
         <AdditionalSections
           localProfile={localProfile}
-          updateRepeatableItem={(
-            f: string,
-            id: string,
-            u: Record<string, unknown>,
-          ) =>
+          updateRepeatableItem={(f: string, id: string, u: any) =>
             updateProfile((p) => ({
               ...p,
-              [f]: updateItem(
-                p[f as keyof typeof p] as Record<string, unknown>[],
-                id,
-                u,
-              ),
+              [f]: updateItem(p[f as keyof typeof p] as any[], id, u),
             }))
           }
-          addRepeatableItem={(f: string, item: Record<string, unknown>) =>
+          addRepeatableItem={(f: string, item: any) =>
             updateProfile((p) => ({
               ...p,
-              [f]: [
-                ...(p[f as keyof typeof p] as Record<string, unknown>[]),
-                item,
-              ],
+              [f]: [...(p[f as keyof typeof p] as any[]), item],
             }))
           }
           removeRepeatableItem={(f: string, id: string) =>
             updateProfile((p) => ({
               ...p,
-              [f]: removeItem(
-                p[f as keyof typeof p] as Record<string, unknown>[],
-                id,
-              ),
+              [f]: removeItem(p[f as keyof typeof p] as any[], id),
             }))
           }
         />

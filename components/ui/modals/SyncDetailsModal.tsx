@@ -16,8 +16,10 @@ import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 
 interface SyncDetailsModalProps {
-  resume: Record<string, unknown>;
-  telemetry: Record<string, unknown>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  resume: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  telemetry: any;
   syncingResumeId: string | null;
   onClose: () => void;
   onResolveUseLocal: (id: string) => void;

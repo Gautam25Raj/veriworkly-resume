@@ -173,7 +173,6 @@ const ShareResumeModal = ({
       });
 
       const nextShareUrl = `${window.location.origin}/share/${shareLink.token}`;
-      setShareUrl(nextShareUrl);
 
       try {
         await navigator.clipboard.writeText(nextShareUrl);
@@ -193,24 +192,12 @@ const ShareResumeModal = ({
       }
     } catch (err) {
       if (err instanceof ApiRequestError && err.status === 409) {
-        const refreshed = await refreshShareLinks(resumeId);
-
-        if (refreshed && refreshed.length > 0) {
-          const existing = refreshed[0];
-
-          const existingUrl = `${window.location.origin}/share/${existing.token}`;
-
-          setShareUrl(existingUrl);
-          setError(
-            "A share link already exists for this resume. Revoke the existing one below to create a new link.",
-          );
-
-          return;
-        }
+        await refreshShareLinks(resumeId);
 
         setError(
           "A share link already exists for this resume. Revoke the existing one below to create a new link.",
         );
+
         return;
       }
 
@@ -242,7 +229,6 @@ const ShareResumeModal = ({
       setPassword("");
       setExpiry("");
       setNoExpiry(false);
-      setShareUrl(null);
       setError(null);
       onClose();
     }

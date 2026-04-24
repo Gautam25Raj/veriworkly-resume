@@ -287,7 +287,7 @@ const DashboardWorkspace = () => {
         />
       )}
 
-      {syncDetailsTargetId && (
+      {syncDetailsTargetId && syncTarget && (
         <SyncDetailsModal
           resume={syncTarget}
           onNotice={setSyncNotice}
