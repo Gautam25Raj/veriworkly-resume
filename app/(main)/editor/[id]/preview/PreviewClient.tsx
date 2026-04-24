@@ -1,11 +1,13 @@
 "use client";
 
+import type { TemplateComponent } from "@/types/template";
+
 import Link from "next/link";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { Card } from "@/components/ui/Card";
 
-import { getTemplateById } from "@/templates";
+import { loadTemplateComponentById } from "@/templates";
 
 import { useResume } from "@/features/resume/hooks/use-resume";
 import { loadResumeById } from "@/features/resume/services/resume-service";
@@ -16,6 +18,8 @@ interface PreviewClientProps {
 
 export function PreviewClient({ resumeId }: PreviewClientProps) {
   const { resume, setResume } = useResume();
+  const [templateComponent, setTemplateComponent] =
+    useState<TemplateComponent | null>(null);
 
   const routeResume = useMemo(() => loadResumeById(resumeId), [resumeId]);
 
@@ -27,7 +31,25 @@ export function PreviewClient({ resumeId }: PreviewClientProps) {
     setResume(routeResume);
   }, [routeResume, setResume]);
 
-  const Template = getTemplateById(resume.templateId).Component;
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadTemplate = async () => {
+      const nextTemplate = await loadTemplateComponentById(resume.templateId);
+
+      if (!cancelled) {
+        setTemplateComponent(() => nextTemplate);
+      }
+    };
+
+    void loadTemplate();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [resume.templateId]);
+
+  const TemplateComponent = templateComponent;
 
   return (
     <div className="space-y-6 px-4 py-6 sm:px-6 lg:px-8">
@@ -83,7 +105,7 @@ export function PreviewClient({ resumeId }: PreviewClientProps) {
         <Card className="overflow-hidden p-4">
           <div className="bg-background rounded-3xl p-4 md:p-6">
             <div className="mx-auto w-full max-w-212.5">
-              <Template resume={resume} />
+              {TemplateComponent ? <TemplateComponent resume={resume} /> : null}
             </div>
           </div>
         </Card>

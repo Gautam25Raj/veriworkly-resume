@@ -1,14 +1,14 @@
 "use client";
 
 import {
-  ChevronDown,
+  Files,
   Code2,
+  FileText,
+  FileJson,
   Download,
   FileCode2,
   FileImage,
-  FileJson,
-  FileText,
-  Files,
+  ChevronDown,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/Button";
@@ -66,7 +66,7 @@ const ToolbarDownloadMenu = ({
             }}
           >
             <Download className="h-4 w-4" />
-            {activeDownload === "pdf" ? "Generating PDF..." : "PDF"}
+            {activeDownload === "pdf" ? "Rendering PDF..." : "PDF"}
           </MenuItem>
 
           <MenuItem
@@ -77,7 +77,7 @@ const ToolbarDownloadMenu = ({
             }}
           >
             <FileImage className="h-4 w-4" />
-            {activeDownload === "png" ? "Generating PNG..." : "PNG Image"}
+            {activeDownload === "png" ? "Rendering PNG..." : "PNG Image"}
           </MenuItem>
 
           <MenuItem
@@ -88,7 +88,7 @@ const ToolbarDownloadMenu = ({
             }}
           >
             <FileImage className="h-4 w-4" />
-            {activeDownload === "jpg" ? "Generating JPG..." : "JPG Image"}
+            {activeDownload === "jpg" ? "Rendering JPG..." : "JPG Image"}
           </MenuItem>
 
           <MenuItem
