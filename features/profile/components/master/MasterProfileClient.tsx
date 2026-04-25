@@ -19,13 +19,7 @@ import {
   loadMasterProfileFromLocalStorage,
 } from "@/features/resume/services/master-profile";
 
-const COUNT_KEYS = {
-  experience: true,
-  projects: true,
-  skills: true,
-} as const;
-
-type CountKey = keyof typeof COUNT_KEYS;
+type CountKey = "experience" | "projects" | "skills";
 
 type MasterSectionNavItem = {
   id: string;
@@ -294,7 +288,14 @@ const StatRow = ({
   </div>
 );
 
-const NavButton = ({ section, isActive, count, onClick }: any) => (
+interface NavButtonProps {
+  section: MasterSectionNavItem;
+  isActive: boolean;
+  count?: number;
+  onClick: () => void;
+}
+
+const NavButton = ({ section, isActive, count, onClick }: NavButtonProps) => (
   <button
     onClick={onClick}
     className={cn(

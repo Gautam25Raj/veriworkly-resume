@@ -90,6 +90,6 @@ export async function loadTemplateComponentById(
     templateComponentLoaders[normalizedTemplateId] ??
     templateComponentLoaders[getFallbackTemplate().id];
 
-  const module = await loader();
-  return module.default;
+  const templateModule = await loader();
+  return templateModule.default;
 }

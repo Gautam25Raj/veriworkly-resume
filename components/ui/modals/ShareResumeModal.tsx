@@ -36,12 +36,19 @@ interface ShareResumeModalProps {
   onNotice: (msg: string) => void;
 }
 
+interface LinkItem {
+  token: string;
+  passwordRequired?: boolean;
+  viewCount: number;
+  expiresAt: string | null;
+}
+
 const ActiveLinkRow = ({
   link,
   onRevoke,
   onCopy,
 }: {
-  link: any;
+  link: LinkItem;
   onRevoke: () => void;
   onCopy: (m: string) => void;
 }) => {
@@ -104,7 +111,6 @@ const ActiveLinkRow = ({
 
 const ShareResumeModal = ({
   resumeId,
-  resumeTitle,
   onClose,
   onNotice,
 }: ShareResumeModalProps) => {
@@ -114,7 +120,6 @@ const ShareResumeModal = ({
   const [noExpiry, setNoExpiry] = useState(false);
 
   const [error, setError] = useState<string | null>(null);
-  const [shareUrl, setShareUrl] = useState<string | null>(null);
   const [shareLinks, setShareLinks] = useState<ResumeShareLinkItem[]>([]);
 
   const [linksLoading, setLinksLoading] = useState(false);
@@ -168,7 +173,6 @@ const ShareResumeModal = ({
       });
 
       const nextShareUrl = `${window.location.origin}/share/${shareLink.token}`;
-      setShareUrl(nextShareUrl);
 
       try {
         await navigator.clipboard.writeText(nextShareUrl);
@@ -188,24 +192,12 @@ const ShareResumeModal = ({
       }
     } catch (err) {
       if (err instanceof ApiRequestError && err.status === 409) {
-        const refreshed = await refreshShareLinks(resumeId);
-
-        if (refreshed && refreshed.length > 0) {
-          const existing = refreshed[0];
-
-          const existingUrl = `${window.location.origin}/share/${existing.token}`;
-
-          setShareUrl(existingUrl);
-          setError(
-            "A share link already exists for this resume. Revoke the existing one below to create a new link.",
-          );
-
-          return;
-        }
+        await refreshShareLinks(resumeId);
 
         setError(
           "A share link already exists for this resume. Revoke the existing one below to create a new link.",
         );
+
         return;
       }
 
@@ -237,7 +229,6 @@ const ShareResumeModal = ({
       setPassword("");
       setExpiry("");
       setNoExpiry(false);
-      setShareUrl(null);
       setError(null);
       onClose();
     }

@@ -31,7 +31,11 @@ const DestructiveModal = ({
   const [value, setValue] = useState("");
 
   useEffect(() => {
-    if (!open) setValue("");
+    if (!open) {
+      // Reset value asynchronously to avoid state update during effect
+      const timer = setTimeout(() => setValue(""), 0);
+      return () => clearTimeout(timer);
+    }
   }, [open]);
 
   const isValid = value.trim().toUpperCase() === confirmText.toUpperCase();

@@ -47,6 +47,7 @@ const ProfileAdvanced = ({
     try {
       JSON.parse(jsonValue);
 
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsJsonValid(true);
       setErrorMessage(null);
     } catch {

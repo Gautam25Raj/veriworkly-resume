@@ -2,6 +2,12 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+function parseBoolean(value: string | undefined, fallback: boolean): boolean {
+  if (value == null) return fallback;
+
+  return ["1", "true", "yes", "on"].includes(value.trim().toLowerCase());
+}
+
 const defaultAuthSessionCacheEnabled =
   (process.env.NODE_ENV || "development") === "production" ? "true" : "false";
 
@@ -30,6 +36,13 @@ export const config = {
   auth: {
     secret: process.env.AUTH_SECRET || "dev-auth-secret",
     baseUrl: process.env.AUTH_BASE_URL || "http://localhost:8080",
+    ipAddressHeaders: (
+      process.env.AUTH_IP_ADDRESS_HEADERS ||
+      "x-client-ip,x-forwarded-for,x-real-ip,cf-connecting-ip"
+    )
+      .split(",")
+      .map((header) => header.trim().toLowerCase())
+      .filter(Boolean),
     sessionTtlSeconds: parseInt(process.env.AUTH_SESSION_TTL_SECONDS || "2592000", 10),
     sessionResetTtlOnUse: parseInt(process.env.AUTH_SESSION_RESET_TTL_ON_USE || "86400", 10),
     sessionCacheEnabled:
@@ -47,6 +60,10 @@ export const config = {
     smtpSecure: (process.env.AUTH_SMTP_SECURE || "false") === "true",
     smtpUser: process.env.AUTH_SMTP_USER || "",
     smtpPass: process.env.AUTH_SMTP_PASS || "",
+  },
+
+  server: {
+    trustProxy: parseBoolean(process.env.TRUST_PROXY, false),
   },
 
   admin: {

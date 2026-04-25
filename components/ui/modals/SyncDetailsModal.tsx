@@ -16,7 +16,9 @@ import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 
 interface SyncDetailsModalProps {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   resume: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   telemetry: any;
   syncingResumeId: string | null;
   onClose: () => void;

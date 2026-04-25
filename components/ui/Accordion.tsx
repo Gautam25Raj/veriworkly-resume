@@ -7,6 +7,7 @@ import {
   useMemo,
   useState,
   useContext,
+  useCallback,
   createContext,
 } from "react";
 import { ChevronDown } from "lucide-react";
@@ -78,25 +79,20 @@ export function Accordion({
     return Array.isArray(defaultValue) ? defaultValue : [defaultValue];
   });
 
-  const toggleItem = (value: string) => {
-    setExpanded((prev) => {
-      const isOpen = prev.includes(value);
-
-      if (type === "single") {
-        if (isOpen) {
-          return collapsible ? [] : prev;
+  const toggleItem = useCallback(
+    (value: string) => {
+      setExpanded((prev) => {
+        if (type === "single") {
+          return prev.includes(value) && !collapsible ? prev : [value];
         }
 
-        return [value];
-      }
+        if (prev.includes(value)) return prev.filter((item) => item !== value);
 
-      if (isOpen) {
-        return prev.filter((entry) => entry !== value);
-      }
-
-      return [...prev, value];
-    });
-  };
+        return [...prev, value];
+      });
+    },
+    [type, collapsible],
+  );
 
   const contextValue = useMemo(
     () => ({
@@ -105,7 +101,7 @@ export function Accordion({
       expanded,
       toggleItem,
     }),
-    [type, collapsible, expanded],
+    [type, collapsible, expanded, toggleItem],
   );
 
   return (

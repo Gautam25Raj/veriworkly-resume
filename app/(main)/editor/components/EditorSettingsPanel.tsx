@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 
+import type { ResumeFontFamilyId } from "@/types/resume-font";
+
 import { templateSummaries } from "@/config/templates";
 
 import {
@@ -50,11 +52,7 @@ const EditorSettingsPanel = () => {
         label="Font style"
         onChange={(event) =>
           updateCustomization({
-            fontFamily: event.target.value as
-              | "geist"
-              | "serif"
-              | "mono"
-              | "modern",
+            fontFamily: event.target.value as ResumeFontFamilyId,
           })
         }
         value={resume.customization.fontFamily}

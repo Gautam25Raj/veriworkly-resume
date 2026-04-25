@@ -4,11 +4,12 @@ import { config } from "#config";
 
 import { prisma } from "#utils/prisma";
 import { logger } from "#utils/logger";
+import { getRequestIpDetails } from "#utils/requestIp";
 
 export function loggingMiddleware(req: Request, res: Response, next: NextFunction) {
   const startTime = performance.now();
 
-  const ip = req.ip || req.socket.remoteAddress || "unknown";
+  const ip = getRequestIpDetails(req).resolvedIp;
 
   const userAgent = req.headers["user-agent"];
 

@@ -2,6 +2,7 @@
 
 import {
   Trash2,
+  Share2,
   Download,
   RotateCcw,
   Settings2,
@@ -17,6 +18,7 @@ interface ToolbarActionsMenuProps {
   onExport: () => void;
   onImport: () => void;
   onReset: () => void;
+  onShare: () => void;
 }
 
 const ToolbarActionsMenu = ({
@@ -24,6 +26,7 @@ const ToolbarActionsMenu = ({
   onExport,
   onImport,
   onReset,
+  onShare,
 }: ToolbarActionsMenuProps) => {
   return (
     <Menu
@@ -64,6 +67,18 @@ const ToolbarActionsMenu = ({
           >
             <Download className="h-4 w-4" />
             Export JSON
+          </MenuItem>
+
+          <MenuSeparator />
+
+          <MenuItem
+            onClick={() => {
+              close();
+              onShare();
+            }}
+          >
+            <Share2 className="h-4 w-4" />
+            Create Share Link
           </MenuItem>
 
           <MenuSeparator />

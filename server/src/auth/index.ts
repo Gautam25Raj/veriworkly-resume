@@ -6,6 +6,7 @@ import { prismaAdapter } from "@better-auth/prisma-adapter";
 import { toNodeHandler, fromNodeHeaders } from "better-auth/node";
 
 import { config } from "#config";
+
 import { prisma } from "#utils/prisma";
 import { sendAuthOtpEmail } from "#auth/mailer";
 
@@ -24,9 +25,13 @@ export const auth = betterAuth({
 
   advanced: {
     trustedProxyHeaders: true,
+    ipAddress: {
+      ipAddressHeaders: config.auth.ipAddressHeaders,
+    },
     cookiePrefix: "veriworkly-auth",
     crossSubDomainCookies: {
       enabled: true,
+      domain: config.nodeEnv === "production" ? ".veriworkly.com" : undefined,
     },
   },
 

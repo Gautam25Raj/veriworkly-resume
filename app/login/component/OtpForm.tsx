@@ -41,7 +41,7 @@ const OtpForm = ({
 
     setIsLoading(true);
 
-    const { data, error: authError } = await authClient.signIn.emailOtp({
+    const { error: authError } = await authClient.signIn.emailOtp({
       email: sentTo,
       otp: otp,
     });

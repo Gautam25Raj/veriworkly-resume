@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { Save, RotateCcw } from "lucide-react";
@@ -60,6 +61,7 @@ const ProfileMaster = ({ profile, onSave, isSaving }: ProfileMasterProps) => {
   }, [localProfile, initialFingerprint]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLocalProfile(normalizeProfileIds(profile));
   }, [profile]);
 
@@ -87,7 +89,7 @@ const ProfileMaster = ({ profile, onSave, isSaving }: ProfileMasterProps) => {
       setStatus({ type: "success", msg: "Changes synced." });
 
       setTimeout(() => setStatus(null), 3000);
-    } catch (error) {
+    } catch {
       setStatus({ type: "error", msg: "Save failed." });
     }
   }, [hasUnsavedChanges, isSaving, localProfile, onSave]);
@@ -103,7 +105,7 @@ const ProfileMaster = ({ profile, onSave, isSaving }: ProfileMasterProps) => {
           setBasicField={(k, v) =>
             updateProfile((p) => ({ ...p, basics: { ...p.basics, [k]: v } }))
           }
-          updateLink={(t, v) => {}}
+          updateLink={() => {}}
           updateLinkDisplayMode={(mode) =>
             updateProfile((p) => ({
               ...p,
@@ -132,33 +134,45 @@ const ProfileMaster = ({ profile, onSave, isSaving }: ProfileMasterProps) => {
 
         <CoreSections
           localProfile={localProfile}
-          updateRepeatableItem={(f, id, u) =>
+          updateRepeatableItem={(f: string, id: string, u: any) =>
             updateProfile((p) => ({
               ...p,
-              [f]: updateItem(p[f] as any, id, u as any),
+              [f]: updateItem(p[f as keyof typeof p] as any, id, u),
             }))
           }
-          addRepeatableItem={(f, item) =>
-            updateProfile((p) => ({ ...p, [f]: [...(p[f] as any), item] }))
+          addRepeatableItem={(f: string, item: any) =>
+            updateProfile((p) => ({
+              ...p,
+              [f]: [...(p[f as keyof typeof p] as any[]), item],
+            }))
           }
-          removeRepeatableItem={(f, id) =>
-            updateProfile((p) => ({ ...p, [f]: removeItem(p[f] as any, id) }))
+          removeRepeatableItem={(f: string, id: string) =>
+            updateProfile((p) => ({
+              ...p,
+              [f]: removeItem(p[f as keyof typeof p] as any[], id),
+            }))
           }
         />
 
         <AdditionalSections
           localProfile={localProfile}
-          updateRepeatableItem={(f, id, u) =>
+          updateRepeatableItem={(f: string, id: string, u: any) =>
             updateProfile((p) => ({
               ...p,
-              [f]: updateItem(p[f] as any, id, u as any),
+              [f]: updateItem(p[f as keyof typeof p] as any[], id, u),
             }))
           }
-          addRepeatableItem={(f, item) =>
-            updateProfile((p) => ({ ...p, [f]: [...(p[f] as any), item] }))
+          addRepeatableItem={(f: string, item: any) =>
+            updateProfile((p) => ({
+              ...p,
+              [f]: [...(p[f as keyof typeof p] as any[]), item],
+            }))
           }
-          removeRepeatableItem={(f, id) =>
-            updateProfile((p) => ({ ...p, [f]: removeItem(p[f] as any, id) }))
+          removeRepeatableItem={(f: string, id: string) =>
+            updateProfile((p) => ({
+              ...p,
+              [f]: removeItem(p[f as keyof typeof p] as any[], id),
+            }))
           }
         />
       </div>
