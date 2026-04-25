@@ -46,12 +46,16 @@ describe("template render contract", () => {
 
       expect(() =>
         renderToStaticMarkup(
+          // @ts-expect-error - testing missing props
           <TemplateComponent {...({} as Record<string, unknown>)} />,
         ),
       ).not.toThrow();
 
       expect(() =>
-        renderToStaticMarkup(<TemplateComponent resume={null as unknown} />),
+        renderToStaticMarkup(
+          // @ts-expect-error - testing invalid props
+          <TemplateComponent resume={null} />
+        ),
       ).not.toThrow();
     }
   });

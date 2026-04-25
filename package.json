@@ -1,6 +1,6 @@
 {
   "name": "veriworkly-resume",
-  "version": "1.10.3",
+  "version": "1.10.4",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -27,10 +27,13 @@
     "zod": "^3.25.76",
     "zustand": "^5.0.12"
   },
+  "overrides": {
+    "postcss": "^8.5.10"
+  },
   "devDependencies": {
     "@playwright/test": "^1.59.1",
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
+    "@types/node": "^25",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
@@ -38,7 +41,7 @@
     "prettier": "^3.8.3",
     "prettier-plugin-tailwindcss": "^0.7.3",
     "tailwindcss": "^4",
-    "typescript": "^5",
-    "vitest": "^2.1.9"
+    "typescript": "^6",
+    "vitest": "^4.1.5"
   }
 }

@@ -61,6 +61,7 @@ const ProfileMaster = ({ profile, onSave, isSaving }: ProfileMasterProps) => {
   }, [localProfile, initialFingerprint]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLocalProfile(normalizeProfileIds(profile));
   }, [profile]);
 

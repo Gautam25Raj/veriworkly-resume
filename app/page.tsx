@@ -24,12 +24,12 @@ const pageOgImage = `${siteConfig.url}/og/landing-page-og.png`;
 export const metadata: Metadata = {
   title: `Free Resume Builder (No Login) | ${siteConfig.shortName}`,
   description:
-    "Create ATS-friendly resumes online for free. No login required. Choose templates, customize easily, and download instantly.",
+    "Create ATS-friendly resumes online for free. No login required. Choose templates, customize easily, and download instantly. Open Source.",
 
   openGraph: {
     title: `Free Resume Builder (No Login) | ${siteConfig.shortName}`,
     description:
-      "Create polished resumes quickly with flexible templates, strong privacy defaults, and optional sync/share workflows.",
+      "Create polished resumes quickly with flexible templates, strong privacy defaults, and optional sync/share workflows. Open Source.",
     url: pageUrl,
     siteName: siteConfig.shortName,
     type: "website",
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: `Free Resume Builder (No Login) | ${siteConfig.shortName}`,
     description:
-      "Local-first resume builder with flexible templates and practical export workflows.",
+      "Local-first resume builder with flexible templates and practical export workflows. Open Source.",
     images: [pageOgImage],
   },
 };

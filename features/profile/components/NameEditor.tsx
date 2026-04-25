@@ -17,6 +17,7 @@ export default function NameEditor() {
   const { user, setUser, loading } = useUserStore();
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setNameDraft(user?.name ?? "");
   }, [user?.name]);
 
