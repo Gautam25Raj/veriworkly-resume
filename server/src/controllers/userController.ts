@@ -13,9 +13,24 @@ const updateUserNameSchema = z.object({
 });
 
 /**
- * Get current user information (read-only email)
+ * Update the authenticated user's name.
+ *
+ * @param req Express request (expects { name } in body)
+ * @param res Express response
+ * @param next Express next middleware
+ *
+ * Body:
+ * - name: string (required, 1–255 chars)
+ *
+ * Response:
+ * - 200: Updated user object
+ *
+ * Errors:
+ * - 400: Validation error
+ * - 500: Server error
  */
-export async function getCurrentUserController(req: Request, res: Response, next: NextFunction) {
+
+const getCurrentUserController = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const authUser = requireAuthUser(req);
 
@@ -23,7 +38,7 @@ export async function getCurrentUserController(req: Request, res: Response, next
 
     const cachedUser = await cacheGet(cacheKey);
     if (cachedUser) {
-      return res.json(createSuccessResponse(cachedUser, "User information fetched from cache"));
+      return res.json(createSuccessResponse(cachedUser, "User information fetched successfully"));
     }
 
     const user = await prisma.user.findUnique({
@@ -55,13 +70,24 @@ export async function getCurrentUserController(req: Request, res: Response, next
   } catch (error) {
     next(error);
   }
-}
+};
 
 /**
- * Update user name (email is read-only)
+ * Get the authenticated user's profile.
+ *
+ * @param req Express request
+ * @param res Express response
+ * @param next Express next middleware
+ *
+ * Response:
+ * - 200: User profile data
+ *
+ * Errors:
+ * - 404: User not found
+ * - 500: Server error
  */
 
-export async function updateUserNameController(req: Request, res: Response, next: NextFunction) {
+const updateUserNameController = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const user = requireAuthUser(req);
     const { name } = updateUserNameSchema.parse(req.body);
@@ -97,4 +123,6 @@ export async function updateUserNameController(req: Request, res: Response, next
 
     next(error);
   }
-}
+};
+
+export { getCurrentUserController, updateUserNameController };

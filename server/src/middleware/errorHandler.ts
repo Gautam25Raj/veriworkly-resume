@@ -1,11 +1,12 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 
 import { config } from "#config";
 
 import { logger } from "#utils/logger";
 import { ApiError, createErrorResponse } from "#utils/errors";
 
-export function errorHandler(error: unknown, req: Request, res: Response) {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export function errorHandler(error: unknown, req: Request, res: Response, next: NextFunction) {
   if (error instanceof ApiError) {
     logger.warn(`API Error [${req.method} ${req.path}]: ${error.message}`, error.details);
 

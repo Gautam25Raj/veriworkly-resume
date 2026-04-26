@@ -1,6 +1,6 @@
 {
   "name": "veriworkly-resume",
-  "version": "1.10.4",
+  "version": "1.10.5",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -11,12 +11,18 @@
     "test:visual": "playwright test",
     "test:visual:update": "playwright test --update-snapshots",
     "format": "prettier --check .",
-    "format:write": "prettier --write ."
+    "format:write": "prettier --write .",
+    "generate:api": "npx @redocly/cli bundle specs/openapi.yaml -o openapi.yaml && node scripts/generate-api.mjs"
   },
   "dependencies": {
+    "@types/mdx": "^2.0.13",
     "better-auth": "^1.6.9",
     "clsx": "^2.1.1",
     "docx": "^9.6.1",
+    "fumadocs-core": "^16.8.3",
+    "fumadocs-mdx": "^14.3.1",
+    "fumadocs-openapi": "^10.8.0",
+    "fumadocs-ui": "^16.8.3",
     "jose": "^6.2.2",
     "lucide-react": "^1.11.0",
     "next": "^16.2.4",

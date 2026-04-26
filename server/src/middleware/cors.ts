@@ -5,7 +5,6 @@ import { ApiError } from "#utils/errors";
 
 export const corsMiddleware = cors({
   origin: (origin, callback) => {
-    // Allow requests without Origin header (SSR/server-to-server/curl/health checks).
     if (!origin) {
       callback(null, true);
       return;

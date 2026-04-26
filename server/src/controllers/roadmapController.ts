@@ -14,22 +14,21 @@ import { roadmapQuerySchema } from "#validators/roadmapValidator";
 import { ApiError, createSuccessResponse, handleValidationError } from "#utils/errors";
 
 /**
- * Get roadmap features with optional filtering/sorting/pagination from query params.
+ * Get roadmap features with filtering, sorting, and pagination.
  *
- * req.query:
- * - status: feature status filter (optional)
- * - sort: sorting strategy (optional)
- * - limit: max number of items (optional)
- * - offset: pagination offset (optional)
+ * @param req Express request (query: status, sort, limit, offset)
+ * @param res Express response
+ * @param next Express next middleware
  *
- * res:
- * - 200 with normalized roadmap list payload
+ * Response:
+ * - 200: Paginated roadmap feature list
  *
- * next:
- * - forwards validation/runtime errors to global error handler
+ * Errors:
+ * - 400: Validation error
+ * - 500: Server error
  */
 
-export async function getRoadmapController(req: Request, res: Response, next: NextFunction) {
+const getRoadmapController = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const query = roadmapQuerySchema.parse(req.query);
 
@@ -46,46 +45,48 @@ export async function getRoadmapController(req: Request, res: Response, next: Ne
 
     next(error);
   }
-}
+};
 
 /**
- * Get aggregated roadmap counters (total, planned, in-progress, completed, etc.).
+ * Get aggregated roadmap statistics.
  *
- * req:
- * - unused
+ * @param _req Express request (unused)
+ * @param res Express response
+ * @param next Express next middleware
  *
- * res:
- * - 200 with computed roadmap statistics
+ * Response:
+ * - 200: Roadmap stats summary
  *
- * next:
- * - forwards runtime errors to global error handler
+ * Errors:
+ * - 500: Server error
  */
-export async function getRoadmapStatsController(_req: Request, res: Response, next: NextFunction) {
+
+const getRoadmapStatsController = async (_req: Request, res: Response, next: NextFunction) => {
   try {
     const stats = await getRoadmapStats();
     res.json(createSuccessResponse(stats, "Roadmap stats fetched successfully"));
   } catch (error) {
     next(error);
   }
-}
+};
 
 /**
- * Get a single roadmap feature by route param id.
+ * Get a roadmap feature by ID.
  *
- * req.params:
- * - id: roadmap feature id (required)
+ * @param req Express request (params: id)
+ * @param res Express response
+ * @param next Express next middleware
  *
- * res:
- * - 200 with feature payload
+ * Response:
+ * - 200: Roadmap feature details
  *
- * next:
- * - forwards runtime errors to global error handler
+ * Errors:
+ * - 400: Missing ID
+ * - 404: Feature not found
+ * - 500: Server error
  */
-export async function getRoadmapFeatureByIdController(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) {
+
+const getRoadmapFeatureByIdController = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
 
@@ -98,4 +99,6 @@ export async function getRoadmapFeatureByIdController(
   } catch (error) {
     next(error);
   }
-}
+};
+
+export { getRoadmapController, getRoadmapStatsController, getRoadmapFeatureByIdController };

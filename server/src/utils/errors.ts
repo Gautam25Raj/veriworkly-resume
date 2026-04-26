@@ -11,13 +11,13 @@ export class ApiError extends Error {
   }
 }
 
-export function handleValidationError(error: z.ZodError): never {
+export function handleValidationError(error: z.ZodError): ApiError {
   const formattedErrors = error.errors.map((err) => ({
     path: err.path.join("."),
     message: err.message,
   }));
 
-  throw new ApiError(400, "Validation failed", formattedErrors);
+  return new ApiError(400, "Validation failed", formattedErrors);
 }
 
 export function createSuccessResponse<T>(data: T, message = "Success") {

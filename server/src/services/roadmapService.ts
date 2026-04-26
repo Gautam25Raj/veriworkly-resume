@@ -29,7 +29,12 @@ function getRoadmapOrderBy(sort: RoadmapSort) {
   return [{ createdAt: "desc" as const }];
 }
 
-export async function getRoadmapFeatures(query: RoadmapQuery = {}) {
+/**
+ * Fetch roadmap features with optional filters and pagination.
+ * Results are cached based on query parameters.
+ */
+
+const getRoadmapFeatures = async (query: RoadmapQuery = {}) => {
   const { status, sort = "newest", limit = 20, offset = 0 } = query;
 
   const cacheKey = `roadmap:list:${status || "all"}:${sort}:${limit}:${offset}`;
@@ -89,9 +94,14 @@ export async function getRoadmapFeatures(query: RoadmapQuery = {}) {
   await cacheSet(cacheKey, response, config.cache.roadmapTtlSeconds);
 
   return response;
-}
+};
 
-export async function getRoadmapFeatureById(id: string) {
+/**
+ * Fetch a single roadmap feature by ID.
+ * Uses cache for faster repeated access.
+ */
+
+const getRoadmapFeatureById = async (id: string) => {
   const cacheKey = `roadmap:feature:${id}`;
   const cached = await cacheGet(cacheKey);
 
@@ -141,9 +151,14 @@ export async function getRoadmapFeatureById(id: string) {
   await cacheSet(cacheKey, feature, config.cache.roadmapTtlSeconds);
 
   return feature;
-}
+};
 
-export async function getRoadmapStats() {
+/**
+ * Compute roadmap statistics (counts by status + completion rate).
+ * Cached to reduce database load.
+ */
+
+const getRoadmapStats = async () => {
   const cacheKey = "roadmap:stats";
   const cached = await cacheGet(cacheKey);
 
@@ -179,4 +194,6 @@ export async function getRoadmapStats() {
   await cacheSet(cacheKey, stats, config.cache.roadmapStatsTtlSeconds);
 
   return stats;
-}
+};
+
+export { getRoadmapFeatures, getRoadmapFeatureById, getRoadmapStats };

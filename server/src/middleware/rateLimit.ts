@@ -119,6 +119,8 @@ export const rateLimitMiddleware = (req: Request, res: Response, next: NextFunct
         })
         .catch((err) => logger.error("Failed to log rate limit violation", err));
 
+      const retryAfter = Math.ceil((windowMs - (now % windowMs)) / 1000);
+      res.set("Retry-After", String(retryAfter));
       res.status(429).json(createErrorResponse(429, "Too many requests. Please try again later."));
     })
     .catch((err) => {

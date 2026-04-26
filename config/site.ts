@@ -7,7 +7,7 @@ export const siteConfig = {
   url: "https://veriworkly.com",
 
   description:
-    "VeriWorkly Resume is a free, open-source resume builder with no login required. Create professional resumes with flexible templates, real-time preview, and complete data privacy — all stored locally in your browser.",
+    "Free, open-source, and privacy-first resume builder. Create professional ATS-friendly resumes with flexible templates, real-time preview, and complete data privacy.",
 
   tagline: "Free resume builder. No login. 100% private.",
 

@@ -1,7 +1,8 @@
 import { Router } from "express";
 
-import { getCurrentUserController, updateUserNameController } from "#controllers/userController";
 import { authMiddleware } from "#middleware/auth";
+
+import { getCurrentUserController, updateUserNameController } from "#controllers/userController";
 
 const router = Router();
 
