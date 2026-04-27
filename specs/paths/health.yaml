@@ -1,0 +1,35 @@
+healthCheck:
+  get:
+    tags:
+      - Health
+    operationId: healthCheck
+    summary: Health Check
+    description: Check the health status of the server, database, and Redis.
+    status:
+      enum: [ok, degraded, down]
+    responses:
+      "200":
+        description: Server is healthy
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas.yaml#/HealthResponse"
+            example:
+              success: true
+              message: "Server is healthy"
+              data:
+                status: "ok"
+                database: "connected"
+                redis: "connected"
+                timestamp: "2026-04-26T10:00:00.000Z"
+
+      "503":
+        description: Service unavailable
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas.yaml#/ErrorResponse"
+            example:
+              success: false
+              statusCode: 503
+              message: "Service Unavailable"

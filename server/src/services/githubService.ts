@@ -81,6 +81,53 @@ function resolveRetryDelayMs(response: Response, attempt: number) {
   return Math.min(backoffMs, 10_000);
 }
 
+/**
+ * Map GitHub issue to internal status.
+ */
+
+function classifyIssue(issue: GitHubIssuePayload): GitHubStatus {
+  if (issue.state === "closed") return "done";
+
+  const labels = issue.labels.map((label) => label.name.toLowerCase());
+
+  if (labels.includes("done")) return "done";
+
+  if (labels.some((l) => l === "in-progress" || l === "in progress" || l === "active")) {
+    return "in-progress";
+  }
+
+  return "todo";
+}
+
+/**
+ * Convert raw GitHub issues into normalized snapshot format.
+ */
+
+function buildGitHubIssuesSnapshot(issues: GitHubIssuePayload[]) {
+  const snapshots = issues.map<GitHubItemSnapshot>((issue) => ({
+    id: `gh-${issue.id}`,
+    number: issue.number,
+    title: issue.title,
+    status: classifyIssue(issue),
+    kind: issue.pull_request ? "pull-request" : "issue",
+    url: issue.html_url,
+    createdAt: issue.created_at,
+    updatedAt: issue.updated_at,
+    labels: issue.labels.map((label) => label.name),
+  }));
+
+  return {
+    issues: snapshots,
+    todoIssues: snapshots.filter((item) => item.status === "todo"),
+    inProgressIssues: snapshots.filter((item) => item.status === "in-progress"),
+    doneIssues: snapshots.filter((item) => item.status === "done"),
+  };
+}
+
+/**
+ * Fetch a single page of GitHub issues with retry handling.
+ */
+
 async function fetchGitHubIssuesPage(url: string, token: string) {
   let attempt = 0;
 
@@ -117,7 +164,11 @@ async function fetchGitHubIssuesPage(url: string, token: string) {
   throw new ApiError(502, "GitHub API communication failed");
 }
 
-export async function getGitHubStats() {
+/**
+ * Fetch cached GitHub project stats or load from DB.
+ */
+
+const getGitHubStats = async () => {
   const cached = await cacheGet(REDIS_STATS_KEY);
 
   if (cached) return cached;
@@ -145,40 +196,11 @@ export async function getGitHubStats() {
 
   await cacheSet(REDIS_STATS_KEY, response, 43200);
   return response;
-}
+};
 
-function classifyIssue(issue: GitHubIssuePayload): GitHubStatus {
-  if (issue.state === "closed") return "done";
-
-  const labels = issue.labels.map((label) => label.name.toLowerCase());
-  if (labels.includes("done")) return "done";
-  if (labels.some((l) => l === "in-progress" || l === "in progress" || l === "active")) {
-    return "in-progress";
-  }
-
-  return "todo";
-}
-
-function buildGitHubIssuesSnapshot(issues: GitHubIssuePayload[]) {
-  const snapshots = issues.map<GitHubItemSnapshot>((issue) => ({
-    id: `gh-${issue.id}`,
-    number: issue.number,
-    title: issue.title,
-    status: classifyIssue(issue),
-    kind: issue.pull_request ? "pull-request" : "issue",
-    url: issue.html_url,
-    createdAt: issue.created_at,
-    updatedAt: issue.updated_at,
-    labels: issue.labels.map((label) => label.name),
-  }));
-
-  return {
-    issues: snapshots,
-    todoIssues: snapshots.filter((item) => item.status === "todo"),
-    inProgressIssues: snapshots.filter((item) => item.status === "in-progress"),
-    doneIssues: snapshots.filter((item) => item.status === "done"),
-  };
-}
+/**
+ * Fetch all GitHub issues with pagination support.
+ */
 
 async function fetchAllGitHubIssues(owner: string, repo: string, token: string, since?: Date) {
   const collected: GitHubIssuePayload[] = [];
@@ -215,7 +237,12 @@ async function fetchAllGitHubIssues(owner: string, repo: string, token: string, 
   return collected;
 }
 
-export async function getGitHubIssues(query: GitHubIssuesQuery) {
+/**
+ * Fetch GitHub issues from DB with filters and pagination.
+ * Results are cached per query.
+ */
+
+const getGitHubIssues = async (query: GitHubIssuesQuery) => {
   const sortedQuery = new URLSearchParams();
   sortedQuery.set("limit", String(query.limit));
   sortedQuery.set("offset", String(query.offset));
@@ -271,9 +298,13 @@ export async function getGitHubIssues(query: GitHubIssuesQuery) {
   await cacheSet(queryKey, result, 300);
 
   return result;
-}
+};
 
-export async function shouldSyncGitHubStats() {
+/**
+ * Determine whether GitHub stats need syncing (12h interval).
+ */
+
+const shouldSyncGitHubStats = async () => {
   const latest = await prisma.gitHubSync.findUnique({
     where: { projectUrl: PROJECT_URL },
     select: { syncedAt: true },
@@ -283,9 +314,13 @@ export async function shouldSyncGitHubStats() {
 
   const TWELVE_HOURS_MS = 12 * 60 * 60 * 1000;
   return Date.now() - new Date(latest.syncedAt).getTime() >= TWELVE_HOURS_MS;
-}
+};
 
-export async function syncGitHubStatsFromGitHub() {
+/**
+ * Sync GitHub issues from GitHub API into DB and refresh caches.
+ */
+
+const syncGitHubStatsFromGitHub = async () => {
   const { owner, repo, token } = config.github;
 
   const existingSync = await prisma.gitHubSync.findUnique({
@@ -389,4 +424,6 @@ export async function syncGitHubStatsFromGitHub() {
   await cacheDelByPrefix(ISSUES_CACHE_PREFIX);
 
   return syncRecord;
-}
+};
+
+export { getGitHubStats, getGitHubIssues, shouldSyncGitHubStats, syncGitHubStatsFromGitHub };

@@ -165,11 +165,7 @@ async function getOrRenderDirectExport(
  * Queue an export job for authenticated user
  */
 
-export async function createResumeExportJobController(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) {
+async function createResumeExportJobController(req: Request, res: Response, next: NextFunction) {
   try {
     const user = requireAuthUser(req);
     const { resumeId } = req.params;
@@ -207,11 +203,7 @@ export async function createResumeExportJobController(
   }
 }
 
-export async function getResumeExportJobStatusController(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) {
+async function getResumeExportJobStatusController(req: Request, res: Response, next: NextFunction) {
   try {
     const user = requireAuthUser(req);
     const { jobId } = req.params;
@@ -224,11 +216,7 @@ export async function getResumeExportJobStatusController(
   }
 }
 
-export async function downloadResumeExportJobController(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) {
+async function downloadResumeExportJobController(req: Request, res: Response, next: NextFunction) {
   try {
     const user = requireAuthUser(req);
     const { jobId } = req.params;
@@ -245,11 +233,7 @@ export async function downloadResumeExportJobController(
  * Direct export without queueing (Now protected by Redis caching)
  */
 
-export async function exportResumeDirectController(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) {
+async function exportResumeDirectController(req: Request, res: Response, next: NextFunction) {
   try {
     requireAuthUser(req);
     const { resumeId } = req.params;
@@ -278,7 +262,7 @@ export async function exportResumeDirectController(
  * Queue an export job for public share link
  */
 
-export async function createPublicShareExportJobController(
+async function createPublicShareExportJobController(
   req: Request,
   res: Response,
   next: NextFunction,
@@ -331,7 +315,7 @@ export async function createPublicShareExportJobController(
   }
 }
 
-export async function getPublicShareExportJobStatusController(
+async function getPublicShareExportJobStatusController(
   req: Request,
   res: Response,
   next: NextFunction,
@@ -347,7 +331,7 @@ export async function getPublicShareExportJobStatusController(
   }
 }
 
-export async function downloadPublicShareExportJobController(
+async function downloadPublicShareExportJobController(
   req: Request,
   res: Response,
   next: NextFunction,
@@ -367,11 +351,7 @@ export async function downloadPublicShareExportJobController(
  * Direct export for public share link (Protected by Cache & Idempotency)
  */
 
-export async function exportPublicShareDirectController(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) {
+async function exportPublicShareDirectController(req: Request, res: Response, next: NextFunction) {
   try {
     const { token } = req.params;
     if (!token) throw new ApiError(400, "Share token is required");
@@ -410,3 +390,14 @@ export async function exportPublicShareDirectController(
     next(error);
   }
 }
+
+export {
+  exportResumeDirectController,
+  createResumeExportJobController,
+  downloadResumeExportJobController,
+  exportPublicShareDirectController,
+  getResumeExportJobStatusController,
+  createPublicShareExportJobController,
+  getPublicShareExportJobStatusController,
+  downloadPublicShareExportJobController,
+};

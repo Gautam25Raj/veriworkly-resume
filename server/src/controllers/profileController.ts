@@ -10,13 +10,13 @@ import { ApiError, createSuccessResponse, handleValidationError } from "#utils/e
 import { masterProfilePayloadSchema } from "#validators/masterProfileValidator";
 
 /**
- * Check if profile has been updated from another session
+ * Check for optimistic concurrency conflict using updatedAt.
  */
 
-export function hasMasterProfileConflict(
+const hasMasterProfileConflict = (
   existingUpdatedAt: Date | null,
   expectedUpdatedAt: string | undefined,
-) {
+) => {
   if (!existingUpdatedAt || !expectedUpdatedAt) {
     return false;
   }
@@ -28,13 +28,25 @@ export function hasMasterProfileConflict(
   }
 
   return existingUpdatedAt.getTime() !== expectedMs;
-}
+};
 
 /**
- * Get master profile with user summary
+ * Get the authenticated user's master profile and summary.
+ * Uses cache for faster reads.
+ *
+ * @param req Express request
+ * @param res Express response
+ * @param next Express next middleware
+ *
+ * Response:
+ * - 200: Profile + user summary
+ *
+ * Errors:
+ * - 404: User not found
+ * - 500: Server error
  */
 
-export async function getMasterProfileController(req: Request, res: Response, next: NextFunction) {
+const getMasterProfileController = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const authUser = requireAuthUser(req);
 
@@ -95,17 +107,27 @@ export async function getMasterProfileController(req: Request, res: Response, ne
   } catch (error) {
     next(error);
   }
-}
+};
 
 /**
- * Update master profile with optimistic concurrency control
+ * Update the authenticated user's master profile.
+ * Uses optimistic concurrency control and invalidates cache.
+ *
+ * @param req Express request (body: profile, expectedUpdatedAt)
+ * @param res Express response
+ * @param next Express next middleware
+ *
+ * Response:
+ * - 200: Updated profile
+ *
+ * Errors:
+ * - 400: Validation error
+ * - 409: Update conflict
+ * - 413: Payload too large
+ * - 500: Server error
  */
 
-export async function updateMasterProfileController(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) {
+const updateMasterProfileController = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const user = requireAuthUser(req);
     const { expectedUpdatedAt, profile } = masterProfilePayloadSchema.parse(req.body);
@@ -145,4 +167,6 @@ export async function updateMasterProfileController(
 
     next(error);
   }
-}
+};
+
+export { hasMasterProfileConflict, getMasterProfileController, updateMasterProfileController };

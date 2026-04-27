@@ -1,0 +1,175 @@
+getRoadmap:
+  get:
+    tags:
+      - Roadmap
+    operationId: getRoadmap
+    summary: Get Roadmap Features
+    description: Fetch roadmap features with optional filtering, sorting, and pagination.
+    parameters:
+      - name: status
+        in: query
+        schema:
+          type: string
+          enum: [todo, in-progress, done]
+        required: false
+        description: Filter features by status
+
+      - name: sort
+        in: query
+        schema:
+          type: string
+          enum: [newest, oldest, recently-completed]
+        required: false
+        description: Sort order of roadmap features
+
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 50
+        required: false
+        description: Number of items to return (max 20 enforced internally)
+
+      - name: offset
+        in: query
+        schema:
+          type: integer
+          minimum: 0
+          default: 0
+        required: false
+        description: Offset for pagination
+
+    responses:
+      "200":
+        description: Roadmap features fetched successfully
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas.yaml#/RoadmapListResponse"
+            example:
+              success: true
+              message: "Roadmap features fetched successfully"
+              data:
+                items:
+                  - id: "feature_1"
+                    title: "AI Resume Builder"
+                    description: "Generate resumes using AI"
+                    status: "in-progress"
+                    eta: "Q3 2026"
+                    tags: ["ai", "resume"]
+                    createdAt: "2026-04-01T00:00:00.000Z"
+                    startedAt: "2026-04-10T00:00:00.000Z"
+                    completedAt: null
+                    completedQuarter: null
+                    updatedAt: "2026-04-20T00:00:00.000Z"
+                    timeline: "Started development"
+                total: 1
+                limit: 20
+                offset: 0
+                hasMore: false
+                pagination:
+                  mode: "offset"
+                  nextOffset: null
+                  nextCursor: null
+
+      "400":
+        description: Validation error
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas.yaml#/ErrorResponse"
+            example:
+              success: false
+              statusCode: 400
+              message: "Validation failed"
+              details:
+                - path: "limit"
+                  message: "Number must be greater than or equal to 1"
+
+getRoadmapStats:
+  get:
+    tags:
+      - Roadmap
+    operationId: getRoadmapStats
+    summary: Get Roadmap Stats
+    description: Retrieve aggregated roadmap statistics.
+    responses:
+      "200":
+        description: Roadmap stats fetched successfully
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas.yaml#/RoadmapStatsResponse"
+            example:
+              success: true
+              message: "Roadmap stats fetched successfully"
+              data:
+                totalFeatures: 10
+                todo: 3
+                inProgress: 4
+                done: 3
+                completionRate: "30.00"
+
+getRoadmapFeatureById:
+  get:
+    tags:
+      - Roadmap
+    operationId: getRoadmapFeatureById
+    summary: Get Roadmap Feature by ID
+    description: Fetch detailed roadmap feature by ID.
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: Feature ID
+
+    responses:
+      "200":
+        description: Feature fetched successfully
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas.yaml#/RoadmapFeatureResponse"
+            example:
+              success: true
+              message: "Feature fetched successfully"
+              data:
+                id: "feature_1"
+                title: "AI Resume Builder"
+                description: "Generate resumes using AI"
+                status: "in-progress"
+                eta: "Q3 2026"
+                tags: ["ai"]
+                createdAt: "2026-04-01T00:00:00.000Z"
+                updatedAt: "2026-04-20T00:00:00.000Z"
+                fullDescription: "Full feature details"
+                whyItMatters: "Improves productivity"
+                timeline: "In progress"
+                details: null
+                interactions: []
+
+      "400":
+        description: Missing feature ID
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas.yaml#/ErrorResponse"
+            example:
+              success: false
+              statusCode: 400
+              message: "Feature ID is required"
+
+      "404":
+        description: Feature not found
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas.yaml#/ErrorResponse"
+            example:
+              success: false
+              statusCode: 404
+              message: "Roadmap feature not found"

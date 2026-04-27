@@ -1,0 +1,74 @@
+---
+title: Roadmap Tracker
+description: Query public features, development status, and completion statistics.
+---
+
+import { Map, BarChart, Target } from "lucide-react";
+
+---
+
+## Description
+
+Transparency is a core tenet of VeriWorkly. The Roadmap API exposes our internal development pipeline directly to the public. This allows the community (and our frontend client) to query upcoming features, track active progress, and view historical completion data.
+
+Unlike the GitHub proxy (which fetches from an external source), the Roadmap data is managed internally within our PostgreSQL database, ensuring zero-latency responses and highly relational queries.
+
+---
+
+## Query Parameters & Pagination
+
+Because the roadmap will grow indefinitely over the lifecycle of the project, the list endpoint is heavily optimized for large datasets.
+
+- **Offset Pagination:** All lists are paginated. You must use the `limit` (max 50) and `offset` parameters to traverse the data. The response will always include a `hasMore` boolean to inform your UI if a "Load More" button is needed.
+- **Granular Filtering:** You can filter the pipeline strictly by its lifecycle `status` (`todo`, `in-progress`, `done`).
+- **Chronological Sorting:** Support for time-series sorting via `newest`, `oldest`, or `recently-completed`.
+
+---
+
+## Authentication
+
+| Method | Access Level | Requirement                                                            |
+| :----- | :----------- | :--------------------------------------------------------------------- |
+| `GET`  | **Public**   | None. No session cookies are required to fetch features or statistics. |
+
+---
+
+## Available Endpoints
+
+<Cards>
+  <Card 
+    title="List Roadmap Features" 
+    icon={<Map />} 
+    href="./roadmap/getRoadmap"
+  >
+    <span className="text-muted-foreground font-mono text-xs block mb-2">
+      `GET /api/v1/roadmap`
+    </span>
+    Fetch a paginated, filterable list of roadmap features. Supports advanced status querying.
+  </Card>
+
+<Card
+  title="Fetch Roadmap Stats"
+  icon={<BarChart />}
+  href="./roadmap/getRoadmapStats"
+>
+  <span className="text-muted-foreground mb-2 block font-mono text-xs">
+    `GET /api/v1/roadmap/stats`
+  </span>
+  Retrieve aggregated metadata, including total tracked features and real-time
+  completion rates.
+</Card>
+
+  <Card 
+    title="Get Feature Details" 
+    icon={<Target />} 
+    href="./roadmap/getRoadmapFeatureById"
+  >
+    <span className="text-muted-foreground font-mono text-xs block mb-2">
+      `GET /api/v1/roadmap/{id}`
+    </span>
+    Fetch deep details, developer timelines, and extended descriptions for a specific roadmap item.
+  </Card>
+</Cards>
+
+---

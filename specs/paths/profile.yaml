@@ -1,0 +1,125 @@
+getMasterProfile:
+  get:
+    tags:
+      - Profile
+    operationId: getMasterProfile
+    security:
+      - LocalSession: []
+      - ProdSession: []
+    summary: Get Master Profile
+    description: |
+      Retrieves the authenticated user's master profile along with a summary.
+
+      Uses caching for improved performance.
+    responses:
+      "200":
+        description: Master profile fetched successfully
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas.yaml#/MasterProfileResponse"
+            examples:
+              success:
+                summary: Successful response
+                value:
+                  success: true
+                  message: "Master profile fetched successfully"
+                  data:
+                    profile:
+                      id: "profile_123"
+                      userId: "user_123"
+                      content: {}
+                      createdAt: "2026-04-01T10:00:00.000Z"
+                      updatedAt: "2026-04-10T10:00:00.000Z"
+                    summary:
+                      id: "user_123"
+                      name: "Admin"
+                      email: "admin@example.com"
+                      createdAt: "2026-04-01T10:00:00.000Z"
+                      emailVerified: true
+                      autoSyncEnabled: false
+                      shareResumeCount: 4
+
+      "401":
+        $ref: "../components/responses.yaml#/UnauthorizedError"
+
+      "404":
+        description: User not found
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas.yaml#/ErrorResponse"
+            example:
+              success: false
+              statusCode: 404
+              message: "User not found"
+
+updateMasterProfile:
+  put:
+    tags:
+      - Profile
+    operationId: updateMasterProfile
+    security:
+      - LocalSession: []
+      - ProdSession: []
+    summary: Update Master Profile
+    description: |
+      Updates the authenticated user's master profile.
+
+      Uses optimistic concurrency control via `expectedUpdatedAt`.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../components/schemas.yaml#/MasterProfileUpdateRequest"
+          example:
+            expectedUpdatedAt: "2026-04-10T10:00:00.000Z"
+            profile:
+              templateId: "modern"
+              basics:
+                fullName: "John Doe"
+                role: "Software Engineer"
+                headline: "Building scalable systems"
+                email: "john@example.com"
+                phone: "1234567890"
+                location: "India"
+                linkEmail: true
+                linkPhone: false
+                linkLocation: false
+
+    responses:
+      "200":
+        description: Master profile updated successfully
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas.yaml#/MasterProfileUpdateResponse"
+
+      "400":
+        $ref: "../components/responses.yaml#/ValidationError"
+
+      "401":
+        $ref: "../components/responses.yaml#/UnauthorizedError"
+
+      "409":
+        description: Conflict - profile updated elsewhere
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas.yaml#/ErrorResponse"
+            example:
+              success: false
+              statusCode: 409
+              message: "Master profile was updated from another session. Refresh and retry."
+
+      "413":
+        description: Payload too large
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas.yaml#/ErrorResponse"
+            example:
+              success: false
+              statusCode: 413
+              message: "Master profile payload is too large"

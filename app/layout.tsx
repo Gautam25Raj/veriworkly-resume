@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { RootProvider } from "fumadocs-ui/provider/next";
 
 import "./globals.css";
 import { globalFontVariables } from "@/app/global-fonts";
@@ -83,11 +84,11 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+const RootLayout = ({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>) {
+}>) => {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": ["WebApplication", "SoftwareApplication"],
@@ -151,7 +152,7 @@ export default function RootLayout({
       </head>
 
       <body
-        className={`${globalFontVariables} bg-background text-foreground font-sans antialiased`}
+        className={`${globalFontVariables} bg-background text-foreground flex min-h-screen flex-col font-sans antialiased`}
       >
         <ThemeProvider
           enableSystem
@@ -160,9 +161,13 @@ export default function RootLayout({
           disableTransitionOnChange
           storageKey="veriworkly-theme"
         >
-          {children}
+          <RootProvider search={{ options: { delayMs: 500 } }}>
+            {children}
+          </RootProvider>
         </ThemeProvider>
       </body>
     </html>
   );
-}
+};
+
+export default RootLayout;

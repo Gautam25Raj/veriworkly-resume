@@ -12,6 +12,20 @@ const githubQuerySchema = z.object({
   offset: z.coerce.number().int().min(0).default(0),
 });
 
+/**
+ * Get GitHub project stats.
+ *
+ * @param _req Express request (unused)
+ * @param res Express response
+ * @param next Express next middleware
+ *
+ * Response:
+ * - 200: Stats summary
+ *
+ * Errors:
+ * - 500: Server error
+ */
+
 const getGitHubStatsController = async (_req: Request, res: Response, next: NextFunction) => {
   try {
     const stats = await githubService.getGitHubStats();
@@ -21,6 +35,21 @@ const getGitHubStatsController = async (_req: Request, res: Response, next: Next
     next(error);
   }
 };
+
+/**
+ * Get GitHub issues with filtering and pagination.
+ *
+ * @param req Express request (query: status, kind, limit, offset)
+ * @param res Express response
+ * @param next Express next middleware
+ *
+ * Response:
+ * - 200: Paginated issues list
+ *
+ * Errors:
+ * - 400: Validation error
+ * - 500: Server error
+ */
 
 const getGitHubIssuesController = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -33,6 +62,20 @@ const getGitHubIssuesController = async (req: Request, res: Response, next: Next
     next(error);
   }
 };
+
+/**
+ * Trigger manual GitHub sync (admin).
+ *
+ * @param _req Express request (unused)
+ * @param res Express response
+ * @param next Express next middleware
+ *
+ * Response:
+ * - 200: Sync result
+ *
+ * Errors:
+ * - 500: Server error
+ */
 
 const syncGitHubStatsAsAdminController = async (
   _req: Request,

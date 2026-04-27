@@ -1,0 +1,180 @@
+---
+title: API Reference
+description: Complete integration guide and OpenAPI specifications for the VeriWorkly backend.
+---
+
+import { Server, Lock, Activity, Map, TerminalSquare } from "lucide-react";
+
+# VeriWorkly API Reference
+
+Welcome to the official API documentation for **VeriWorkly**.
+
+Our backend powers a secure, privacy-first, and highly scalable resume platform. Designed with strict RESTful principles, this API enables developers to manage profiles, resumes, background PDF generation, and GitHub syncing.
+
+---
+
+## Base URLs
+
+All API endpoints are relative to the following base URLs depending on your environment. All routes are prefixed with `/api/v1`.
+
+<CodeBlockTabs defaultValue="production" groupId="environment">
+  <CodeBlockTabsList>
+    <CodeBlockTabsTrigger value="production">Production</CodeBlockTabsTrigger>
+    <CodeBlockTabsTrigger value="local">Local Development</CodeBlockTabsTrigger>
+  </CodeBlockTabsList>
+
+  <CodeBlockTab value="production">
+
+    ```text
+    https://api.veriworkly.com/api/v1
+    ```
+
+  </CodeBlockTab>
+
+  <CodeBlockTab value="local">
+
+    ```text
+    http://localhost:8080/api/v1
+    ```
+
+  </CodeBlockTab>
+</CodeBlockTabs>
+
+---
+
+## Authentication
+
+VeriWorkly deliberately avoids standard `Bearer` tokens in favor of highly secure, `HttpOnly` session cookies managed by **Better Auth**.
+
+When interacting with protected endpoints (like updating user profiles or fetching private stats), your HTTP client must include credentials.
+
+### Cookie Configuration
+
+- **Local Environment:** Uses `veriworkly-auth.session_token`.
+- **Production Environment:** Uses `__Secure-veriworkly-auth.session_token`.
+
+<Callout type="warn" title="Important for Frontend Integration">
+  If you are calling this API from a browser or a frontend framework (like Next.js client components), you **must** configure your fetch requests to include cookies: `fetch(url, { credentials: 'include' })`. Axios users must set `withCredentials: true`.
+</Callout>
+
+---
+
+## Core Concepts
+
+### Optimistic Concurrency Control
+
+To prevent data loss when updating Master Profiles or Resumes across different browser tabs or devices, VeriWorkly implements **Optimistic Concurrency Control**.
+
+Every profile or resume object includes an `updatedAt` timestamp. When making a `PUT` or `PATCH` request to update data, you must provide the timestamp you are editing against.
+
+- If your timestamp matches the server's timestamp, the update succeeds.
+- If the server's timestamp is newer (meaning someone else updated it), the API will reject your request with a `409 Conflict`.
+
+### Background Job Processing
+
+Heavy tasks, such as generating high-fidelity PDFs via **Playwright**, are not executed synchronously. The API will queue a job in **BullMQ (Redis)** and return an immediate response. You will either poll a status endpoint or receive a webhook when the PDF is successfully uploaded to **AWS S3**.
+
+---
+
+## Standardized Responses
+
+Every endpoint adheres to a strict, predictable JSON response format, heavily validated by **Zod**.
+
+### Success Response
+
+Successful requests will return a `200 OK` status code and a payload containing `success: true`.
+
+```json
+{
+  "success": true,
+  "message": "Roadmap features fetched successfully",
+  "data": {
+    "totalFeatures": 10,
+    "todo": 3,
+    "inProgress": 4,
+    "done": 3,
+    "completionRate": "30.00"
+  }
+}
+```
+
+---
+
+### Error Handling & Validation
+
+Failed requests return `success: false.` If the failure is due to a validation error (e.g., passing a string instead of a number for a pagination limit), a `details` array will pinpoint the exact structural failure.
+
+```json
+{
+  "success": false,
+  "statusCode": 400,
+  "message": "Validation failed",
+  "details": [
+    {
+      "path": "limit",
+      "message": "Number must be greater than or equal to 1"
+    }
+  ]
+}
+```
+
+### Common HTTP Status Codes
+
+- **`200 OK`**: The request was successful.
+- **`400 Bad Request`**: Validation error (missing parameters, malformed body).
+- **`401 Unauthorized`**: Authentication failed or session expired.
+- **`404 Not Found`**: The requested resource does not exist.
+- **`409 Conflict`**: Optimistic concurrency failure (timestamp mismatch).
+- **`429 Too Many Requests`**: Rate limit exceeded. Slow down your requests.
+- **`503 Service Unavailable`**: The server, database, or Redis queue is unreachable.
+
+## Pagination
+
+Endpoints that return lists (like `/roadmap` or `/github/issues`) use **Offset Pagination**.
+
+Query parameters allow you to control the data flow:
+
+- `limit`: Number of items to return (maximum is usually clamped at 20 or 50).
+- `offset`: The number of items to skip.
+
+The response object will always include a `pagination` metadata block so you know if there is more data to fetch:
+
+```json
+{
+  "total": 120,
+  "limit": 20,
+  "offset": 0,
+  "hasMore": true,
+  "pagination": {
+    "mode": "offset",
+    "nextOffset": 20,
+    "nextCursor": null
+  }
+}
+```
+
+---
+
+## Explore the API
+
+Dive into the specific modules to see precise schemas, request bodies, and live examples powered by our OpenAPI integration.
+
+<Cards>
+  <Card title="Health & Diagnostics" icon={<Activity />} href="/docs/api-reference/health">
+    Monitor system uptime, PostgreSQL database connectivity, and Redis queue health.
+  </Card>
+
+<Card title="Users Module" icon={<Lock />} href="/docs/api-reference/users">
+  Protected operations for authenticated users. Fetch profile metadata and
+  manage account configurations.
+</Card>
+
+<Card title="Roadmap Tracker" icon={<Map />} href="/docs/api-reference/roadmap">
+  Query public roadmap features, filter by development status, and aggregate
+  completion statistics.
+</Card>
+
+  <Card title="GitHub Integrations" icon={<img width={24} height={24} src="/icons/socials/github.svg" alt="GitHub Icon" className="w-5 h-5" />} href="/docs/api-reference/github">
+    Fetch live repository statistics, paginated issues, and pull requests directly from the VeriWorkly repo.
+  </Card>
+</Cards>

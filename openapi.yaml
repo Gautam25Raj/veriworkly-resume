@@ -1,0 +1,887 @@
+openapi: 3.1.0
+info:
+  title: VeriWorkly API
+  version: 1.0.0
+  description: |
+    The official API reference for VeriWorkly.
+
+    Authentication:
+    This API uses session-based authentication via cookies.
+
+    - Local: `veriworkly-auth.session_token`
+    - Production: `__Secure-veriworkly-auth.session_token`
+servers:
+  - url: https://api.veriworkly.com
+    description: Production Server
+  - url: http://localhost:8080
+    description: Local Development
+tags:
+  - name: Health
+    description: Service health and readiness checks.
+  - name: Users
+    description: Operations related to authenticated users.
+  - name: Roadmap
+    description: Operations related to roadmap.
+  - name: GitHub
+    description: GitHub issues, pull requests, and repository statistics.
+paths:
+  /api/v1/health:
+    get:
+      tags:
+        - Health
+      operationId: healthCheck
+      summary: Health Check
+      description: Check the health status of the server, database, and Redis.
+      status:
+        enum:
+          - ok
+          - degraded
+          - down
+      responses:
+        '200':
+          description: Server is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+              example:
+                success: true
+                message: Server is healthy
+                data:
+                  status: ok
+                  database: connected
+                  redis: connected
+                  timestamp: '2026-04-26T10:00:00.000Z'
+        '503':
+          description: Service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                success: false
+                statusCode: 503
+                message: Service Unavailable
+  /api/v1/users/me:
+    get:
+      tags:
+        - Users
+      operationId: getCurrentUser
+      security:
+        - LocalSession: []
+        - ProdSession: []
+      summary: Get Current User
+      description: Retrieves detailed profile information for the currently authenticated user.
+      responses:
+        '200':
+          description: User information fetched successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+              example:
+                success: true
+                message: User information fetched successfully
+                data:
+                  id: cmnu7awv4000063lk18zpon2m
+                  name: VeriWorkly User
+                  email: contact@veriworkly.com
+                  emailVerified: true
+                  autoSyncEnabled: false
+                  createdAt: '2026-04-11T10:37:35.584Z'
+                  updatedAt: '2026-04-25T19:35:44.409Z'
+                  _count:
+                    resumeShareLinks: 4
+                    resumes: 4
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                success: false
+                statusCode: 404
+                message: User not found
+  /api/v1/users/me/name:
+    put:
+      tags:
+        - Users
+      operationId: updateUserName
+      security:
+        - LocalSession: []
+        - ProdSession: []
+      summary: Update User Name
+      description: |
+        Updates the name of the authenticated user. The email address remains read-only.
+
+        Requires authentication via session (local or production).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+                  minLength: 1
+                  maxLength: 255
+                  description: Name cannot be null or empty when updating.
+            example:
+              name: VeriWorkly
+      responses:
+        '200':
+          description: User name updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+              example:
+                success: true
+                message: User name updated successfully
+                data:
+                  id: cmnu7awv4000063lk18zpon2m
+                  name: VeriWorkly User New Name
+                  email: contact@veriworkly.com
+                  emailVerified: true
+                  autoSyncEnabled: false
+                  createdAt: '2026-04-11T10:37:35.584Z'
+                  updatedAt: '2026-04-26T02:00:00.000Z'
+                  _count:
+                    resumeShareLinks: 4
+                    resumes: 4
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                emptyName:
+                  summary: Name is empty
+                  value:
+                    success: false
+                    statusCode: 400
+                    message: Validation failed
+                    details:
+                      - path: name
+                        message: Name cannot be empty
+                nameTooLong:
+                  summary: Name too long
+                  value:
+                    success: false
+                    statusCode: 400
+                    message: Validation failed
+                    details:
+                      - path: name
+                        message: Name is too long
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                success: false
+                statusCode: 404
+                message: User not found
+  /api/v1/roadmap:
+    get:
+      tags:
+        - Roadmap
+      operationId: getRoadmap
+      summary: Get Roadmap Features
+      description: Fetch roadmap features with optional filtering, sorting, and pagination.
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum:
+              - todo
+              - in-progress
+              - done
+          required: false
+          description: Filter features by status
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum:
+              - newest
+              - oldest
+              - recently-completed
+          required: false
+          description: Sort order of roadmap features
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 50
+          required: false
+          description: Number of items to return (max 20 enforced internally)
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+          required: false
+          description: Offset for pagination
+      responses:
+        '200':
+          description: Roadmap features fetched successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoadmapListResponse'
+              example:
+                success: true
+                message: Roadmap features fetched successfully
+                data:
+                  items:
+                    - id: feature_1
+                      title: AI Resume Builder
+                      description: Generate resumes using AI
+                      status: in-progress
+                      eta: Q3 2026
+                      tags:
+                        - ai
+                        - resume
+                      createdAt: '2026-04-01T00:00:00.000Z'
+                      startedAt: '2026-04-10T00:00:00.000Z'
+                      completedAt: null
+                      completedQuarter: null
+                      updatedAt: '2026-04-20T00:00:00.000Z'
+                      timeline: Started development
+                  total: 1
+                  limit: 20
+                  offset: 0
+                  hasMore: false
+                  pagination:
+                    mode: offset
+                    nextOffset: null
+                    nextCursor: null
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                success: false
+                statusCode: 400
+                message: Validation failed
+                details:
+                  - path: limit
+                    message: Number must be greater than or equal to 1
+  /api/v1/roadmap/stats:
+    get:
+      tags:
+        - Roadmap
+      operationId: getRoadmapStats
+      summary: Get Roadmap Stats
+      description: Retrieve aggregated roadmap statistics.
+      responses:
+        '200':
+          description: Roadmap stats fetched successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoadmapStatsResponse'
+              example:
+                success: true
+                message: Roadmap stats fetched successfully
+                data:
+                  totalFeatures: 10
+                  todo: 3
+                  inProgress: 4
+                  done: 3
+                  completionRate: '30.00'
+  /api/v1/roadmap/{id}:
+    get:
+      tags:
+        - Roadmap
+      operationId: getRoadmapFeatureById
+      summary: Get Roadmap Feature by ID
+      description: Fetch detailed roadmap feature by ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Feature ID
+      responses:
+        '200':
+          description: Feature fetched successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoadmapFeatureResponse'
+              example:
+                success: true
+                message: Feature fetched successfully
+                data:
+                  id: feature_1
+                  title: AI Resume Builder
+                  description: Generate resumes using AI
+                  status: in-progress
+                  eta: Q3 2026
+                  tags:
+                    - ai
+                  createdAt: '2026-04-01T00:00:00.000Z'
+                  updatedAt: '2026-04-20T00:00:00.000Z'
+                  fullDescription: Full feature details
+                  whyItMatters: Improves productivity
+                  timeline: In progress
+                  details: null
+                  interactions: []
+        '400':
+          description: Missing feature ID
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                success: false
+                statusCode: 400
+                message: Feature ID is required
+        '404':
+          description: Feature not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                success: false
+                statusCode: 404
+                message: Roadmap feature not found
+  /api/v1/github/stats:
+    get:
+      tags:
+        - GitHub
+      operationId: getGitHubStats
+      summary: Get GitHub Stats
+      description: Fetch aggregated GitHub issue statistics for the configured repository.
+      responses:
+        '200':
+          description: Stats fetched successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GitHubStatsResponse'
+              example:
+                success: true
+                message: Stats fetched successfully
+                data:
+                  projectName: owner/repo
+                  stats:
+                    total: 120
+                    todo: 40
+                    inProgress: 30
+                    done: 50
+                    completionRate: '41.67'
+                  syncedAt: '2026-04-26T10:00:00.000Z'
+  /api/v1/github/issues:
+    get:
+      tags:
+        - GitHub
+      operationId: getGitHubIssues
+      summary: Get GitHub Issues
+      description: Fetch paginated GitHub issues and pull requests with optional filters.
+      parameters:
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum:
+              - todo
+              - in-progress
+              - done
+        - in: query
+          name: kind
+          schema:
+            type: string
+            enum:
+              - issue
+              - pull-request
+              - all
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+      responses:
+        '200':
+          description: Issues fetched successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GitHubIssuesResponse'
+              example:
+                success: true
+                message: Issues fetched successfully
+                data:
+                  items:
+                    - id: gh-123456
+                      number: 42
+                      title: Add new feature
+                      status: in-progress
+                      kind: issue
+                      url: https://github.com/owner/repo/issues/42
+                      labels:
+                        - enhancement
+                      createdAt: '2026-04-20T10:00:00.000Z'
+                      updatedAt: '2026-04-25T10:00:00.000Z'
+                  total: 1
+                  limit: 20
+                  offset: 0
+        '400':
+          $ref: '#/components/responses/ValidationError'
+  /api/v1/github/sync:
+    post:
+      tags:
+        - GitHub
+      operationId: syncGitHubStats
+      security:
+        - LocalSession: []
+        - ProdSession: []
+      summary: Sync GitHub Stats (Admin)
+      description: Manually trigger GitHub stats synchronization. Intended for admin use.
+      responses:
+        '200':
+          description: Manual sync completed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericSuccessResponse'
+              example:
+                success: true
+                message: Manual sync completed
+                data:
+                  id: sync_123
+                  projectUrl: https://github.com/owner/repo
+                  syncedAt: '2026-04-26T10:00:00.000Z'
+components:
+  securitySchemes:
+    LocalSession:
+      type: apiKey
+      in: cookie
+      name: veriworkly-auth.session_token
+    ProdSession:
+      type: apiKey
+      in: cookie
+      name: __Secure-veriworkly-auth.session_token
+  schemas:
+    HealthData:
+      type: object
+      required:
+        - status
+        - database
+        - redis
+        - timestamp
+      properties:
+        status:
+          type: string
+          example: ok
+        database:
+          type: string
+          example: connected
+        redis:
+          type: string
+          example: connected
+        timestamp:
+          type: string
+          format: date-time
+    HealthResponse:
+      type: object
+      required:
+        - success
+        - message
+        - data
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        data:
+          $ref: '#/components/schemas/HealthData'
+    ErrorResponse:
+      type: object
+      required:
+        - success
+        - message
+        - statusCode
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        statusCode:
+          type: integer
+        details:
+          type: array
+          nullable: true
+          items:
+            type: object
+            properties:
+              path:
+                type: string
+              message:
+                type: string
+    UserObject:
+      type: object
+      required:
+        - id
+        - email
+        - emailVerified
+        - autoSyncEnabled
+        - createdAt
+        - updatedAt
+        - _count
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+          nullable: true
+        email:
+          type: string
+        emailVerified:
+          type: boolean
+        autoSyncEnabled:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        _count:
+          type: object
+          required:
+            - resumeShareLinks
+            - resumes
+          properties:
+            resumeShareLinks:
+              type: integer
+            resumes:
+              type: integer
+    UserResponse:
+      type: object
+      required:
+        - success
+        - message
+        - data
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        data:
+          $ref: '#/components/schemas/UserObject'
+    RoadmapFeature:
+      type: object
+      required:
+        - id
+        - title
+        - description
+        - status
+        - createdAt
+        - updatedAt
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          enum:
+            - todo
+            - in-progress
+            - done
+        eta:
+          type: string
+          nullable: true
+        tags:
+          type: array
+          items:
+            type: string
+        createdAt:
+          type: string
+          format: date-time
+        startedAt:
+          type: string
+          format: date-time
+          nullable: true
+        completedAt:
+          type: string
+          format: date-time
+          nullable: true
+        completedQuarter:
+          type: string
+          nullable: true
+        updatedAt:
+          type: string
+          format: date-time
+        timeline:
+          type: string
+          nullable: true
+    RoadmapListData:
+      type: object
+      required:
+        - items
+        - total
+        - limit
+        - offset
+        - hasMore
+        - pagination
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/RoadmapFeature'
+        total:
+          type: integer
+        limit:
+          type: integer
+        offset:
+          type: integer
+        hasMore:
+          type: boolean
+        pagination:
+          type: object
+          properties:
+            mode:
+              type: string
+              enum:
+                - offset
+            nextOffset:
+              type: integer
+              nullable: true
+            nextCursor:
+              type: string
+              nullable: true
+    RoadmapListResponse:
+      type: object
+      required:
+        - success
+        - message
+        - data
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        data:
+          $ref: '#/components/schemas/RoadmapListData'
+    RoadmapStats:
+      type: object
+      properties:
+        totalFeatures:
+          type: integer
+        todo:
+          type: integer
+        inProgress:
+          type: integer
+        done:
+          type: integer
+        completionRate:
+          type: string
+    RoadmapStatsResponse:
+      type: object
+      required:
+        - success
+        - message
+        - data
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        data:
+          $ref: '#/components/schemas/RoadmapStats'
+    RoadmapFeatureDetail:
+      allOf:
+        - $ref: '#/components/schemas/RoadmapFeature'
+        - type: object
+          properties:
+            fullDescription:
+              type: string
+              nullable: true
+            whyItMatters:
+              type: string
+              nullable: true
+            details:
+              type: object
+              nullable: true
+            interactions:
+              type: array
+              items:
+                type: object
+                properties:
+                  type:
+                    type: string
+                  value:
+                    type: integer
+                  comment:
+                    type: string
+                    nullable: true
+                  createdAt:
+                    type: string
+                    format: date-time
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      name:
+                        type: string
+                        nullable: true
+    RoadmapFeatureResponse:
+      type: object
+      required:
+        - success
+        - message
+        - data
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        data:
+          $ref: '#/components/schemas/RoadmapFeatureDetail'
+    GitHubStatsResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        data:
+          - $ref: '#/GitHubStatsData'
+          - type: 'null'
+    GitHubItem:
+      type: object
+      properties:
+        id:
+          type: string
+        number:
+          type: integer
+        title:
+          type: string
+        status:
+          type: string
+          enum:
+            - todo
+            - in-progress
+            - done
+        kind:
+          type: string
+          enum:
+            - issue
+            - pull-request
+        url:
+          type: string
+        labels:
+          type: array
+          items:
+            type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    GitHubIssuesData:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/GitHubItem'
+        total:
+          type: integer
+        limit:
+          type: integer
+        offset:
+          type: integer
+    GitHubIssuesResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        data:
+          $ref: '#/components/schemas/GitHubIssuesData'
+    GenericSuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        data:
+          type: object
+          additionalProperties: true
+    GitHubStats:
+      type: object
+      properties:
+        total:
+          type: integer
+        todo:
+          type: integer
+        inProgress:
+          type: integer
+        done:
+          type: integer
+        completionRate:
+          type: string
+    GitHubStatsData:
+      type: object
+      properties:
+        projectName:
+          type: string
+        stats:
+          $ref: '#/components/schemas/GitHubStats'
+        syncedAt:
+          type: string
+          format: date-time
+  responses:
+    UnauthorizedError:
+      description: Unauthorized - Authentication failed or session expired.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            success: false
+            statusCode: 401
+            message: Authentication required
+    ValidationError:
+      description: Bad Request - The request body or parameters are invalid.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'

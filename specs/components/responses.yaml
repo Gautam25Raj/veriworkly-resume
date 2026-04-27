@@ -1,0 +1,17 @@
+ValidationError:
+  description: Bad Request - The request body or parameters are invalid.
+  content:
+    application/json:
+      schema:
+        $ref: "./schemas.yaml#/ErrorResponse"
+
+UnauthorizedError:
+  description: Unauthorized - Authentication failed or session expired.
+  content:
+    application/json:
+      schema:
+        $ref: "./schemas.yaml#/ErrorResponse"
+      example:
+        success: false
+        statusCode: 401
+        message: "Authentication required"

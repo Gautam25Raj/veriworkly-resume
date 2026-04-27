@@ -1,0 +1,78 @@
+---
+title: System Overview
+description: A high-level look at how VeriWorkly manages data, privacy, and background processing.
+---
+
+import { Database, Laptop, Cloud, Workflow } from "lucide-react";
+
+---
+
+# System Overview
+
+VeriWorkly is not a standard web application. Because we prioritize privacy and user control, the platform operates on a **Local-First Architecture** with an optional cloud-sync layer.
+
+Understanding this architecture will help you navigate the platform, whether you are building a resume, self-hosting the application, or contributing to the codebase.
+
+---
+
+## 1. The Local-First Engine
+
+By default, VeriWorkly operates entirely inside the user's browser.
+
+- **Browser Storage:** When a user opens the dashboard and starts building a resume, their Master Profile and resume layouts are saved directly to `localStorage` (via Zustand).
+- **No Database Required:** Users can write, switch templates, and trigger standard browser-based exports without ever sending a single byte of personal data to our backend.
+- **Privacy by Design:** Because the data never leaves the device, there is zero risk of data mining or unauthorized access.
+
+---
+
+## 2. The Optional Cloud Layer
+
+While local-first is great for privacy, users often want to access their resumes across multiple devices or share links with recruiters. For this, VeriWorkly utilizes an optional cloud layer.
+
+When a user decides to create an account (via Better Auth), the system bridges the local state with our backend infrastructure.
+
+<Cards>
+  <Card title="Data Syncing" icon={<Cloud />}>
+    Local Zustand state is securely synced to our PostgreSQL database via the
+    Express API.
+  </Card>
+  <Card title="Conflict Resolution" icon={<Workflow />}>
+    We use optimistic concurrency (timestamp checking) to ensure a user editing
+    on their laptop doesn't accidentally overwrite changes made on their phone.
+  </Card>
+</Cards>
+
+---
+
+## 3. Asynchronous PDF Rendering
+
+Generating pixel-perfect, ATS-friendly PDFs directly in the browser can be incredibly inconsistent depending on the user's operating system and fonts. To solve this, VeriWorkly uses a heavy-duty backend rendering engine.
+
+When a user requests a high-fidelity export or creates a shareable link:
+
+1. The frontend sends the resume payload to the backend API.
+2. The API places a job into a **Redis Queue** (managed by BullMQ).
+3. A background worker picks up the job and uses **Playwright** to headlessly render the resume exactly as intended.
+4. The final PDF is uploaded to **AWS S3**, and the secure URL is returned to the user.
+
+---
+
+## What's Next?
+
+Now that you understand the data flow and system boundaries, you can start setting up the project or dive into specific guides.
+
+<Cards>
+  <Card title="Quick Start" href="/docs/getting-started/quick-start" icon={<Laptop />}>
+    Jump straight into using the resume builder and creating your first profile.
+  </Card>
+
+  <Card
+    title="Checking Service Status"
+    href="/docs/operations/service-status"
+    icon={<Database />}
+  >
+    Learn how to monitor the health of the API, Redis queues, and database.
+  </Card>
+</Cards>
+
+---

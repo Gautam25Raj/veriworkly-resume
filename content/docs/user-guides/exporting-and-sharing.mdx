@@ -1,0 +1,61 @@
+---
+title: Exporting & Sharing
+description: How to generate high-fidelity PDFs, DOCX files, and secure shareable links.
+---
+
+import {
+  FileText,
+  FileDown,
+  ShieldCheck,
+  Link as LinkIcon,
+} from "lucide-react";
+
+# Exporting & Sharing
+
+VeriWorkly provides flexible ways to get your resume out of the editor and into the hands of recruiters. Because of our privacy-first architecture, the way you export dictates what happens to your data.
+
+---
+
+## 1. High-Fidelity PDF Export
+
+Unlike traditional browser-based builders that rely on flawed client-side printing scripts, VeriWorkly utilizes a heavy-duty backend engine to generate pixel-perfect PDFs.
+
+- **How it works:** When you click Export to PDF, your resume payload is sent to our API and placed in a Redis queue. A headless browser (Playwright) renders the document exactly as it appears on your screen and generates the PDF.
+- **ATS Optimization:** Because the PDF is rendered properly as a digital document (not an image snapshot), all text remains selectable, and ATS parsers can read the exact semantic structure.
+
+<Callout type="warn" title="Local-First Privacy Boundary">
+  PDF generation requires sending your payload to the backend momentarily.
+  However, if you are an unauthenticated user (no account), the data is only
+  held in memory during generation, the PDF is returned, and the data is
+  immediately discarded.
+</Callout>
+
+---
+
+## 2. DOCX Export
+
+If you need to manually tweak your resume in Microsoft Word or Google Docs, you can export your profile directly to a `.docx` file.
+
+- **Client-Side Generation:** DOCX exports happen entirely within your browser using the `docx` library.
+- **Formatting:** While the structural hierarchy (Headings, Bullet points) remains intact, the visual styling (colors, strict layouts) will default to standard Word formatting.
+
+---
+
+## 3. Shareable Links
+
+For users who have opted to create an account and enable cloud sync, VeriWorkly allows you to generate live URLs for your resumes.
+
+<Cards>
+  <Card title="Public Links" icon={<LinkIcon />}>
+    Generate a unique, read-only URL that you can attach to emails or LinkedIn
+    profiles. Whenever you update your resume in the editor, the public link
+    updates instantly.
+  </Card>
+
+  <Card title="Protected Links" icon={<ShieldCheck />}>
+    Add an optional password requirement to your shared link to ensure only
+    intended recruiters can view your contact information and history.
+  </Card>
+</Cards>
+
+---
