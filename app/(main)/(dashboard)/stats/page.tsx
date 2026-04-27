@@ -15,7 +15,7 @@ import {
   fetchGitHubStatsFromBackend,
 } from "@/features/github/services/github-backend";
 
-import { Container } from "@/components/layout/Container";
+import { Container } from "@veriworkly/ui";
 
 import StatsHero from "./components/StatsHero";
 import StatsBoard from "./components/StatsBoard";

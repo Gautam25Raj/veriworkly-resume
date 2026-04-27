@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 
 import Footer from "@/components/layout/Footer";
 import Navbar from "@/components/layout/Navbar";
-import { Container } from "@/components/layout/Container";
+import { Container } from "@veriworkly/ui";
 
 const DashboardLayout = ({ children }: { children: ReactNode }) => {
   return (

@@ -1,0 +1,179 @@
+---
+title: Building a Scalable Resume Platform with a Multi-App Architecture
+description: How we architected VeriWorkly using a monorepo, Next.js, and Fumadocs to deliver a fast, modular, and privacy-first resume platform.
+author: VeriWorkly Team
+date: 2026-04-25
+---
+
+---
+
+# Building a Scalable Resume Platform with a Multi-App Architecture
+
+When building VeriWorkly, our goal wasn’t just to create another resume builder - it was to design a **high-performance, privacy-first system** that scales cleanly as features grow.
+
+Very early on, we realized that a traditional monolithic frontend would eventually slow us down. As features expand - documentation, APIs, guides, editor, exports - bundling everything into a single application introduces unnecessary complexity, performance overhead, and deployment friction.
+
+So instead, we built VeriWorkly as a **multi-app monorepo system**.
+
+---
+
+## Why Not a Monolith?
+
+At small scale, a single app works fine. But as the platform grows:
+
+- Build times increase significantly
+- Unrelated changes trigger full redeployments
+- JavaScript bundles become bloated
+- Developer velocity slows down
+
+For a product focused on **speed and local-first performance**, this tradeoff wasn’t acceptable.
+
+---
+
+## The Architecture
+
+We split the platform into **independent, focused applications**, all living inside a single monorepo.
+
+### 1. The Builder
+
+This is the core product.
+
+- A high-performance resume editor
+- Fully local-first (runs in the browser)
+- Real-time updates with zero lag
+- Structured data powered by a strict schema
+
+The builder is optimized for **interaction speed**, not content delivery.
+
+---
+
+### 2. The Documentation Platform
+
+Our documentation is powered by Fumadocs and designed specifically for:
+
+- API reference (generated from schemas)
+- Setup guides and architecture docs
+- Developer onboarding
+
+Separating docs from the main app allows us to:
+
+- Ship updates instantly without touching the core product
+- Keep documentation lightweight and fast
+- Generate API docs automatically from source code
+
+---
+
+### 3. The Blog
+
+The blog is intentionally isolated from the rest of the system.
+
+It serves as a space for:
+
+- Engineering deep dives
+- Product decisions and architecture insights
+- Updates on features and system design
+
+This separation ensures that editorial content never impacts application performance.
+
+---
+
+## The Monorepo Advantage
+
+Even though the apps are independent, they are **not isolated**.
+
+We use a monorepo to share critical pieces across all apps:
+
+### Shared Systems
+
+- **Type Definitions**
+  Ensures API contracts and data structures stay consistent everywhere
+
+- **UI Components**
+  Reusable primitives for consistent design
+
+- **Design Tokens**
+  Shared via Tailwind and CSS variables for visual consistency
+
+- **Validation Schemas**
+  Centralized schema definitions (e.g., profile structure)
+
+---
+
+## Key Benefits
+
+### Isolated Deployments
+
+Each app can be deployed independently:
+
+- Updating docs → no impact on builder
+- Publishing blog → no rebuild of core app
+- Shipping backend changes → no frontend redeploy
+
+---
+
+### Performance by Design
+
+- Users only download what they need
+- No unnecessary JavaScript overhead
+- Faster load times across all surfaces
+
+---
+
+### Strong Type Safety
+
+Because everything shares the same source of truth:
+
+- Frontend and backend stay in sync
+- Validation is consistent everywhere
+- Breaking changes are caught early
+
+---
+
+### Better Developer Experience
+
+- Smaller, focused codebases per app
+- Faster builds and iteration cycles
+- Clear separation of concerns
+
+---
+
+## Design Philosophy
+
+This architecture reflects a few core principles:
+
+- **Local-first by default**
+- **Strict data structures over loose flexibility**
+- **Performance over convenience**
+- **Separation of concerns at every layer**
+
+---
+
+## What This Enables
+
+By structuring the platform this way, we’ve built a foundation that can scale without friction.
+
+This makes it easier to introduce:
+
+- Advanced export pipelines
+- Real-time sync systems
+- AI-assisted editing workflows
+- Collaboration features
+- Extended API ecosystem
+
+All without slowing down the core editing experience.
+
+---
+
+## Closing Thoughts
+
+VeriWorkly is not just a frontend app - it’s a **system of focused applications working together**.
+
+By investing early in a modular architecture, we’ve ensured that:
+
+- The builder remains fast
+- The docs remain flexible
+- The platform remains scalable
+
+This is just the starting point - and everything we build next will sit on top of this foundation.
+
+---

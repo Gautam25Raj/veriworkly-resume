@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 
 import { siteConfig } from "@/config/site";
 
-import { Card } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
+import { Card } from "@veriworkly/ui";
+import { Badge } from "@veriworkly/ui";
 
 import { PublicPageShell } from "@/components/layout/PublicPageShell";
 

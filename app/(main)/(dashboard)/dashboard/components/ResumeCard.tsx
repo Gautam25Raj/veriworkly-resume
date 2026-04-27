@@ -4,9 +4,9 @@ import Link from "next/link";
 import { memo } from "react";
 import { CalendarClock, FileText, Palette } from "lucide-react";
 
-import { Card } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
+import { Card } from "@veriworkly/ui";
+import { Badge } from "@veriworkly/ui";
+import { Button } from "@veriworkly/ui";
 
 import { templateSummaries } from "@/config/templates";
 

@@ -5,7 +5,7 @@ import { CloudSync, CheckCircle2, History, LucideIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
-import { Switch } from "@/components/ui/Switch";
+import { Switch } from "@veriworkly/ui";
 
 import {
   syncAllPendingResumes,

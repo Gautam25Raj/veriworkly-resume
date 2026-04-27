@@ -2,8 +2,8 @@ import Link from "next/link";
 
 import { cn } from "@/lib/utils";
 
-import { Card } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
+import { Card } from "@veriworkly/ui";
+import { Badge } from "@veriworkly/ui";
 
 import { KanbanItem } from "./KanbanBoard";
 

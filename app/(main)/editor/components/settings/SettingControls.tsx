@@ -6,7 +6,7 @@ import type {
   SelectHTMLAttributes,
 } from "react";
 
-import { Select } from "@/components/ui/Select";
+import { Select } from "@veriworkly/ui";
 
 export function SettingsField({
   children,

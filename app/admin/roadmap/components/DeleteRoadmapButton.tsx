@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { Button } from "@/components/ui/Button";
+import { Button } from "@veriworkly/ui";
 
 import { deleteRoadmapFeature } from "@/features/roadmap/services/admin-roadmap";
 

@@ -4,7 +4,7 @@ import type { TemplateComponent } from "@/types/template";
 
 import { useDeferredValue, useEffect, useRef, useState } from "react";
 
-import { Card } from "@/components/ui/Card";
+import { Card } from "@veriworkly/ui";
 
 import {
   startResumeSyncWorker,

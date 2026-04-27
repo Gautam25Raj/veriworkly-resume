@@ -2,8 +2,8 @@
 
 import { Eye, MoreVertical, RefreshCw, Share2, Trash2 } from "lucide-react";
 
-import { Button } from "@/components/ui/Button";
-import { Menu, MenuItem, MenuSeparator } from "@/components/ui/Menu";
+import { Button } from "@veriworkly/ui";
+import { Menu, MenuItem, MenuSeparator } from "@veriworkly/ui";
 
 interface ResumeCardMenuProps {
   resumeTitle: string;

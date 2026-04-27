@@ -2,7 +2,7 @@
 
 import type { ResumeCustomization } from "@/types/resume";
 
-import { Button } from "@/components/ui/Button";
+import { Button } from "@veriworkly/ui";
 
 import { SettingsColor, SettingsRange } from "./SettingControls";
 

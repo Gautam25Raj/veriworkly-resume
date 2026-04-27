@@ -5,7 +5,7 @@ import { Sun, Moon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
-import { buttonClassName } from "@/components/ui/Button";
+import { buttonClassName } from "@veriworkly/ui";
 
 interface ThemeToggleProps {
   className?: string;

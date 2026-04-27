@@ -6,7 +6,7 @@ import { Monitor, Moon, Sun, LucideIcon, CheckCircle2 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
-import { Badge } from "@/components/ui/Badge";
+import { Badge } from "@veriworkly/ui";
 
 type ThemeChoice = "light" | "dark" | "system";
 

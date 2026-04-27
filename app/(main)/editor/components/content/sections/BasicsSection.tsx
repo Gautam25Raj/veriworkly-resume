@@ -2,7 +2,7 @@
 
 import type { BaseSectionProps } from "./section-types";
 
-import { Input } from "@/components/ui/Input";
+import { Input } from "@veriworkly/ui";
 
 import { useResume } from "@/features/resume/hooks/use-resume";
 import { validateBasics } from "@/features/resume/utils/validation";

@@ -1,4 +1,4 @@
-import { Container } from "@/components/layout/Container";
+import { Container } from "@veriworkly/ui";
 
 export default function AppLoading() {
   return (

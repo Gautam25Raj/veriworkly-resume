@@ -1,9 +1,7 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 
 import { siteConfig } from "@/config/site";
-
-import { Container } from "@/components/layout/Container";
-
+import { Container } from "@veriworkly/ui";
 import { faqs } from "@/features/landing/data/faqItems";
 
 import TrustBar from "@/features/landing/components/TrustBar";

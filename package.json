@@ -1,12 +1,22 @@
 {
   "name": "veriworkly-resume",
-  "version": "1.11.0",
+  "version": "1.12.0",
   "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
     "dev": "next dev",
+    "dev:docs": "npm run dev --prefix apps/docs-platform",
+    "dev:blog": "npm run dev --prefix apps/blog-platform",
     "build": "next build",
+    "build:docs": "npm run build --prefix apps/docs-platform",
+    "build:blog": "npm run build --prefix apps/blog-platform",
     "start": "next start",
     "lint": "eslint .",
+    "lint:docs": "npm run lint --prefix apps/docs-platform",
+    "lint:blog": "npm run lint --prefix apps/blog-platform",
     "test:contracts": "vitest run",
     "test:visual": "playwright test",
     "test:visual:update": "playwright test --update-snapshots",
@@ -15,6 +25,7 @@
     "generate:api": "npx @redocly/cli bundle specs/openapi.yaml -o openapi.yaml && node scripts/generate-api.mjs"
   },
   "dependencies": {
+    "@veriworkly/ui": "*",
     "@types/mdx": "^2.0.13",
     "better-auth": "^1.6.9",
     "clsx": "^2.1.1",

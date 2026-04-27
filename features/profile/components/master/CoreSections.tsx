@@ -1,7 +1,7 @@
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
-import { Select } from "@/components/ui/Select";
-import { TextArea } from "@/components/ui/TextArea";
+import { Button } from "@veriworkly/ui";
+import { Input } from "@veriworkly/ui";
+import { Select } from "@veriworkly/ui";
+import { TextArea } from "@veriworkly/ui";
 import type { MasterProfileData, ResumeLanguage } from "@/types/resume";
 
 import { SectionCard, SectionItemCard } from "./master-shared";

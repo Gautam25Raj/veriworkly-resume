@@ -4,10 +4,10 @@ import Link from "next/link";
 import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
 
-import { Card } from "@/components/ui/Card";
-import { Input } from "@/components/ui/Input";
-import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
+import { Card } from "@veriworkly/ui";
+import { Input } from "@veriworkly/ui";
+import { Badge } from "@veriworkly/ui";
+import { Button } from "@veriworkly/ui";
 
 import OtpForm from "./component/OtpForm";
 

@@ -6,7 +6,7 @@ import { useEffect, useState, useCallback, useRef } from "react";
 
 import type { TemplateComponent } from "@/types/template";
 
-import { Button } from "@/components/ui/Button";
+import { Button } from "@veriworkly/ui";
 import { loadTemplateComponentById } from "@/templates";
 
 import {

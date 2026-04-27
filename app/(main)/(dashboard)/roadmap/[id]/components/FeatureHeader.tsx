@@ -1,4 +1,4 @@
-import { Badge } from "@/components/ui/Badge";
+import { Badge } from "@veriworkly/ui";
 
 import type { RoadmapFeature } from "@/features/roadmap/services/roadmap-backend";
 

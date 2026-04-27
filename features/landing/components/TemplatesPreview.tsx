@@ -1,9 +1,9 @@
 import Link from "next/link";
 
-import { Card } from "@/components/ui/Card";
+import { Card } from "@veriworkly/ui";
 
 import { templateSummaries } from "@/config/templates";
-import { Badge } from "@/components/ui/Badge";
+import { Badge } from "@veriworkly/ui";
 
 const TemplatesPreview = () => {
   const featured = templateSummaries.slice(0, 3);

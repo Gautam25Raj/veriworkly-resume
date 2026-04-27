@@ -6,8 +6,8 @@ import { Database, FileJson, ArrowLeft, ShieldAlert } from "lucide-react";
 
 import type { MasterProfile } from "@/types/resume";
 
-import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
+import { Card } from "@veriworkly/ui";
+import { Button } from "@veriworkly/ui";
 
 import {
   saveMasterProfileToDatabase,

@@ -4,8 +4,8 @@ import { useMemo, useState } from "react";
 
 import type { BaseSectionProps } from "./section-types";
 
-import { Input } from "@/components/ui/Input";
-import { Button } from "@/components/ui/Button";
+import { Input } from "@veriworkly/ui";
+import { Button } from "@veriworkly/ui";
 
 import {
   Field,

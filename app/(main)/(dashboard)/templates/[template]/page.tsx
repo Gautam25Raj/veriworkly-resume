@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 
-import { Card } from "@/components/ui/Card";
+import { Card } from "@veriworkly/ui";
 
 import { TemplateDetailHeader } from "../components/TemplateHeader";
 

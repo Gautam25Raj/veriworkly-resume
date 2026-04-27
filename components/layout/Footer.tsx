@@ -1,7 +1,7 @@
 import Link from "next/link";
 
-import { Container } from "@/components/layout/Container";
-import { Badge } from "@/components/ui/Badge";
+import { Badge } from "@veriworkly/ui";
+import { Container } from "@veriworkly/ui";
 
 import { siteConfig } from "@/config/site";
 

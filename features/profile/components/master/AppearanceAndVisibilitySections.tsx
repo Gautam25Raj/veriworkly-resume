@@ -1,5 +1,5 @@
-import { Input } from "@/components/ui/Input";
-import { Select } from "@/components/ui/Select";
+import { Input } from "@veriworkly/ui";
+import { Select } from "@veriworkly/ui";
 import type { MasterProfileData, ResumeSection } from "@/types/resume";
 
 import { ColorField, SectionCard } from "./master-shared";

@@ -2,7 +2,7 @@
 
 import { ArrowLeft } from "lucide-react";
 
-import { Button } from "@/components/ui/Button";
+import { Button } from "@veriworkly/ui";
 
 interface ToolbarHeaderProps {
   message: string;

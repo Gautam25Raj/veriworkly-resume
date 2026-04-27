@@ -2,8 +2,8 @@ import type { ReactNode } from "react";
 
 import Link from "next/link";
 
-import { Container } from "@/components/layout/Container";
-import { Button } from "@/components/ui/Button";
+import { Container } from "@veriworkly/ui";
+import { Button } from "@veriworkly/ui";
 import { siteConfig } from "@/config/site";
 
 type PublicPageShellProps = {

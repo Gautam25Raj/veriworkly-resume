@@ -9,8 +9,8 @@ import {
   AccordionItem,
   AccordionContent,
   AccordionTrigger,
-} from "@/components/ui/Accordion";
-import { Card } from "@/components/ui/Card";
+} from "@veriworkly/ui";
+import { Card } from "@veriworkly/ui";
 
 import { PublicPageShell } from "@/components/layout/PublicPageShell";
 

@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { Card } from "@/components/ui/Card";
+import { Card } from "@veriworkly/ui";
 
 import type { RoadmapFeature } from "@/features/roadmap/services/roadmap-backend";
 

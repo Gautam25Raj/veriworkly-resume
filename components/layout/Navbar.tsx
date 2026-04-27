@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import {
   LogOut,
@@ -12,9 +12,9 @@ import { useRouter } from "next/navigation";
 
 import { siteConfig } from "@/config/site";
 
-import { Menu, MenuItem } from "@/components/ui/Menu";
-import { Container } from "@/components/layout/Container";
-import { Button, buttonClassName } from "@/components/ui/Button";
+import { Container } from "@veriworkly/ui";
+import { Menu, MenuItem } from "@veriworkly/ui";
+import { Button, buttonClassName } from "@veriworkly/ui";
 
 import { signOutCurrentUser } from "@/features/auth/services/current-user";
 

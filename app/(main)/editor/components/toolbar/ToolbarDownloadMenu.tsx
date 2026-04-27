@@ -11,8 +11,8 @@ import {
   ChevronDown,
 } from "lucide-react";
 
-import { Button } from "@/components/ui/Button";
-import { Menu, MenuItem } from "@/components/ui/Menu";
+import { Button } from "@veriworkly/ui";
+import { Menu, MenuItem } from "@veriworkly/ui";
 
 interface ToolbarDownloadMenuProps {
   activeDownload: string | null;

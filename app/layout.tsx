@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { RootProvider } from "fumadocs-ui/provider/next";
 
 import "./globals.css";
 import { globalFontVariables } from "@/app/global-fonts";
@@ -161,9 +160,7 @@ const RootLayout = ({
           disableTransitionOnChange
           storageKey="veriworkly-theme"
         >
-          <RootProvider search={{ options: { delayMs: 500 } }}>
-            {children}
-          </RootProvider>
+          {children}
         </ThemeProvider>
       </body>
     </html>

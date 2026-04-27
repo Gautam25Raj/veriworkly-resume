@@ -12,7 +12,7 @@ import Link from "next/link";
 
 import { cn } from "@/lib/utils";
 
-import { Button } from "@/components/ui/Button";
+import { Button } from "@veriworkly/ui";
 import { ThemeToggle } from "@/components/dashboard/ThemeToggle";
 
 type ExportNotice = {

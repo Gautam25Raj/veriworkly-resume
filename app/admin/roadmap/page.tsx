@@ -2,9 +2,9 @@ import Link from "next/link";
 
 import type { RoadmapStatus } from "@/features/roadmap/services/roadmap-backend";
 
-import { Card } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
+import { Card } from "@veriworkly/ui";
+import { Badge } from "@veriworkly/ui";
+import { Button } from "@veriworkly/ui";
 
 import { fetchAdminRoadmapServer } from "@/features/admin/services/admin-server";
 

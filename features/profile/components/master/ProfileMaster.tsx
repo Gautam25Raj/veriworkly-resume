@@ -7,8 +7,8 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import type { UpdateProfile } from "./types";
 import type { MasterProfileData } from "@/types/resume";
 
-import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
+import { Card } from "@veriworkly/ui";
+import { Button } from "@veriworkly/ui";
 
 import { cn } from "@/lib/utils";
 

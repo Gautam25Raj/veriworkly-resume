@@ -5,8 +5,8 @@ import {
   AccordionItem,
   AccordionTrigger,
   AccordionContent,
-} from "@/components/ui/Accordion";
-import { Button } from "@/components/ui/Button";
+} from "@veriworkly/ui";
+import { Button } from "@veriworkly/ui";
 
 import { faqs } from "../data/faqItems";
 

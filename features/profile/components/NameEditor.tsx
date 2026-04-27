@@ -4,9 +4,9 @@ import { useState, useEffect } from "react";
 
 import { useUserStore } from "@/store/useUserStore";
 
-import { Card } from "@/components/ui/Card";
-import { Input } from "@/components/ui/Input";
-import { Button } from "@/components/ui/Button";
+import { Card } from "@veriworkly/ui";
+import { Input } from "@veriworkly/ui";
+import { Button } from "@veriworkly/ui";
 
 import { updateCurrentUserName } from "@/features/auth/services/current-user";
 

@@ -1,7 +1,7 @@
 import type { ResumeData } from "@/types/resume";
 import type { TemplateComponent } from "@/types/template";
 
-import { Card } from "@/components/ui/Card";
+import { Card } from "@veriworkly/ui";
 
 interface ResumeCanvasProps {
   sharePreviewId: string;

@@ -39,9 +39,9 @@ import { useUserStore } from "@/store/useUserStore";
 import ResumeGrid from "./ResumeGrid";
 import WorkspaceHeader from "./WorkspaceHeader";
 
-import DestructiveModal from "@/components/ui/modals/DestructiveModal";
-import ShareResumeModal from "@/components/ui/modals/ShareResumeModal";
-import SyncDetailsModal from "@/components/ui/modals/SyncDetailsModal";
+import DestructiveModal from "@/components/modals/DestructiveModal";
+import ShareResumeModal from "@/components/modals/ShareResumeModal";
+import SyncDetailsModal from "@/components/modals/SyncDetailsModal";
 
 const EMPTY_RESUMES: ResumeListItem[] = [];
 let resumeCache = { data: EMPTY_RESUMES, key: "" };

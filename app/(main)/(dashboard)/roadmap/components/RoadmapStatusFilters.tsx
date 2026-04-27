@@ -3,7 +3,7 @@ import Link from "next/link";
 import { type RoadmapSort } from "@/features/roadmap/services/roadmap-backend";
 
 import { buildHref } from "./RoadmapPageShell";
-import { buttonClassName } from "@/components/ui/Button";
+import { buttonClassName } from "@veriworkly/ui";
 
 const RoadmapStatusFilters = ({
   currentSort,

@@ -20,6 +20,7 @@
     ],
     "paths": {
       "@/*": ["./*"],
+      "@veriworkly/ui": ["./packages/ui/src"],
       "collections/*": ["./.source/*"]
     }
   },

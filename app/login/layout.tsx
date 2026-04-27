@@ -2,8 +2,8 @@ import type { ReactNode } from "react";
 
 import Link from "next/link";
 
-import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
+import { Badge } from "@veriworkly/ui";
+import { Button } from "@veriworkly/ui";
 
 export const metadata = {
   title: "Login",

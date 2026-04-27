@@ -2,8 +2,8 @@
 
 import { useMemo, useState } from "react";
 
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
+import { Button } from "@veriworkly/ui";
+import { Input } from "@veriworkly/ui";
 
 import { useResume } from "@/features/resume/hooks/use-resume";
 import { validateProject } from "@/features/resume/utils/validation";

@@ -5,7 +5,7 @@ import type { TemplateComponent } from "@/types/template";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
-import { Card } from "@/components/ui/Card";
+import { Card } from "@veriworkly/ui";
 
 import { loadTemplateComponentById } from "@/templates";
 

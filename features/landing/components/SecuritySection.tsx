@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { Card } from "@/components/ui/Card";
+import { Card } from "@veriworkly/ui";
 
 const SecuritySection = () => {
   return (

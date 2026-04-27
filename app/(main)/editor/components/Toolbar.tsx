@@ -3,9 +3,9 @@
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { Input } from "@/components/ui/Input";
-import { Modal } from "@/components/ui/Modal";
-import { Button } from "@/components/ui/Button";
+import { Input } from "@veriworkly/ui";
+import { Modal } from "@veriworkly/ui";
+import { Button } from "@veriworkly/ui";
 
 import ToolbarHeader from "@/app/(main)/editor/components/toolbar/ToolbarHeader";
 import ToolbarActionsMenu from "@/app/(main)/editor/components/toolbar/ToolbarActionsMenu";

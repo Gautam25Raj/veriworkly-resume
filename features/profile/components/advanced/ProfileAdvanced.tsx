@@ -13,10 +13,10 @@ import { useRef, useState, useEffect } from "react";
 
 import type { MasterProfile } from "@/types/resume";
 
-import { Card } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
-import { TextArea } from "@/components/ui/TextArea";
+import { Card } from "@veriworkly/ui";
+import { Badge } from "@veriworkly/ui";
+import { Button } from "@veriworkly/ui";
+import { TextArea } from "@veriworkly/ui";
 
 import { cn } from "@/lib/utils";
 

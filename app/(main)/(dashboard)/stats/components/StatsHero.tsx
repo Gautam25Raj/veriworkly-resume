@@ -1,4 +1,4 @@
-import { Badge } from "@/components/ui/Badge";
+import { Badge } from "@veriworkly/ui";
 
 import { formatAbsoluteTime, formatRelativeTime } from "./stats-utils";
 

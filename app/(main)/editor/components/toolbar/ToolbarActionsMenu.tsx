@@ -10,8 +10,8 @@ import {
   FolderInput,
 } from "lucide-react";
 
-import { Button } from "@/components/ui/Button";
-import { Menu, MenuItem, MenuSeparator } from "@/components/ui/Menu";
+import { Button } from "@veriworkly/ui";
+import { Menu, MenuItem, MenuSeparator } from "@veriworkly/ui";
 
 interface ToolbarActionsMenuProps {
   onDelete: () => void;

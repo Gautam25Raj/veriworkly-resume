@@ -1,4 +1,4 @@
-﻿import type { ReactNode } from "react";
+import type { ReactNode } from "react";
 
 import type { ResumeSectionId } from "@/types/resume";
 import type { TemplateRenderProps } from "@/types/template";

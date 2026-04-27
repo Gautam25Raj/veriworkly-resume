@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { UserCircle, ArrowUpRight } from "lucide-react";
 
-import { Card } from "@/components/ui/Card";
+import { Card } from "@veriworkly/ui";
 
 export default function ProfileCTA() {
   return (

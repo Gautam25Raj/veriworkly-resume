@@ -2,8 +2,8 @@ import Link from "next/link";
 
 import type { RoadmapFeature } from "@/features/roadmap/services/roadmap-backend";
 
-import { Card } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
+import { Card } from "@veriworkly/ui";
+import { Button } from "@veriworkly/ui";
 
 const statusLabels = {
   todo: "To Do",

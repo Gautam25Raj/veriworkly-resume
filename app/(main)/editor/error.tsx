@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/Button";
+import { Button } from "@veriworkly/ui";
 
 export default function EditorSegmentError({
   reset,

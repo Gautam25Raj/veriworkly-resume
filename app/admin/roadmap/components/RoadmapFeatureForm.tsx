@@ -10,18 +10,18 @@ import type {
   RoadmapFeature,
 } from "@/features/roadmap/services/roadmap-backend";
 
-import { Card } from "@/components/ui/Card";
-import { Input } from "@/components/ui/Input";
-import { Button } from "@/components/ui/Button";
-import { Select } from "@/components/ui/Select";
-import { TextArea } from "@/components/ui/TextArea";
+import { Card } from "@veriworkly/ui";
+import { Input } from "@veriworkly/ui";
+import { Button } from "@veriworkly/ui";
+import { Select } from "@veriworkly/ui";
+import { TextArea } from "@veriworkly/ui";
 
 import {
   type AdminRoadmapPayload,
   createRoadmapFeature,
   updateRoadmapFeature,
 } from "@/features/roadmap/services/admin-roadmap";
-import { Badge } from "@/components/ui/Badge";
+import { Badge } from "@veriworkly/ui";
 
 const STATUS_OPTIONS: Array<{ value: RoadmapStatus; label: string }> = [
   { value: "todo", label: "To Do" },

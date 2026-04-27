@@ -9,7 +9,7 @@ import {
   KanbanBoard,
   type KanbanColumn,
 } from "@/components/roadmap/KanbanBoard";
-import { Container } from "@/components/layout/Container";
+import { Container } from "@veriworkly/ui";
 
 import RoadmapHeader from "./RoadmapHeader";
 import RoadmapStatsGrid from "./RoadmapStatsGrid";

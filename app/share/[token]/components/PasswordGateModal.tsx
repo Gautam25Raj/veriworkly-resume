@@ -1,8 +1,8 @@
 import { Lock } from "lucide-react";
 
-import { Input } from "@/components/ui/Input";
-import { Modal } from "@/components/ui/Modal";
-import { Button } from "@/components/ui/Button";
+import { Input } from "@veriworkly/ui";
+import { Modal } from "@veriworkly/ui";
+import { Button } from "@veriworkly/ui";
 
 interface PasswordGateModalProps {
   password: string;

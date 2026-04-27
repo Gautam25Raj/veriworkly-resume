@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { Badge } from "@/components/ui/Badge";
+import { Badge } from "@veriworkly/ui";
 import { TemplateDefinition } from "@/types/template";
 
 export function TemplateDetailHeader({

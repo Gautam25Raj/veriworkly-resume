@@ -6,7 +6,7 @@ import { notFound } from "next/navigation";
 
 import { siteConfig } from "@/config/site";
 
-import { Container } from "@/components/layout/Container";
+import { Container } from "@veriworkly/ui";
 
 import {
   fetchRoadmapFeatureById,

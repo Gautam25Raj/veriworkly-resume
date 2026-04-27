@@ -8,7 +8,7 @@ import type { MasterProfileData } from "@/types/resume";
 
 import { cn } from "@/lib/utils";
 
-import { Card } from "@/components/ui/Card";
+import { Card } from "@veriworkly/ui";
 
 import ProfileMaster from "./ProfileMaster";
 

@@ -1,5 +1,6 @@
 import { generateFiles } from "fumadocs-openapi";
 import { createOpenAPI } from "fumadocs-openapi/server";
+import { copyFileSync } from "node:fs";
 
 const openapi = createOpenAPI({
   input: ["./openapi.yaml"],
@@ -8,7 +9,9 @@ const openapi = createOpenAPI({
 
 void generateFiles({
   input: openapi,
-  output: "./content/api",
+  output: "./apps/docs-platform/content/api-reference",
   per: "operation",
   groupBy: "tag",
 });
+
+copyFileSync("./openapi.yaml", "./apps/docs-platform/openapi.yaml");
