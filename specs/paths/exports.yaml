@@ -1,0 +1,34 @@
+queuePrivateExportJob:
+  post:
+    tags:
+      - Exports
+    operationId: queuePrivateExportJob
+    security:
+      - LocalSession: []
+      - ProdSession: []
+    summary: Queue Private Export Job
+    description: Queues a background job to export a specific resume.
+    parameters:
+      - name: resumeId
+        in: path
+        required: true
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [format, snapshot]
+            properties:
+              format:
+                type: string
+                enum: [pdf, png, jpg]
+              snapshot:
+                type: object
+              renderHtml:
+                type: string
+    responses:
+      "202":
+        description: Export job queued

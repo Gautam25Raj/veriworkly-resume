@@ -1,0 +1,111 @@
+---
+title: Introduction
+description: Welcome to the official documentation for VeriWorkly, a free, open-source, and local-first resume builder.
+---
+
+import {
+  Eye,
+  Code2,
+  Rocket,
+  Palette,
+  FileDown,
+  ShieldCheck,
+} from "lucide-react";
+
+# Welcome to VeriWorkly
+
+**VeriWorkly** is a free and open-source resume builder designed to simplify the process of creating, updating, and exporting your professional resume without compromising your privacy.
+
+![VeriWorkly Banner](/og/landing-page-og.png)
+
+---
+
+## What is VeriWorkly?
+
+VeriWorkly is built around a simple idea: career tools should not force people to trade privacy for utility. Most resume builders gatekeep your data, force you into subscriptions, or silently mine your information. VeriWorkly operates **100% local-first by default**, requiring no accounts, no mandatory cloud storage, and zero friction.
+
+<Cards>
+  <Card title="Privacy First" icon={<ShieldCheck />}>
+    Your data stays yours. It lives in your browser by default. No tracking, no ads, and complete transparency with our open-source codebase.
+  </Card>
+
+  <Card title="Beautiful Templates" icon={<Palette />}>
+    Choose from professionally designed, ATS-friendly templates including Modern,
+    Minimal, Executive, and ATS Classic.
+  </Card>
+
+  <Card title="Real-time Preview" icon={<Eye />}>
+    See changes instantly as you type. What you see is exactly what you'll get
+    when you export.
+  </Card>
+
+  <Card title="High-Fidelity Exports" icon={<FileDown />}>
+    Download your resume as a pixel-perfect PDF or DOCX. Our server-side rendering engine ensures perfect formatting for ATS parsers.
+  </Card>
+</Cards>
+
+---
+
+## Key Features
+
+<Accordions>
+  <Accordion id="free-open-source" title="Completely Free & Open Source">
+    VeriWorkly is licensed under MIT. You can use it for free, modify it, and even host your own instance. The entire codebase is available on [GitHub](https://github.com/Gautam25Raj/veriworkly-resume).
+  </Accordion>
+
+  <Accordion id="no-account" title="No Account Required">
+    Jump straight into the editor and start building. Accounts are completely
+    optional and only needed if you want to use cloud sync or managed sharing
+    features.
+  </Accordion>
+
+  <Accordion id="rich-customization" title="Rich Customization">
+    Adjust colors, fonts, spacing, section order, and content visibility. Tailor
+    your master profile for specific roles in seconds.
+  </Accordion>
+
+  <Accordion id="self-hostable" title="Self-Hosting Ready">
+    Deploy your own instance of VeriWorkly using Docker. Keep complete control over your data, API, and background workers.
+  </Accordion>
+</Accordions>
+
+---
+
+## Tech Stack
+
+VeriWorkly utilizes a modern, decoupled architecture capable of handling heavy document rendering asynchronously:
+
+| Category                | Technology                                        |
+| :---------------------- | :------------------------------------------------ |
+| **Frontend**            | Next.js 16 (App Router), React 19, Tailwind CSS 4 |
+| **Backend API**         | Node.js, Express, ORPC (Type-safe RPC)            |
+| **Database**            | PostgreSQL with Prisma ORM                        |
+| **Job Queue & Caching** | Redis + BullMQ                                    |
+| **PDF Engine**          | Playwright (Server-side rendering)                |
+| **Authentication**      | Better Auth                                       |
+| **State Management**    | Zustand                                           |
+| **Storage & Email**     | AWS S3, Nodemailer                                |
+
+---
+
+## Getting Started
+
+Whether you want to build a resume, contribute to the open-source code, or self-host your own instance, choose your path below:
+
+<Cards>
+  <Card title="Quickstart & Local Setup" icon={<Rocket />} href="/docs/getting-started/quick-start">
+    Set up the frontend, backend, Redis, and Postgres for local development.
+  </Card>
+
+  <Card title="API Reference" icon={<Code2 />} href="/api-reference">
+    Explore our OpenAPI documentation to integrate with the VeriWorkly backend.
+  </Card>
+</Cards>
+
+<Callout title="Need help?">
+  If you run into issues, check our [FAQ](/faq), open a [GitHub
+  Discussion](https://github.com/Gautam25Raj/veriworkly-resume/discussions), or
+  reach out to us at **info@veriworkly.com**.
+</Callout>
+
+---

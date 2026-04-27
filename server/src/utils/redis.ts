@@ -88,7 +88,7 @@ export async function cacheDel(key: string): Promise<void> {
 export async function cacheDelByPrefix(prefix: string): Promise<void> {
   try {
     const redis = getRedis();
-    let cursor = 0;
+    let cursor = "0";
 
     do {
       const result = await redis.scan(cursor, {
@@ -100,7 +100,7 @@ export async function cacheDelByPrefix(prefix: string): Promise<void> {
       if (result.keys.length > 0) {
         await redis.del(result.keys);
       }
-    } while (cursor !== 0);
+    } while (cursor !== "0");
   } catch (error) {
     console.error("Cache prefix delete error:", error);
   }

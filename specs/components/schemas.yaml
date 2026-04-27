@@ -1,0 +1,585 @@
+ErrorResponse:
+  type: object
+  required:
+    - success
+    - message
+    - statusCode
+  properties:
+    success:
+      type: boolean
+    message:
+      type: string
+    statusCode:
+      type: integer
+    details:
+      type: array
+      nullable: true
+      items:
+        type: object
+        properties:
+          path:
+            type: string
+          message:
+            type: string
+
+##################################################
+# HEALTH SCHEMA
+##################################################
+
+HealthData:
+  type: object
+  required:
+    - status
+    - database
+    - redis
+    - timestamp
+  properties:
+    status:
+      type: string
+      example: ok
+    database:
+      type: string
+      example: connected
+    redis:
+      type: string
+      example: connected
+    timestamp:
+      type: string
+      format: date-time
+
+HealthResponse:
+  type: object
+  required:
+    - success
+    - message
+    - data
+  properties:
+    success:
+      type: boolean
+    message:
+      type: string
+    data:
+      $ref: "#/HealthData"
+
+##################################################
+# USER SCHEMA
+##################################################
+
+UserObject:
+  type: object
+  required:
+    - id
+    - email
+    - emailVerified
+    - autoSyncEnabled
+    - createdAt
+    - updatedAt
+    - _count
+  properties:
+    id:
+      type: string
+    name:
+      type: string
+      nullable: true
+    email:
+      type: string
+    emailVerified:
+      type: boolean
+    autoSyncEnabled:
+      type: boolean
+    createdAt:
+      type: string
+      format: date-time
+    updatedAt:
+      type: string
+      format: date-time
+    _count:
+      type: object
+      required:
+        - resumeShareLinks
+        - resumes
+      properties:
+        resumeShareLinks:
+          type: integer
+        resumes:
+          type: integer
+
+UserResponse:
+  type: object
+  required:
+    - success
+    - message
+    - data
+  properties:
+    success:
+      type: boolean
+    message:
+      type: string
+    data:
+      $ref: "#/UserObject"
+
+##################################################
+# MASTER PROFILE SCHEMA
+##################################################
+
+# MasterProfile:
+#   type: object
+#   properties:
+#     id:
+#       type: string
+#     userId:
+#       type: string
+#     content:
+#       type: object
+#       additionalProperties: true
+#     createdAt:
+#       type: string
+#       format: date-time
+#     updatedAt:
+#       type: string
+#       format: date-time
+
+# UserSummary:
+#   type: object
+#   properties:
+#     id:
+#       type: string
+#     name:
+#       type: string
+#       nullable: true
+#     email:
+#       type: string
+#     createdAt:
+#       type: string
+#       format: date-time
+#     emailVerified:
+#       type: boolean
+#     autoSyncEnabled:
+#       type: boolean
+#     shareResumeCount:
+#       type: integer
+
+# MasterProfileContent:
+#   type: object
+#   required:
+#     - templateId
+#     - basics
+#     - links
+#     - summary
+#     - experience
+#     - education
+#     - projects
+#     - skills
+#     - languages
+#     - interests
+#     - awards
+#     - certificates
+#     - publications
+#     - volunteer
+#     - references
+#     - achievements
+#     - customSections
+#     - sections
+#     - customization
+#   properties:
+#     templateId:
+#       type: string
+#       maxLength: 64
+#     basics:
+#       $ref: "#/components/schemas/master/MasterProfileBasics"
+#     links:
+#       $ref: "#/components/schemas/master/MasterProfileLinks"
+#     summary:
+#       type: string
+#       maxLength: 8000
+#     experience:
+#       type: array
+#       maxItems: 200
+#       items:
+#         $ref: "#/components/schemas/master/ExperienceItem"
+#     education:
+#       type: array
+#       maxItems: 200
+#       items:
+#         $ref: "#/components/schemas/master/EducationItem"
+#     projects:
+#       type: array
+#       maxItems: 200
+#       items:
+#         $ref: "#/components/schemas/master/ProjectItem"
+#     skills:
+#       type: array
+#       maxItems: 200
+#       items:
+#         $ref: "#/components/schemas/master/SkillItem"
+#     languages:
+#       type: array
+#       maxItems: 200
+#       items:
+#         $ref: "#/components/schemas/master/LanguageItem"
+#     interests:
+#       type: array
+#       maxItems: 200
+#       items:
+#         $ref: "#/components/schemas/master/InterestItem"
+#     awards:
+#       type: array
+#       maxItems: 200
+#       items:
+#         $ref: "#/components/schemas/master/AwardItem"
+#     certificates:
+#       type: array
+#       maxItems: 200
+#       items:
+#         $ref: "#/components/schemas/master/CertificateItem"
+#     publications:
+#       type: array
+#       maxItems: 200
+#       items:
+#         $ref: "#/components/schemas/master/PublicationItem"
+#     volunteer:
+#       type: array
+#       maxItems: 200
+#       items:
+#         $ref: "#/components/schemas/master/VolunteerItem"
+#     references:
+#       type: array
+#       maxItems: 200
+#       items:
+#         $ref: "#/components/schemas/master/ReferenceItem"
+#     achievements:
+#       type: array
+#       maxItems: 200
+#       items:
+#         $ref: "#/components/schemas/master/AchievementItem"
+#     customSections:
+#       type: array
+#       maxItems: 200
+#       items:
+#         $ref: "#/components/schemas/master/CustomSection"
+#     sections:
+#       type: array
+#       maxItems: 200
+#       items:
+#         $ref: "#/components/schemas/master/SectionItem"
+#     customization:
+#       $ref: "#/components/schemas/master/Customization"
+#     updatedAt:
+#       type: string
+#       format: date-time
+#       nullable: true
+
+# MasterProfileResponse:
+#   type: object
+#   properties:
+#     success:
+#       type: boolean
+#     message:
+#       type: string
+#     data:
+#       type: object
+#       properties:
+#         profile:
+#           $ref: "#/MasterProfile"
+#         summary:
+#           $ref: "#/UserSummary"
+
+# MasterProfileUpdateRequest:
+#   type: object
+#   required:
+#     - profile
+#   properties:
+#     expectedUpdatedAt:
+#       type: string
+#       format: date-time
+#       nullable: true
+#     profile:
+#       $ref: "#/MasterProfileContent"
+
+# MasterProfileUpdateResponse:
+#   type: object
+#   properties:
+#     success:
+#       type: boolean
+#     message:
+#       type: string
+#     data:
+#       $ref: "#/MasterProfile"
+
+##################################################
+# ROADMAP SCHEMA
+##################################################
+
+RoadmapFeature:
+  type: object
+  required:
+    - id
+    - title
+    - description
+    - status
+    - createdAt
+    - updatedAt
+  properties:
+    id:
+      type: string
+    title:
+      type: string
+    description:
+      type: string
+    status:
+      type: string
+      enum: [todo, in-progress, done]
+    eta:
+      type: string
+      nullable: true
+    tags:
+      type: array
+      items:
+        type: string
+    createdAt:
+      type: string
+      format: date-time
+    startedAt:
+      type: string
+      format: date-time
+      nullable: true
+    completedAt:
+      type: string
+      format: date-time
+      nullable: true
+    completedQuarter:
+      type: string
+      nullable: true
+    updatedAt:
+      type: string
+      format: date-time
+    timeline:
+      type: string
+      nullable: true
+
+RoadmapListData:
+  type: object
+  required:
+    - items
+    - total
+    - limit
+    - offset
+    - hasMore
+    - pagination
+  properties:
+    items:
+      type: array
+      items:
+        $ref: "#/RoadmapFeature"
+    total:
+      type: integer
+    limit:
+      type: integer
+    offset:
+      type: integer
+    hasMore:
+      type: boolean
+    pagination:
+      type: object
+      properties:
+        mode:
+          type: string
+          enum: [offset]
+        nextOffset:
+          type: integer
+          nullable: true
+        nextCursor:
+          type: string
+          nullable: true
+
+RoadmapListResponse:
+  type: object
+  required: [success, message, data]
+  properties:
+    success:
+      type: boolean
+    message:
+      type: string
+    data:
+      $ref: "#/RoadmapListData"
+
+RoadmapStats:
+  type: object
+  properties:
+    totalFeatures:
+      type: integer
+    todo:
+      type: integer
+    inProgress:
+      type: integer
+    done:
+      type: integer
+    completionRate:
+      type: string
+
+RoadmapStatsResponse:
+  type: object
+  required: [success, message, data]
+  properties:
+    success:
+      type: boolean
+    message:
+      type: string
+    data:
+      $ref: "#/RoadmapStats"
+
+RoadmapFeatureDetail:
+  allOf:
+    - $ref: "#/RoadmapFeature"
+    - type: object
+      properties:
+        fullDescription:
+          type: string
+          nullable: true
+        whyItMatters:
+          type: string
+          nullable: true
+        details:
+          type: object
+          nullable: true
+        interactions:
+          type: array
+          items:
+            type: object
+            properties:
+              type:
+                type: string
+              value:
+                type: integer
+              comment:
+                type: string
+                nullable: true
+              createdAt:
+                type: string
+                format: date-time
+              user:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  name:
+                    type: string
+                    nullable: true
+
+RoadmapFeatureResponse:
+  type: object
+  required: [success, message, data]
+  properties:
+    success:
+      type: boolean
+    message:
+      type: string
+    data:
+      $ref: "#/RoadmapFeatureDetail"
+
+##################################################
+# GITHUB SCHEMA
+##################################################
+
+GitHubStats:
+  type: object
+  properties:
+    total:
+      type: integer
+    todo:
+      type: integer
+    inProgress:
+      type: integer
+    done:
+      type: integer
+    completionRate:
+      type: string
+
+GitHubStatsData:
+  type: object
+  properties:
+    projectName:
+      type: string
+    stats:
+      $ref: "#/GitHubStats"
+    syncedAt:
+      type: string
+      format: date-time
+
+GitHubStatsResponse:
+  type: object
+  properties:
+    success:
+      type: boolean
+    message:
+      type: string
+    data:
+      - $ref: "#/GitHubStatsData"
+      - type: "null"
+
+GitHubItem:
+  type: object
+  properties:
+    id:
+      type: string
+    number:
+      type: integer
+    title:
+      type: string
+    status:
+      type: string
+      enum: [todo, in-progress, done]
+    kind:
+      type: string
+      enum: [issue, pull-request]
+    url:
+      type: string
+    labels:
+      type: array
+      items:
+        type: string
+    createdAt:
+      type: string
+      format: date-time
+    updatedAt:
+      type: string
+      format: date-time
+
+GitHubIssuesData:
+  type: object
+  properties:
+    items:
+      type: array
+      items:
+        $ref: "#/GitHubItem"
+    total:
+      type: integer
+    limit:
+      type: integer
+    offset:
+      type: integer
+
+GitHubIssuesResponse:
+  type: object
+  properties:
+    success:
+      type: boolean
+    message:
+      type: string
+    data:
+      $ref: "#/GitHubIssuesData"
+
+GenericSuccessResponse:
+  type: object
+  properties:
+    success:
+      type: boolean
+    message:
+      type: string
+    data:
+      type: object
+      additionalProperties: true
+
+##################################################
+# GITHUB SCHEMA
+##################################################

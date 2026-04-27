@@ -1,0 +1,131 @@
+getCurrentUser:
+  get:
+    tags:
+      - Users
+    operationId: getCurrentUser
+    security:
+      - LocalSession: []
+      - ProdSession: []
+    summary: Get Current User
+    description: Retrieves detailed profile information for the currently authenticated user.
+    responses:
+      "200":
+        description: User information fetched successfully.
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas.yaml#/UserResponse"
+            example:
+              success: true
+              message: "User information fetched successfully"
+              data:
+                id: "cmnu7awv4000063lk18zpon2m"
+                name: "VeriWorkly User"
+                email: "contact@veriworkly.com"
+                emailVerified: true
+                autoSyncEnabled: false
+                createdAt: "2026-04-11T10:37:35.584Z"
+                updatedAt: "2026-04-25T19:35:44.409Z"
+                _count:
+                  resumeShareLinks: 4
+                  resumes: 4
+      "401":
+        $ref: "../components/responses.yaml#/UnauthorizedError"
+      "404":
+        description: User not found
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas.yaml#/ErrorResponse"
+            example:
+              success: false
+              statusCode: 404
+              message: "User not found"
+
+updateUserName:
+  put:
+    tags:
+      - Users
+    operationId: updateUserName
+    security:
+      - LocalSession: []
+      - ProdSession: []
+    summary: Update User Name
+    description: |
+      Updates the name of the authenticated user. The email address remains read-only.
+
+      Requires authentication via session (local or production).
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [name]
+            properties:
+              name:
+                type: string
+                minLength: 1
+                maxLength: 255
+                description: Name cannot be null or empty when updating.
+          example:
+            name: "VeriWorkly"
+    responses:
+      "200":
+        description: User name updated successfully.
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas.yaml#/UserResponse"
+            example:
+              success: true
+              message: "User name updated successfully"
+              data:
+                id: "cmnu7awv4000063lk18zpon2m"
+                name: "VeriWorkly User New Name"
+                email: "contact@veriworkly.com"
+                emailVerified: true
+                autoSyncEnabled: false
+                createdAt: "2026-04-11T10:37:35.584Z"
+                updatedAt: "2026-04-26T02:00:00.000Z"
+                _count:
+                  resumeShareLinks: 4
+                  resumes: 4
+      "400":
+        description: Validation error
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas.yaml#/ErrorResponse"
+            examples:
+              emptyName:
+                summary: Name is empty
+                value:
+                  success: false
+                  statusCode: 400
+                  message: "Validation failed"
+                  details:
+                    - path: "name"
+                      message: "Name cannot be empty"
+
+              nameTooLong:
+                summary: Name too long
+                value:
+                  success: false
+                  statusCode: 400
+                  message: "Validation failed"
+                  details:
+                    - path: "name"
+                      message: "Name is too long"
+      "401":
+        $ref: "../components/responses.yaml#/UnauthorizedError"
+      "404":
+        description: User not found
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas.yaml#/ErrorResponse"
+            example:
+              success: false
+              statusCode: 404
+              message: "User not found"

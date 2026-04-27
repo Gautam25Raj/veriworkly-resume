@@ -1,0 +1,109 @@
+getGitHubStats:
+  get:
+    tags:
+      - GitHub
+    operationId: getGitHubStats
+    summary: Get GitHub Stats
+    description: Fetch aggregated GitHub issue statistics for the configured repository.
+    responses:
+      "200":
+        description: Stats fetched successfully
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas.yaml#/GitHubStatsResponse"
+            example:
+              success: true
+              message: "Stats fetched successfully"
+              data:
+                projectName: "owner/repo"
+                stats:
+                  total: 120
+                  todo: 40
+                  inProgress: 30
+                  done: 50
+                  completionRate: "41.67"
+                syncedAt: "2026-04-26T10:00:00.000Z"
+
+getGitHubIssues:
+  get:
+    tags:
+      - GitHub
+    operationId: getGitHubIssues
+    summary: Get GitHub Issues
+    description: Fetch paginated GitHub issues and pull requests with optional filters.
+    parameters:
+      - in: query
+        name: status
+        schema:
+          type: string
+          enum: [todo, in-progress, done]
+      - in: query
+        name: kind
+        schema:
+          type: string
+          enum: [issue, pull-request, all]
+      - in: query
+        name: limit
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+      - in: query
+        name: offset
+        schema:
+          type: integer
+          minimum: 0
+          default: 0
+    responses:
+      "200":
+        description: Issues fetched successfully
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas.yaml#/GitHubIssuesResponse"
+            example:
+              success: true
+              message: "Issues fetched successfully"
+              data:
+                items:
+                  - id: "gh-123456"
+                    number: 42
+                    title: "Add new feature"
+                    status: "in-progress"
+                    kind: "issue"
+                    url: "https://github.com/owner/repo/issues/42"
+                    labels: ["enhancement"]
+                    createdAt: "2026-04-20T10:00:00.000Z"
+                    updatedAt: "2026-04-25T10:00:00.000Z"
+                total: 1
+                limit: 20
+                offset: 0
+      "400":
+        $ref: "../components/responses.yaml#/ValidationError"
+
+syncGitHubStats:
+  post:
+    tags:
+      - GitHub
+    operationId: syncGitHubStats
+    security:
+      - LocalSession: []
+      - ProdSession: []
+    summary: (Admin) Sync GitHub
+    description: Manually trigger GitHub stats synchronization. Intended for admin use.
+    responses:
+      "200":
+        description: Manual sync completed
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas.yaml#/GenericSuccessResponse"
+            example:
+              success: true
+              message: "Manual sync completed"
+              data:
+                id: "sync_123"
+                projectUrl: "https://github.com/owner/repo"
+                syncedAt: "2026-04-26T10:00:00.000Z"
