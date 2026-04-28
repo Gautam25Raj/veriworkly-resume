@@ -1,179 +1,79 @@
 ---
-title: Building a Scalable Resume Platform with a Multi-App Architecture
-description: How we architected VeriWorkly using a monorepo, Next.js, and Fumadocs to deliver a fast, modular, and privacy-first resume platform.
-author: VeriWorkly Team
-date: 2026-04-25
+title: "Building a Scalable Resume Platform: The VeriWorkly Multi-App Architecture"
+description: "How we transitioned from a monolithic Next.js app to a robust, scalable 4-app monorepo to separate concerns, improve build times, and build a local-first architecture."
+author: "VeriWorkly Engineering"
+date: "2026-04-28"
 ---
 
----
+# Building a Scalable Resume Platform
 
-# Building a Scalable Resume Platform with a Multi-App Architecture
+When VeriWorkly started, it was a single Next.js application holding everything: the resume builder, our blog, our documentation, and all the backend API routes. This monolithic approach was simple initially but quickly became unsustainable. Building the Docs meant recompiling the Resume Editor. Editing a Blog post slowed down Hot Module Replacement for critical API features.
 
-When building VeriWorkly, our goal wasn’t just to create another resume builder - it was to design a **high-performance, privacy-first system** that scales cleanly as features grow.
+Today, we're proud to run a massive, enterprise-grade **NPM Workspace Monorepo** encompassing **four entirely distinct applications**:
 
-Very early on, we realized that a traditional monolithic frontend would eventually slow us down. As features expand - documentation, APIs, guides, editor, exports - bundling everything into a single application introduces unnecessary complexity, performance overhead, and deployment friction.
+1. **Resume Builder** (pps/resume-builder)
+2. **Docs Platform** (pps/docs-platform)
+3. **Blog Platform** (pps/blog-platform)
+4. **Backend Server** (pps/server)
 
-So instead, we built VeriWorkly as a **multi-app monorepo system**.
+Plus, everything is backed by our internal @veriworkly/ui design system.
 
----
+Here's why we split the architecture and how it works.
 
-## Why Not a Monolith?
+## Welcome to the Monorepo
 
-At small scale, a single app works fine. But as the platform grows:
+We manage the monorepo via **NPM Workspaces**. This setup provides significant advantages over the old monolith.
 
-- Build times increase significantly
-- Unrelated changes trigger full redeployments
-- JavaScript bundles become bloated
-- Developer velocity slows down
+### 1. Isolated Build Pipelines
 
-For a product focused on **speed and local-first performance**, this tradeoff wasn’t acceptable.
+Now,
+esume-builder is optimized specifically as a highly interactive Client-Side App, while log-platform and docs-platform are statically generated using **Fumadocs**. Next.js App Router caching policies apply strictly where they should. Modifying the documentation no longer restarts the Resume Editor.
 
----
+### 2. Independent Deployments
 
-## The Architecture
+Each application is containerized within a shared compose.yaml but runs as a separate service.
 
-We split the platform into **independent, focused applications**, all living inside a single monorepo.
+- **Resume Builder**: Port 3000
+- **Docs Platform**: Port 3001
+- **Blog Platform**: Port 3002
+- **Backend API**: Port 8080
 
-### 1. The Builder
+This isolation means that a heavy traffic spike hitting a viral log-platform article will never steal CPU cycles from someone trying to generate their PDF in the
+esume-builder.
 
-This is the core product.
+## Inside the Core Applications
 
-- A high-performance resume editor
-- Fully local-first (runs in the browser)
-- Real-time updates with zero lag
-- Structured data powered by a strict schema
+### 🚀 Resume Builder: Local-First and Blazing Fast
 
-The builder is optimized for **interaction speed**, not content delivery.
+Our editor (pps/resume-builder) is entirely local-first. We heavily lean into **Zustand** combined with the persist middleware.
+When a user types their experience summary, the state immediately updates the DOM and seamlessly saves to localStorage. Only when the user hits "Sync" or "Download PDF" do we talk to our database or API.
 
----
+### ⚙️ The Node.js Backend Server
 
-### 2. The Documentation Platform
+The server (pps/server) handles two massive tasks that Next.js wasn't well suited for:
 
-Our documentation is powered by Fumadocs and designed specifically for:
+1. **Prisma & PostgreSQL Connection Pooling**: Direct connection to Neon Database with advanced cache strategies.
+2. **Headless Chromium PDF Generation**: Generating pixel-perfect PDFs is mathematically intense. We chose not to use client-side libraries like jsPDF or html2canvas because they only create inaccessible images, which instantly fail ATS scans. Instead, the backend spawns **Playwright**, mounts a hidden React template over the API payload, waits for Tailwind 4 and fonts to render, and exports a raw, true-text PDF.
 
-- API reference (generated from schemas)
-- Setup guides and architecture docs
-- Developer onboarding
+This heavy-lifting is moved entirely off the user's browser and isolated inside a robust Node 20+ Express instance running its own thread pool.
 
-Separating docs from the main app allows us to:
+### 📚 The Docs Platform
 
-- Ship updates instantly without touching the core product
-- Keep documentation lightweight and fast
-- Generate API docs automatically from source code
+Our documentation (pps/docs-platform) is an entirely independent app running Fumadocs on top of Next.js 15. The Docs Platform has a distinct openapi.yaml configuration to auto-generate our API reference, which would have absolutely bloated the Resume Editor if combined.
 
----
+### ✍️ The Blog Platform
 
-### 3. The Blog
+Finally, the Blog Platform (pps/blog-platform) is an SEO-optimized Markdown powerhouse. It shares the @veriworkly/ui package explicitly so buttons and cards match our main brand identity perfectly, but the Next.js configurations are heavily biased towards SSG (Static Site Generation), providing sub-100ms load times for global SEO dominance.
 
-The blog is intentionally isolated from the rest of the system.
+## Security & Authentication Deep Dive
 
-It serves as a space for:
+To tie all these applications together under one security model, we use **Better-Auth**.
+By storing session tokens centrally in the Neon database, our API endpoints at pps/server instantly know if a request originating from the Resume Builder is valid.
 
-- Engineering deep dives
-- Product decisions and architecture insights
-- Updates on features and system design
+All passwords are cryptographically hashed using standard best-practices, but what's better is that **Better-Auth** handles magic links, Google, and Github SSO seamlessly without us maintaining standard OAuth boilerplate.
 
-This separation ensures that editorial content never impacts application performance.
+## Moving Forward and Tailwind CSS 4
 
----
+By standardizing our @veriworkly/ui across all 3 frontends using **Tailwind CSS 4**, our design system is perfectly cohesive.
 
-## The Monorepo Advantage
-
-Even though the apps are independent, they are **not isolated**.
-
-We use a monorepo to share critical pieces across all apps:
-
-### Shared Systems
-
-- **Type Definitions**
-  Ensures API contracts and data structures stay consistent everywhere
-
-- **UI Components**
-  Reusable primitives for consistent design
-
-- **Design Tokens**
-  Shared via Tailwind and CSS variables for visual consistency
-
-- **Validation Schemas**
-  Centralized schema definitions (e.g., profile structure)
-
----
-
-## Key Benefits
-
-### Isolated Deployments
-
-Each app can be deployed independently:
-
-- Updating docs → no impact on builder
-- Publishing blog → no rebuild of core app
-- Shipping backend changes → no frontend redeploy
-
----
-
-### Performance by Design
-
-- Users only download what they need
-- No unnecessary JavaScript overhead
-- Faster load times across all surfaces
-
----
-
-### Strong Type Safety
-
-Because everything shares the same source of truth:
-
-- Frontend and backend stay in sync
-- Validation is consistent everywhere
-- Breaking changes are caught early
-
----
-
-### Better Developer Experience
-
-- Smaller, focused codebases per app
-- Faster builds and iteration cycles
-- Clear separation of concerns
-
----
-
-## Design Philosophy
-
-This architecture reflects a few core principles:
-
-- **Local-first by default**
-- **Strict data structures over loose flexibility**
-- **Performance over convenience**
-- **Separation of concerns at every layer**
-
----
-
-## What This Enables
-
-By structuring the platform this way, we’ve built a foundation that can scale without friction.
-
-This makes it easier to introduce:
-
-- Advanced export pipelines
-- Real-time sync systems
-- AI-assisted editing workflows
-- Collaboration features
-- Extended API ecosystem
-
-All without slowing down the core editing experience.
-
----
-
-## Closing Thoughts
-
-VeriWorkly is not just a frontend app - it’s a **system of focused applications working together**.
-
-By investing early in a modular architecture, we’ve ensured that:
-
-- The builder remains fast
-- The docs remain flexible
-- The platform remains scalable
-
-This is just the starting point - and everything we build next will sit on top of this foundation.
-
----
+In closing, removing the monolithic architecture took significant time, but it resulted in a project that is infinitely easier to scale, debug, and maintain. Every piece of VeriWorkly now has one job, and it does that job perfectly. Welcome to the future of resume building.

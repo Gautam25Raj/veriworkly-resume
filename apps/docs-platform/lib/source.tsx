@@ -66,8 +66,7 @@ export const apiSource = loader({
             node.name = createElement(
               "span",
               {
-                className:
-                  "inline-flex items-center justify-between w-full gap-2",
+                className: "inline-flex items-center justify-between w-full gap-2",
               },
               createElement("span", { key: "name" }, node.name as string),
               badge,
@@ -95,11 +94,11 @@ export function getMethodColor(method: string) {
       return "bg-zinc-500/10 text-zinc-500 border-zinc-500/20";
   }
 }
-export function getPageImage(page: (typeof source)['$inferPage']) {
-  const segments = [...page.slugs, 'image.png'];
+export function getPageImage(page: (typeof source)["$inferPage"]) {
+  const segments = [...page.slugs, "image.png"];
 
   return {
     segments,
-    url: `/og/docs/${segments.join('/')}`,
+    url: `/og/docs/${segments.join("/")}`,
   };
 }

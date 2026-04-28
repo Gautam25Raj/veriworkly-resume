@@ -1,138 +1,71 @@
-# ⚙️ Environment Setup
+# ⚙️ Environment Setup Guide
 
-VeriWorkly Resume requires several environment variables to function correctly, especially for backend features like sharing and the roadmap.
+VeriWorkly uses a multi-layered environment configuration to handle the complexity of the monorepo.
 
-> This project uses multiple environment files depending on how you run the application.
+## 📁 Environment Files Locations
 
-## 📁 Environment Files Overview
-
-| File           | Purpose                               |
-| -------------- | ------------------------------------- |
-| `.env`         | Frontend + shared configuration       |
-| `server/.env`  | Backend configuration                 |
-| `.env.docker`  | Docker-specific environment settings  |
-| `.env.example` | Full list of all variables (template) |
-
-> Always use `.env.example` as the source of truth for all available variables.
+| File               | Application           | Purpose                                          |
+| :----------------- | :-------------------- | :----------------------------------------------- |
+| `.env`             | Root / Resume Builder | Frontend public variables and shared configs.    |
+| `apps/server/.env` | Backend API           | Database, Auth, and Secret keys.                 |
+| `.env.docker`      | Docker Compose        | Container-specific networking and orchestration. |
 
 ---
 
-## 🌐 Frontend & Shared Variables (`.env`)
+## 🌐 Frontend Variables (`.env`)
 
-Located in the **root directory**.
+These variables are prefixed with `NEXT_PUBLIC_` to be accessible in the browser.
 
-| Variable                  | Description                                 | Default                        |
-| ------------------------- | ------------------------------------------- | ------------------------------ |
-| `NEXT_PUBLIC_BACKEND_URL` | The public URL of your API                  | `http://localhost:8080/api/v1` |
-| `ADMIN_EMAIL`             | Email for admin access (roadmap management) | -                              |
-
----
-
-## 🗄 Backend Variables (`server/.env`)
-
-Located in the **`/server` directory**.
+| Variable                  | Description                        | Default                        |
+| :------------------------ | :--------------------------------- | :----------------------------- |
+| `NEXT_PUBLIC_BACKEND_URL` | The public URL of the Backend API. | `http://localhost:8080/api/v1` |
 
 ---
+
+## 🗄️ Backend Variables (`apps/server/.env`)
+
+These are sensitive and should never be exposed to the client.
 
 ### 🔴 Required
 
-| Variable       | Description                     |
-| -------------- | ------------------------------- |
-| `DATABASE_URL` | PostgreSQL connection string    |
-| `AUTH_SECRET`  | Secret for session/auth signing |
-| `JWT_SECRET`   | Secret for JWT tokens           |
+- `DATABASE_URL`: PostgreSQL connection string (e.g., Neon.tech).
+- `AUTH_SECRET`: Secret key for Better-Auth. Generate with `openssl rand -base64 32`.
+- `JWT_SECRET`: Secret for signing JWT tokens.
+
+### 🟡 Recommended (Infrastructure)
+
+- `REDIS_URL`: Redis connection string (e.g., `redis://localhost:6379`).
+- `ALLOWED_ORIGINS`: Comma-separated list of allowed CORS origins.
 
 ---
 
-### 🟡 Recommended
+## 🐳 Docker Variables (`.env.docker`)
 
-| Variable          | Description                 |
-| ----------------- | --------------------------- |
-| `REDIS_URL`       | Redis connection string     |
-| `REDIS_HOST`      | Redis host                  |
-| `REDIS_PORT`      | Redis port                  |
-| `ALLOWED_ORIGINS` | Allowed CORS origins        |
-| `AUTH_BASE_URL`   | Base URL for auth callbacks |
+Used when running via `docker compose`.
+
+- `DATABASE_URL`: External database connection.
+- `REDIS_URL`: Should be `redis://redis:6379` (using the service name).
+- `NEXT_PUBLIC_BACKEND_URL`: Public-facing API URL.
 
 ---
 
-### 🔵 Optional
+## 🔐 Generating Secure Secrets
 
-#### Email (Nodemailer)
+To generate strong, random strings for your secrets, use the following command:
 
-- `AUTH_EMAIL_PROVIDER` → `smtp` or `console` (dev)
-- `AUTH_SMTP_HOST`
-- `AUTH_SMTP_PORT`
-- `AUTH_SMTP_USER`
-- `AUTH_SMTP_PASS`
-
----
-
-## 🐳 Docker Environment (`.env.docker`)
-
-Used when running via Docker Compose.
-
----
-
-### Required
-
-| Variable       | Description                            |
-| -------------- | -------------------------------------- |
-| `DATABASE_URL` | External PostgreSQL (Neon recommended) |
-| `AUTH_SECRET`  | Auth secret                            |
-| `JWT_SECRET`   | JWT secret                             |
-
----
-
-### Important
-
-| Variable                  | Description                     | Example                        |
-| ------------------------- | ------------------------------- | ------------------------------ |
-| `NEXT_PUBLIC_BACKEND_URL` | Public API URL (browser access) | `http://localhost:8080/api/v1` |
-| `BACKEND_INTERNAL_URL`    | Internal container API URL      | `http://api:8080/api/v1`       |
-
----
-
-## 🔒 Generating Secrets
-
-Generate secure values for secrets:
-
-```bash id="bqz3mz"
+```bash
 openssl rand -base64 32
 ```
 
-Use this for:
+Use the output for:
 
 - `AUTH_SECRET`
 - `JWT_SECRET`
 
 ---
 
-## 📌 Full Variable Reference
-
-All available environment variables — including advanced and internal ones — are defined in:
-
-```id="jv2m8m"
-.env.example
-server/.env.example
-```
-
-> These files act as the **single source of truth**.
-
----
-
 ## ⚠️ Best Practices
 
-- Never commit `.env` or `.env.docker`
-- Always start from `.env.example`
-- Use strong, unique secrets in production
-- Prefer `REDIS_URL` over host/port for simplicity
-- Keep environment values consistent across frontend and backend
-
----
-
-## 🧠 Notes
-
-- Some variables are **internal tuning parameters** (cache TTLs, session configs, etc.)
-- These are intentionally **not documented here** to keep setup simple
-- Refer to `.env.example` if you need advanced configuration
+1. **Never commit `.env` files** to version control. They are ignored by `.gitignore`.
+2. **Use `.env.example`** as a template when adding new variables.
+3. **Keep secrets unique** across development, staging, and production environments.

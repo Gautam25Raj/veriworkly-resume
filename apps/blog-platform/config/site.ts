@@ -3,8 +3,7 @@ export const siteConfig = {
   shortName: "VeriWorkly",
   creator: "Gautam Raj",
   url: "https://blogs.veriworkly.com",
-  description:
-    "Insights, product notes, and career guidance from the VeriWorkly team.",
+  description: "Insights, product notes, and career guidance from the VeriWorkly team.",
   tagline: "Career platform ideas and architecture stories.",
   links: {
     github: "https://github.com/Gautam25Raj/veriworkly-resume",

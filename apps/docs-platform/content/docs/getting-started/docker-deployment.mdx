@@ -12,10 +12,9 @@ This guide explains how to self-host VeriWorkly in a production-like environment
 VeriWorkly utilizes a single root `compose.yaml` file to orchestrate the entire ecosystem, ensuring the Next.js frontend, the Express API, and the Redis cache all communicate securely over an internal Docker network.
 
 <Callout type="warn" title="Important Database Note">
-  **PostgreSQL is intentionally NOT containerized in this setup.** Because
-  databases require complex volume management and backup strategies in
-  production, our `compose.yaml` expects you to provide an external database URL
-  (such as [Neon](https://neon.tech), AWS RDS, or a managed VPS Postgres
+  **PostgreSQL is intentionally NOT containerized in this setup.** Because databases require complex
+  volume management and backup strategies in production, our `compose.yaml` expects you to provide
+  an external database URL (such as [Neon](https://neon.tech), AWS RDS, or a managed VPS Postgres
   instance).
 </Callout>
 

@@ -43,8 +43,8 @@ To make automated alerting reliable, the endpoint strictly adheres to HTTP statu
 | `503 Service Unavailable` | One or more core services (Database/Redis) are unreachable. | **Immediate alert.** The API cannot process resumes. |
 
 <Callout type="warn">
-  **Privacy Note:** The health endpoint does not expose any sensitive user data.
-  It is safe to expose publicly for monitoring purposes.
+  **Privacy Note:** The health endpoint does not expose any sensitive user data. It is safe to
+  expose publicly for monitoring purposes.
 </Callout>
 
 ---
@@ -52,16 +52,10 @@ To make automated alerting reliable, the endpoint strictly adheres to HTTP statu
 ## Available Endpoints
 
 <Cards>
-  <Card
-    title="Get Health Status"
-    icon={<Activity />}
-    href="./health/healthCheck"
-  >
-    <span className="text-muted-foreground mb-2 block font-mono text-xs">
-      `GET /api/v1/health`
-    </span>
-    Returns a comprehensive, timestamped status report of the server, database,
-    and Redis connections.
+  <Card title="Get Health Status" icon={<Activity />} href="./health/healthCheck">
+    <span className="text-muted-foreground mb-2 block font-mono text-xs">`GET /api/v1/health`</span>
+    Returns a comprehensive, timestamped status report of the server, database, and Redis
+    connections.
   </Card>
 </Cards>
 

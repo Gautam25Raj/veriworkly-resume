@@ -14,8 +14,7 @@ export async function GET(request: Request) {
     const logoUrl = `${baseUrl}/veriworkly-logo.png`;
 
     const displayDescription =
-      description ||
-      "Building the future of professional resumes, one sync at a time.";
+      description || "Building the future of professional resumes, one sync at a time.";
 
     return new ImageResponse(
       <div
@@ -67,12 +66,7 @@ export async function GET(request: Request) {
           xmlns="http://www.w3.org/2000/svg"
         >
           <defs>
-            <pattern
-              id="grid"
-              width="16"
-              height="16"
-              patternUnits="userSpaceOnUse"
-            >
+            <pattern id="grid" width="16" height="16" patternUnits="userSpaceOnUse">
               <path
                 d="M 16 0 L 0 0 0 16"
                 fill="none"

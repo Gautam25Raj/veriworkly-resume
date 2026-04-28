@@ -36,9 +36,7 @@ const handleRequest = async (req: NextRequest): Promise<Response> => {
   const modifiedReq = new NextRequest(req.url, requestInit as any);
 
   const method = req.method as keyof typeof proxyHandlers;
-  const handler = proxyHandlers[method] as (
-    request: Request,
-  ) => Promise<Response>;
+  const handler = proxyHandlers[method] as (request: Request) => Promise<Response>;
 
   return handler(modifiedReq);
 };

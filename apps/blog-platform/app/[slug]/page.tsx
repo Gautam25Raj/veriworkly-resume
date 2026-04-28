@@ -2,13 +2,7 @@ import type { Metadata } from "next";
 import type { ComponentType } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import {
-  ArrowLeft,
-  Clock,
-  Share2,
-  MoreHorizontal,
-  Calendar,
-} from "lucide-react";
+import { ArrowLeft, Clock, Share2, MoreHorizontal, Calendar } from "lucide-react";
 import { DocsBody } from "fumadocs-ui/layouts/notebook/page";
 
 import { blog } from "@/lib/source";
@@ -90,9 +84,7 @@ export default async function BlogPostPage(props: PageProps) {
                 V
               </div>
               <div>
-                <p className="text-foreground leading-none font-bold">
-                  VeriWorkly Team
-                </p>
+                <p className="text-foreground leading-none font-bold">VeriWorkly Team</p>
                 <p className="text-muted mt-1 text-xs">Core Contributors</p>
               </div>
             </div>
@@ -111,13 +103,10 @@ export default async function BlogPostPage(props: PageProps) {
                   V
                 </div>
                 <div className="space-y-4">
-                  <h3 className="text-foreground text-2xl font-bold">
-                    Written by VeriWorkly
-                  </h3>
+                  <h3 className="text-foreground text-2xl font-bold">Written by VeriWorkly</h3>
                   <p className="text-muted text-lg leading-relaxed">
-                    We're on a mission to build the most private and
-                    professional career engineering platform. Join us in
-                    redefining how professional stories are told.
+                    We're on a mission to build the most private and professional career engineering
+                    platform. Join us in redefining how professional stories are told.
                   </p>
                   <div className="flex flex-wrap justify-center gap-4 pt-2 md:justify-start">
                     <Link

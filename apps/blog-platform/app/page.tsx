@@ -26,8 +26,7 @@ const BlogHome = () => {
     .getPages()
     .sort(
       (a, b) =>
-        new Date(toBlogMeta(b.data).date).getTime() -
-        new Date(toBlogMeta(a.data).date).getTime(),
+        new Date(toBlogMeta(b.data).date).getTime() - new Date(toBlogMeta(a.data).date).getTime(),
     );
 
   const featuredPost = allPosts[0];
@@ -59,9 +58,8 @@ const BlogHome = () => {
               </h1>
 
               <p className="text-muted max-w-2xl text-lg leading-relaxed md:text-xl">
-                Thoughts from the VeriWorkly team on career engineering,
-                privacy-first technology, and the future of professional
-                storytelling.
+                Thoughts from the VeriWorkly team on career engineering, privacy-first technology,
+                and the future of professional storytelling.
               </p>
 
               <div className="flex flex-wrap items-center justify-start gap-4">
@@ -95,9 +93,7 @@ const BlogHome = () => {
                     <PenTool className="text-accent size-5" />
                   </div>
                   <div>
-                    <p className="text-foreground font-semibold">
-                      {allPosts.length}
-                    </p>
+                    <p className="text-foreground font-semibold">{allPosts.length}</p>
                     <p className="text-muted text-xs">Articles published</p>
                   </div>
                 </div>
@@ -123,18 +119,13 @@ const BlogHome = () => {
           <section className="space-y-12">
             <div className="border-border flex items-end justify-between border-b pb-6">
               <div className="space-y-2">
-                <h2 className="text-2xl font-bold tracking-tight md:text-4xl">
-                  Featured Article
-                </h2>
+                <h2 className="text-2xl font-bold tracking-tight md:text-4xl">Featured Article</h2>
                 <p className="text-muted font-medium">
                   Our latest deep dive into career engineering.
                 </p>
               </div>
               <div className="hidden md:block">
-                <Link
-                  href="/archive"
-                  className="text-accent text-sm font-bold hover:underline"
-                >
+                <Link href="/archive" className="text-accent text-sm font-bold hover:underline">
                   View archive
                 </Link>
               </div>
@@ -159,9 +150,7 @@ const BlogHome = () => {
                   <div className="flex flex-col justify-center space-y-6 p-8 md:p-12">
                     <div className="flex items-center gap-4 text-xs font-bold tracking-widest text-zinc-400 uppercase">
                       <span>
-                        {new Date(
-                          toBlogMeta(featuredPost.data).date,
-                        ).toLocaleDateString("en-US", {
+                        {new Date(toBlogMeta(featuredPost.data).date).toLocaleDateString("en-US", {
                           month: "long",
                           day: "numeric",
                           year: "numeric",
@@ -280,8 +269,7 @@ const BlogHome = () => {
               </h2>
 
               <p className="text-muted text-sm leading-7 md:text-base">
-                Common questions about our content, guest posts, and engineering
-                updates.
+                Common questions about our content, guest posts, and engineering updates.
               </p>
             </div>
 
@@ -320,8 +308,8 @@ const BlogHome = () => {
               Stay in the loop.
             </h2>
             <p className="text-muted mx-auto max-w-2xl text-xl leading-relaxed font-medium">
-              Follow our journey as we build the best privacy-first resume
-              builder for engineers. Join 5,000+ others on our newsletter.
+              Follow our journey as we build the best privacy-first resume builder for engineers.
+              Join 5,000+ others on our newsletter.
             </p>
             <div className="flex flex-wrap justify-center gap-4 pt-6">
               <Button

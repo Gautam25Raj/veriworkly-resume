@@ -37,8 +37,8 @@ Data is not fetched in real-time on every `GET` request. Instead, we use a backg
 | `POST` | `/sync`             | **Admin**    | Valid session cookie with admin privileges. |
 
 <Callout type="warn">
-  The manual `/sync` endpoint is strictly protected. Unauthorized calls will be
-  rejected with a `401 Unauthorized` status.
+  The manual `/sync` endpoint is strictly protected. Unauthorized calls will be rejected with a `401
+  Unauthorized` status.
 </Callout>
 
 ---
@@ -57,17 +57,12 @@ Data is not fetched in real-time on every `GET` request. Instead, we use a backg
     Retrieve aggregated metrics for the repository, including total open issues, active pull requests, and the calculated completion rate.
   </Card>
 
-<Card
-  title="List Issues & PRs"
-  icon={<GitPullRequest />}
-  href="./github/getGitHubIssues"
->
+<Card title="List Issues & PRs" icon={<GitPullRequest />} href="./github/getGitHubIssues">
   <span className="text-muted-foreground mb-2 block font-mono text-xs">
     `GET /api/v1/github/issues`
   </span>
-  Retrieve a paginated list of repository items. Supports advanced query
-  filtering by development `status` (todo, in-progress, done) and `kind` (issue,
-  pull-request).
+  Retrieve a paginated list of repository items. Supports advanced query filtering by development
+  `status` (todo, in-progress, done) and `kind` (issue, pull-request).
 </Card>
 
   <Card 

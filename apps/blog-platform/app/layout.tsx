@@ -54,8 +54,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "VeriWorkly Blog | Resume Tips & Career Advice",
-    description:
-      "Learn how to build better resumes and grow your career with actionable insights.",
+    description: "Learn how to build better resumes and grow your career with actionable insights.",
     images: ["/og/blog-og.png"],
     creator: "@noober_boy",
   },
@@ -84,8 +83,7 @@ const BlogLayout = ({ children }: { children: React.ReactNode }) => {
     name: "VeriWorkly Blog",
     url: `${siteConfig.url}/blog`,
 
-    description:
-      "Career advice, resume tips, and technical insights from VeriWorkly.",
+    description: "Career advice, resume tips, and technical insights from VeriWorkly.",
 
     publisher: {
       "@type": "Organization",
@@ -115,9 +113,7 @@ const BlogLayout = ({ children }: { children: React.ReactNode }) => {
           defaultTheme="system"
           disableTransitionOnChange
         >
-          <RootProvider search={{ options: { delayMs: 450 } }}>
-            {children}
-          </RootProvider>
+          <RootProvider search={{ options: { delayMs: 450 } }}>{children}</RootProvider>
         </ThemeProvider>
       </body>
     </html>

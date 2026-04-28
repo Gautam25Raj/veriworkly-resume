@@ -44,8 +44,11 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# fumadocs generated files
+.source
+
 # testing
 /test-results
 /app/test
 /app/og-generator
-/api-index
+/api-index

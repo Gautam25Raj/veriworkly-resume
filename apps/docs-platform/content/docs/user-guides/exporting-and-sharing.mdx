@@ -3,12 +3,7 @@ title: Exporting & Sharing
 description: How to generate high-fidelity PDFs, DOCX files, and secure shareable links.
 ---
 
-import {
-  FileText,
-  FileDown,
-  ShieldCheck,
-  Link as LinkIcon,
-} from "lucide-react";
+import { FileText, FileDown, ShieldCheck, Link as LinkIcon } from "lucide-react";
 
 # Exporting & Sharing
 
@@ -24,10 +19,9 @@ Unlike traditional browser-based builders that rely on flawed client-side printi
 - **ATS Optimization:** Because the PDF is rendered properly as a digital document (not an image snapshot), all text remains selectable, and ATS parsers can read the exact semantic structure.
 
 <Callout type="warn" title="Local-First Privacy Boundary">
-  PDF generation requires sending your payload to the backend momentarily.
-  However, if you are an unauthenticated user (no account), the data is only
-  held in memory during generation, the PDF is returned, and the data is
-  immediately discarded.
+  PDF generation requires sending your payload to the backend momentarily. However, if you are an
+  unauthenticated user (no account), the data is only held in memory during generation, the PDF is
+  returned, and the data is immediately discarded.
 </Callout>
 
 ---

@@ -1,7 +1,5 @@
 {
   "title": "Health",
   "description": "Service health and readiness checks.",
-  "pages": [
-    "healthCheck"
-  ]
+  "pages": ["healthCheck"]
 }

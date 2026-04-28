@@ -48,14 +48,12 @@ const HomePage = () => {
                 id="docs-hero-heading"
                 className="text-foreground text-4xl leading-[1.1] font-bold tracking-tight sm:text-5xl md:text-7xl"
               >
-                The Architecture of{" "}
-                <span className="text-accent">Career Tech.</span>
+                The Architecture of <span className="text-accent">Career Tech.</span>
               </h1>
 
               <p className="text-muted max-w-2xl text-lg leading-relaxed md:text-xl">
-                Deep dive into our privacy-first engine, explore the API specs,
-                and learn how we're redefining professional identity with
-                local-first engineering.
+                Deep dive into our privacy-first engine, explore the API specs, and learn how we're
+                redefining professional identity with local-first engineering.
               </p>
 
               <div className="flex flex-wrap items-center justify-start gap-4">
@@ -90,9 +88,7 @@ const HomePage = () => {
                   </div>
                   <div>
                     <p className="text-foreground text-lg font-bold">100ms</p>
-                    <p className="text-muted text-sm font-medium">
-                      Render Latency
-                    </p>
+                    <p className="text-muted text-sm font-medium">Render Latency</p>
                   </div>
                 </div>
               </Card>
@@ -104,9 +100,7 @@ const HomePage = () => {
                   </div>
                   <div>
                     <p className="text-foreground text-lg font-bold">E2EE</p>
-                    <p className="text-muted text-sm font-medium">
-                      Privacy Standard
-                    </p>
+                    <p className="text-muted text-sm font-medium">Privacy Standard</p>
                   </div>
                 </div>
               </Card>
@@ -117,12 +111,8 @@ const HomePage = () => {
                     <Layout className="size-6 text-purple-600" />
                   </div>
                   <div>
-                    <p className="text-foreground text-lg font-bold">
-                      Open Source
-                    </p>
-                    <p className="text-muted text-sm font-medium">
-                      MIT Licensed
-                    </p>
+                    <p className="text-foreground text-lg font-bold">Open Source</p>
+                    <p className="text-muted text-sm font-medium">MIT Licensed</p>
                   </div>
                 </div>
               </Card>
@@ -133,12 +123,9 @@ const HomePage = () => {
         {/* Core Pillars */}
         <section className="space-y-12">
           <div className="space-y-4 text-center">
-            <h2 className="text-3xl font-bold tracking-tight md:text-5xl">
-              Engineering Pillars
-            </h2>
+            <h2 className="text-3xl font-bold tracking-tight md:text-5xl">Engineering Pillars</h2>
             <p className="text-muted mx-auto max-w-2xl text-lg">
-              Our documentation is structured around the three core values that
-              drive VeriWorkly.
+              Our documentation is structured around the three core values that drive VeriWorkly.
             </p>
           </div>
 
@@ -206,9 +193,8 @@ const HomePage = () => {
                 Built for <span className="text-blue-400">Developers.</span>
               </h2>
               <p className="text-lg leading-relaxed font-medium text-zinc-400">
-                VeriWorkly provides a comprehensive set of tools to help you
-                build privacy-first career applications. Our API is designed for
-                simplicity and power.
+                VeriWorkly provides a comprehensive set of tools to help you build privacy-first
+                career applications. Our API is designed for simplicity and power.
               </p>
               <ul className="space-y-4">
                 {[
@@ -217,10 +203,7 @@ const HomePage = () => {
                   "Automated schema validation",
                   "Webhook support for real-time events",
                 ].map((feature) => (
-                  <li
-                    key={feature}
-                    className="flex items-center gap-3 font-medium text-zinc-300"
-                  >
+                  <li key={feature} className="flex items-center gap-3 font-medium text-zinc-300">
                     <div className="size-1.5 rounded-full bg-blue-500" />
                     {feature}
                   </li>
@@ -259,8 +242,7 @@ const HomePage = () => {
                   format: <span className="text-zinc-400">"pdf"</span>,
                 </p>
                 <p className="pl-4">
-                  template:{" "}
-                  <span className="text-zinc-400">"modern-minimal"</span>
+                  template: <span className="text-zinc-400">"modern-minimal"</span>
                 </p>
                 <p>`&rbrace;`);</p>
               </div>
@@ -280,8 +262,8 @@ const HomePage = () => {
                 Universal Search.
               </h2>
               <p className="text-muted text-xl leading-relaxed font-medium">
-                Find documentation, blog posts, and API reference parameters in
-                one unified search interface.
+                Find documentation, blog posts, and API reference parameters in one unified search
+                interface.
               </p>
             </div>
             <div className="flex items-center justify-center gap-4 pt-4">
@@ -311,8 +293,8 @@ const HomePage = () => {
               </h2>
 
               <p className="text-muted text-sm leading-7 md:text-base">
-                Everything you need to know about building with VeriWorkly,
-                our security model, and API usage.
+                Everything you need to know about building with VeriWorkly, our security model, and
+                API usage.
               </p>
             </div>
 
@@ -335,8 +317,8 @@ const HomePage = () => {
               Ready to dive in?
             </h2>
             <p className="text-muted mx-auto max-w-2xl text-xl leading-relaxed font-medium">
-              Join thousands of developers building better career tools with
-              VeriWorkly. Our documentation is always open and free.
+              Join thousands of developers building better career tools with VeriWorkly. Our
+              documentation is always open and free.
             </p>
             <div className="flex flex-wrap justify-center gap-4 pt-6">
               <Button

@@ -3,7 +3,7 @@ import { createOpenAPI } from "fumadocs-openapi/server";
 import { copyFileSync } from "node:fs";
 
 const openapi = createOpenAPI({
-  input: ["./openapi.yaml"],
+  input: ["./apps/docs-platform/openapi.yaml"],
   proxyUrl: "/api/proxy",
 });
 
@@ -14,4 +14,4 @@ void generateFiles({
   groupBy: "tag",
 });
 
-copyFileSync("./openapi.yaml", "./apps/docs-platform/openapi.yaml");
+// No need to copy anymore as it's already in docs-platform

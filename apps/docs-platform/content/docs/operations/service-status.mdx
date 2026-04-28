@@ -3,15 +3,7 @@ title: Checking Service Status
 description: A DevOps playbook for monitoring health, diagnosing container crashes, and ensuring uptime.
 ---
 
-import {
-  Activity,
-  Terminal,
-  AlertTriangle,
-  Cpu,
-  Network,
-  Server,
-  Database,
-} from "lucide-react";
+import { Activity, Terminal, AlertTriangle, Cpu, Network, Server, Database } from "lucide-react";
 
 # Checking Service Status
 
@@ -62,9 +54,9 @@ If there are issues with the database or Redis connection, the API will return:
 ```
 
 <Callout type="info" title="Monitoring Integration">
-  We highly recommend plugging `https://api.yourdomain.com/api/v1/health` into a
-  monitoring tool like Datadog, UptimeRobot, or Better Stack. Configure the
-  monitor to alert your team immediately if the status code deviates from 200.
+  We highly recommend plugging `https://api.yourdomain.com/api/v1/health` into a monitoring tool
+  like Datadog, UptimeRobot, or Better Stack. Configure the monitor to alert your team immediately
+  if the status code deviates from 200.
 </Callout>
 
 ---

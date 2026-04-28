@@ -3,8 +3,7 @@ export const siteConfig = {
   shortName: "VeriWorkly",
   creator: "Gautam Raj",
   url: "https://docs.veriworkly.com",
-  description:
-    "Technical documentation and API reference for the VeriWorkly platform.",
+  description: "Technical documentation and API reference for the VeriWorkly platform.",
   tagline: "Docs and API reference for VeriWorkly.",
   links: {
     github: "https://github.com/Gautam25Raj/veriworkly-resume",

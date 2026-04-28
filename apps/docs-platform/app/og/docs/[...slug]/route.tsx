@@ -1,8 +1,8 @@
-import { getPageImage, source } from '@/lib/source';
-import { notFound } from 'next/navigation';
-import { ImageResponse } from 'next/og';
-import { generate as DefaultImage } from 'fumadocs-ui/og';
-import { siteConfig } from '@/config/site';
+import { getPageImage, source } from "@/lib/source";
+import { notFound } from "next/navigation";
+import { ImageResponse } from "next/og";
+import { generate as DefaultImage } from "fumadocs-ui/og";
+import { siteConfig } from "@/config/site";
 
 export const revalidate = false;
 
@@ -16,10 +16,10 @@ export async function GET(_req: Request, { params }: RouteContext) {
   if (!page) notFound();
 
   return new ImageResponse(
-    <DefaultImage 
-      title={page.data.title} 
-      description={page.data.description} 
-      site={siteConfig.shortName} 
+    <DefaultImage
+      title={page.data.title}
+      description={page.data.description}
+      site={siteConfig.shortName}
     />,
     {
       width: 1200,

@@ -20,17 +20,32 @@
     ],
     "paths": {
       "@/*": ["./*"],
-      "@veriworkly/ui": ["./packages/ui/src"],
-      "collections/*": ["./.source/*"]
+      "@veriworkly/ui": ["../../packages/ui/src"]
     }
   },
   "include": [
     "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
+    "app/**/*.ts",
+    "app/**/*.tsx",
+    "components/**/*.ts",
+    "components/**/*.tsx",
+    "features/**/*.ts",
+    "features/**/*.tsx",
+    "hooks/**/*.ts",
+    "hooks/**/*.tsx",
+    "lib/**/*.ts",
+    "config/**/*.ts",
+    "providers/**/*.ts",
+    "providers/**/*.tsx",
+    "store/**/*.ts",
+    "types/**/*.ts",
+    "utils/**/*.ts",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
-    "**/*.mts"
+    "next.config.ts",
+    "postcss.config.mjs",
+    "vitest.config.ts",
+    "playwright.config.ts"
   ],
-  "exclude": ["node_modules", "server"]
+  "exclude": ["node_modules"]
 }

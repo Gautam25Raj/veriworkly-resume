@@ -6,8 +6,8 @@
 
 @source "../../../packages/ui/src";
 
-@import "../../../styles/themes.css";
-@import "../../../styles/globals.css";
+@import "@veriworkly/ui/styles/themes.css";
+@import "@veriworkly/ui/styles/globals.css";
 
 @custom-variant dark (&:is(.dark *));
 

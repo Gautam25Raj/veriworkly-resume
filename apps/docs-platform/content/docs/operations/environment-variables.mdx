@@ -3,15 +3,7 @@ title: "Environment Variables"
 description: "Comprehensive reference for configuring VeriWorkly across Frontend, Backend, and Docker environments."
 ---
 
-import {
-  Key,
-  Globe,
-  Database,
-  Shield,
-  Mail,
-  Cloud,
-  Server,
-} from "lucide-react";
+import { Key, Globe, Database, Shield, Mail, Cloud, Server } from "lucide-react";
 
 # Environment Variables
 
@@ -102,9 +94,9 @@ REDIS_URL=redis://redis:6379
 ## Security Best Practices
 
 <Callout type="warn" title="Generating Cryptographic Secrets">
-  Never use easily guessable strings for `AUTH_SECRET` or `JWT_SECRET`. To
-  generate cryptographically secure, 32-byte hex strings suitable for
-  production, run the following command in your terminal:
+  Never use easily guessable strings for `AUTH_SECRET` or `JWT_SECRET`. To generate
+  cryptographically secure, 32-byte hex strings suitable for production, run the following command
+  in your terminal:
 </Callout>
 
 <CodeBlockTabs defaultValue="mac" groupId="os">

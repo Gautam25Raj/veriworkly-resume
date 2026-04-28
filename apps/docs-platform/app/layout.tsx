@@ -35,8 +35,7 @@ export const metadata: Metadata = {
     type: "website",
     url: `${siteConfig.url}`,
     title: "VeriWorkly Docs | Technical Guides & API Reference",
-    description:
-      "Comprehensive documentation for using and integrating VeriWorkly.",
+    description: "Comprehensive documentation for using and integrating VeriWorkly.",
     siteName: siteConfig.name,
     images: [
       {
@@ -51,8 +50,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "VeriWorkly Docs | Guides & API Reference",
-    description:
-      "Explore guides, API references, and technical documentation for VeriWorkly.",
+    description: "Explore guides, API references, and technical documentation for VeriWorkly.",
     images: ["/og/docs-og.png"],
   },
 
@@ -74,8 +72,7 @@ const DocsPlatformLayout = ({ children }: { children: React.ReactNode }) => {
     name: "VeriWorkly Documentation",
     url: `${siteConfig.url}/docs`,
 
-    description:
-      "Technical documentation and guides for VeriWorkly resume builder.",
+    description: "Technical documentation and guides for VeriWorkly resume builder.",
 
     publisher: {
       "@type": "Organization",
@@ -105,9 +102,7 @@ const DocsPlatformLayout = ({ children }: { children: React.ReactNode }) => {
           defaultTheme="system"
           disableTransitionOnChange
         >
-          <RootProvider search={{ options: { delayMs: 500 } }}>
-            {children}
-          </RootProvider>
+          <RootProvider search={{ options: { delayMs: 500 } }}>{children}</RootProvider>
         </ThemeProvider>
       </body>
     </html>

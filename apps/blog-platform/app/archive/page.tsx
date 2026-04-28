@@ -17,8 +17,7 @@ const BlogArchive = () => {
     .getPages()
     .sort(
       (a, b) =>
-        new Date(toBlogMeta(b.data).date).getTime() -
-        new Date(toBlogMeta(a.data).date).getTime(),
+        new Date(toBlogMeta(b.data).date).getTime() - new Date(toBlogMeta(a.data).date).getTime(),
     );
 
   return (
@@ -44,10 +43,7 @@ const BlogArchive = () => {
 
             <div className="relative w-full md:max-w-sm">
               <Search className="text-muted absolute top-1/2 left-4 size-4 -translate-y-1/2" />
-              <Input
-                placeholder="Search articles..."
-                className="pl-11 border-zinc-200/50"
-              />
+              <Input placeholder="Search articles..." className="pl-11 border-zinc-200/50" />
             </div>
           </div>
         </header>
@@ -104,9 +100,15 @@ const BlogArchive = () => {
             Previous
           </Button>
           <div className="flex items-center gap-1">
-            <Button variant="primary" className="size-10 rounded-xl p-0">1</Button>
-            <Button variant="ghost" className="size-10 rounded-xl p-0">2</Button>
-            <Button variant="ghost" className="size-10 rounded-xl p-0">3</Button>
+            <Button variant="primary" className="size-10 rounded-xl p-0">
+              1
+            </Button>
+            <Button variant="ghost" className="size-10 rounded-xl p-0">
+              2
+            </Button>
+            <Button variant="ghost" className="size-10 rounded-xl p-0">
+              3
+            </Button>
           </div>
           <Button variant="secondary" className="rounded-xl px-4">
             Next
