@@ -34,7 +34,7 @@ const BlogHome = () => {
 
   return (
     <main className="surface-grid min-h-screen py-14 md:py-20">
-      <Container className="space-y-20 md:space-y-32">
+      <Container className="space-y-12 md:space-y-16">
         {/* Blog Hero */}
         <section
           aria-labelledby="blog-hero-heading"

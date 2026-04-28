@@ -30,9 +30,7 @@ type AccordionItemContextValue = {
 };
 
 const AccordionContext = createContext<AccordionContextValue | null>(null);
-const AccordionItemContext = createContext<AccordionItemContextValue | null>(
-  null,
-);
+const AccordionItemContext = createContext<AccordionItemContextValue | null>(null);
 
 function useAccordionContext() {
   const ctx = useContext(AccordionContext);
@@ -48,9 +46,7 @@ function useAccordionItemContext() {
   const ctx = useContext(AccordionItemContext);
 
   if (!ctx) {
-    throw new Error(
-      "AccordionTrigger and AccordionContent must be used inside AccordionItem.",
-    );
+    throw new Error("AccordionTrigger and AccordionContent must be used inside AccordionItem.");
   }
 
   return ctx;
@@ -106,7 +102,7 @@ export function Accordion({
 
   return (
     <AccordionContext.Provider value={contextValue}>
-      <div data-accordion-root="true" className={cn("grid gap-3", className)}>
+      <div data-accordion-root="true" className={cn("flex flex-col gap-3", className)}>
         {children}
       </div>
     </AccordionContext.Provider>
@@ -119,11 +115,7 @@ type AccordionItemProps = {
   className?: string;
 };
 
-export function AccordionItem({
-  value,
-  children,
-  className,
-}: AccordionItemProps) {
+export function AccordionItem({ value, children, className }: AccordionItemProps) {
   const generatedId = useId();
 
   return (
@@ -152,10 +144,7 @@ type AccordionTriggerProps = {
   className?: string;
 };
 
-export function AccordionTrigger({
-  children,
-  className,
-}: AccordionTriggerProps) {
+export function AccordionTrigger({ children, className }: AccordionTriggerProps) {
   const { value, triggerId, contentId } = useAccordionItemContext();
   const { expanded, toggleItem } = useAccordionContext();
 
@@ -169,13 +158,9 @@ export function AccordionTrigger({
     }
 
     const triggerNodes = Array.from(
-      root.querySelectorAll<HTMLButtonElement>(
-        '[data-accordion-trigger="true"]',
-      ),
+      root.querySelectorAll<HTMLButtonElement>('[data-accordion-trigger="true"]'),
     );
-    const currentIndex = triggerNodes.findIndex(
-      (node) => node.id === event.currentTarget.id,
-    );
+    const currentIndex = triggerNodes.findIndex((node) => node.id === event.currentTarget.id);
 
     if (currentIndex === -1) {
       return;
@@ -198,8 +183,7 @@ export function AccordionTrigger({
 
     if (event.key === "ArrowUp") {
       event.preventDefault();
-      const nextIndex =
-        currentIndex - 1 < 0 ? triggerNodes.length - 1 : currentIndex - 1;
+      const nextIndex = currentIndex - 1 < 0 ? triggerNodes.length - 1 : currentIndex - 1;
       focusByIndex(nextIndex);
     }
 
@@ -248,10 +232,7 @@ type AccordionContentProps = {
   className?: string;
 };
 
-export function AccordionContent({
-  children,
-  className,
-}: AccordionContentProps) {
+export function AccordionContent({ children, className }: AccordionContentProps) {
   const { value, triggerId, contentId } = useAccordionItemContext();
   const { expanded } = useAccordionContext();
 
@@ -264,14 +245,14 @@ export function AccordionContent({
       aria-hidden={!isOpen}
       aria-labelledby={triggerId}
       className={cn(
-        "border-border/60 grid border-t px-5 transition-all duration-300 ease-out",
+        "border-border/60 grid border-t px-5 transition-[grid-template-rows,padding,opacity,visibility] duration-300 ease-in-out overflow-hidden",
         isOpen
-          ? "grid-rows-[1fr] py-4 opacity-100"
-          : "grid-rows-[0fr] py-0 opacity-0",
+          ? "grid-rows-[1fr] py-4 opacity-100 visible"
+          : "grid-rows-[0fr] py-0 opacity-0 invisible",
         className,
       )}
     >
-      <div className="overflow-hidden">
+      <div className="min-h-0 overflow-hidden">
         <div className="text-muted text-sm leading-7">{children}</div>
       </div>
     </div>

@@ -26,8 +26,8 @@ const HeroSection = () => {
           </h1>
 
           <p className="text-muted max-w-2xl text-base leading-8 md:text-lg">
-            A modern, ATS-friendly resume builder with full control over layout,
-            sections, and structure. Fast by default. Private by design.
+            A modern, ATS-friendly resume builder with full control over layout, sections, and
+            structure. Fast by default. Private by design.
           </p>
 
           <div className="mt-6 flex flex-wrap items-center justify-start gap-3">
@@ -38,10 +38,11 @@ const HeroSection = () => {
             </Button>
 
             <Button asChild size="lg" variant="secondary">
-              <Link href="/templates" aria-label="Browse resume templates">
-                Explore Templates
+              <Link href="https://docs.veriworkly.com" aria-label="Read documentation">
+                Read Documentation
               </Link>
             </Button>
+
           </div>
         </div>
 

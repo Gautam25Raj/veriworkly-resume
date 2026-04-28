@@ -12,9 +12,7 @@ const TemplatesPreview = () => {
     <section className="space-y-5" aria-labelledby="templates-heading">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-muted text-xs font-semibold tracking-[0.24em] uppercase">
-            Templates
-          </p>
+          <p className="text-muted text-xs font-semibold tracking-[0.24em] uppercase">Templates</p>
 
           <h2
             id="templates-heading"
@@ -24,8 +22,7 @@ const TemplatesPreview = () => {
           </h2>
 
           <p className="sr-only">
-            Free resume templates for creating professional and ATS-friendly
-            resumes online.
+            Free resume templates for creating professional and ATS-friendly resumes online.
           </p>
         </div>
 
@@ -40,7 +37,7 @@ const TemplatesPreview = () => {
 
       <div className="grid gap-6 md:grid-cols-3">
         {featured.map((template) => (
-          <Card className="space-y-4" key={template.id}>
+          <Card className="space-y-4 p-6" key={template.id}>
             <div className="flex items-center justify-between gap-3">
               <h3 className="text-foreground text-lg font-semibold">
                 {template.name} Resume Template
@@ -53,9 +50,7 @@ const TemplatesPreview = () => {
               />
             </div>
 
-            <p className="text-muted text-sm leading-6">
-              {template.description}
-            </p>
+            <p className="text-muted text-sm leading-6">{template.description}</p>
 
             <div className="flex flex-wrap gap-2">
               {template.tags.slice(0, 3).map((tag) => (
@@ -77,8 +72,7 @@ const TemplatesPreview = () => {
       </div>
 
       <p className="sr-only">
-        Browse free resume templates including modern, minimal, executive, and
-        ATS-friendly layouts.
+        Browse free resume templates including modern, minimal, executive, and ATS-friendly layouts.
       </p>
     </section>
   );

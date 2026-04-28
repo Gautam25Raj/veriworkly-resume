@@ -1,14 +1,16 @@
+import Link from "next/link";
 import type { Metadata } from "next";
 import type { ComponentType } from "react";
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Clock, Share2, MoreHorizontal, Calendar } from "lucide-react";
 import { DocsBody } from "fumadocs-ui/layouts/notebook/page";
+import { ArrowLeft, Clock, Share2, MoreHorizontal, Calendar } from "lucide-react";
 
 import { blog } from "@/lib/source";
-import { getMDXComponents } from "@/components/mdx";
-import { Container } from "@/components/layout/Container";
 import { siteConfig } from "@/config/site";
+
+import { getMDXComponents } from "@/components/mdx";
+
+import { Container } from "@/components/layout/Container";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -80,9 +82,10 @@ export default async function BlogPostPage(props: PageProps) {
             </p>
 
             <div className="flex items-center gap-4 pt-4">
-              <div className="bg-foreground text-background flex size-12 items-center justify-center rounded-full text-lg font-bold shadow-lg">
-                V
+              <div className="rounded-full border border-border p-1.5">
+                <img width={32} height={32} alt="VeriWorkly Logo" src="/veriworkly-logo.png" />
               </div>
+
               <div>
                 <p className="text-foreground leading-none font-bold">VeriWorkly Team</p>
                 <p className="text-muted mt-1 text-xs">Core Contributors</p>
@@ -99,8 +102,8 @@ export default async function BlogPostPage(props: PageProps) {
           <footer className="border-border mt-20 border-t pt-16">
             <div className="bg-accent/5 rounded-3xl p-8 md:p-12">
               <div className="flex flex-col items-center gap-8 text-center md:flex-row md:text-left">
-                <div className="bg-foreground text-background flex size-20 shrink-0 items-center justify-center rounded-2xl text-4xl font-bold shadow-2xl">
-                  V
+                <div className="bg-foreground/10 text-background flex size-20 shrink-0 items-center justify-center rounded-2xl font-bold shadow-2xl">
+                  <img width={48} height={48} alt="VeriWorkly Logo" src="/veriworkly-logo.png" />
                 </div>
                 <div className="space-y-4">
                   <h3 className="text-foreground text-2xl font-bold">Written by VeriWorkly</h3>

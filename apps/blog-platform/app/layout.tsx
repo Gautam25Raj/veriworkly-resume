@@ -71,7 +71,7 @@ export const metadata: Metadata = {
   },
 
   alternates: {
-    canonical: `${siteConfig.url}/blog`,
+    canonical: siteConfig.url,
   },
 };
 
@@ -81,7 +81,7 @@ const BlogLayout = ({ children }: { children: React.ReactNode }) => {
     "@type": "Blog",
 
     name: "VeriWorkly Blog",
-    url: `${siteConfig.url}/blog`,
+    url: siteConfig.url,
 
     description: "Career advice, resume tips, and technical insights from VeriWorkly.",
 
@@ -99,6 +99,7 @@ const BlogLayout = ({ children }: { children: React.ReactNode }) => {
     <html lang="en" suppressHydrationWarning data-scroll-behavior="smooth">
       <head>
         <script
+          id="json-ld"
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
@@ -112,6 +113,7 @@ const BlogLayout = ({ children }: { children: React.ReactNode }) => {
           attribute="class"
           defaultTheme="system"
           disableTransitionOnChange
+          storageKey="veriworkly-theme"
         >
           <RootProvider search={{ options: { delayMs: 450 } }}>{children}</RootProvider>
         </ThemeProvider>

@@ -65,7 +65,22 @@ const Footer = () => {
           >
             Development
           </Link>
+
+          <Link
+            href="https://blogs.veriworkly.com"
+            className="text-muted hover:text-foreground w-fit text-sm transition-colors"
+          >
+            Blog
+          </Link>
+
+          <Link
+            href="https://docs.veriworkly.com"
+            className="text-muted hover:text-foreground w-fit text-sm transition-colors"
+          >
+            Documentation
+          </Link>
         </div>
+
 
         <div className="flex flex-col gap-4">
           <p className="text-foreground text-xs font-semibold tracking-[0.2em] uppercase">

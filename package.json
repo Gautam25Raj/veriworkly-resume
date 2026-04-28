@@ -1,6 +1,6 @@
 {
   "name": "veriworkly-resume",
-  "version": "1.12.0",
+  "version": "1.14.0",
   "private": true,
   "workspaces": [
     "apps/*",
@@ -9,8 +9,8 @@
   "scripts": {
     "dev": "npm run dev -w @veriworkly/resume-builder",
     "dev:server": "npm run dev -w @veriworkly/server",
-    "dev:blog": "npm run dev -w @veriworkly/blog-platform",
-    "dev:docs": "npm run dev -w @veriworkly/docs-platform",
+    "dev:docs": "npm run dev -w @veriworkly/docs-platform -- -p 3001",
+    "dev:blog": "npm run dev -w @veriworkly/blog-platform -- -p 3002",
     "dev:all": "npm run dev --workspaces --if-present",
     "build": "npm run build --workspaces --if-present",
     "build:resume": "npm run build -w @veriworkly/resume-builder",

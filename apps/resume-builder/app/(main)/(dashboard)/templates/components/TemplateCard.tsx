@@ -18,18 +18,13 @@ interface TemplateCardProps {
 }
 
 const TemplateCard = ({ template }: TemplateCardProps) => {
-  const topTags = template.tags.filter(
-    (tag) => tag !== "One column" && tag !== "Two column",
-  );
+  const topTags = template.tags.filter((tag) => tag !== "One column" && tag !== "Two column");
 
   return (
-    <Card className="group hover:border-accent/40 relative flex flex-col justify-between space-y-6 overflow-visible transition-colors">
+    <Card className="group hover:border-accent/40 relative flex flex-col justify-between space-y-6 overflow-visible transition-colors p-6">
       <div className="pointer-events-none absolute top-4 right-4 z-30 hidden w-95 translate-y-2 opacity-0 transition-all duration-200 ease-out xl:block xl:group-hover:translate-y-0 xl:group-hover:opacity-100">
         <div className="border-border bg-card overflow-hidden rounded-xl border shadow-[0_24px_80px_-40px_rgba(15,23,42,0.6)]">
-          <div
-            className="h-1 w-full"
-            style={{ backgroundColor: template.accentColor }}
-          />
+          <div className="h-1 w-full" style={{ backgroundColor: template.accentColor }} />
 
           <div className="relative h-56 bg-slate-100">
             {template.previewImage ? (
@@ -90,13 +85,9 @@ const TemplateCard = ({ template }: TemplateCardProps) => {
         </div>
 
         <div className="space-y-2">
-          <h2 className="text-foreground text-2xl font-semibold tracking-tight">
-            {template.name}
-          </h2>
+          <h2 className="text-foreground text-2xl font-semibold tracking-tight">{template.name}</h2>
 
-          <p className="text-muted text-sm leading-relaxed">
-            {template.description}
-          </p>
+          <p className="text-muted text-sm leading-relaxed">{template.description}</p>
         </div>
 
         <div className="flex flex-wrap gap-2">

@@ -6,9 +6,14 @@ export const baseOptions: BaseLayoutProps = {
   nav: {
     title: (
       <div className="flex items-center gap-2">
-        <span className="flex size-6 items-center justify-center rounded-md bg-zinc-950 text-[10px] font-bold text-white">
-          V
-        </span>
+        <img
+          width={24}
+          height={24}
+          alt="VeriWorkly Logo"
+          className="rounded-md"
+          src="/veriworkly-logo.png"
+        />
+
         <span className="font-semibold">{siteConfig.name}</span>
       </div>
     ),

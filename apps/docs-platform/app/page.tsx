@@ -28,7 +28,7 @@ import { cn } from "@/lib/utils";
 const HomePage = () => {
   return (
     <main className="surface-grid min-h-screen py-14 md:py-20">
-      <Container className="space-y-20 md:space-y-32">
+      <Container className="space-y-12 md:space-y-20">
         {/* Docs Hero */}
         <section
           aria-labelledby="docs-hero-heading"

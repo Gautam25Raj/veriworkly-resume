@@ -45,8 +45,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Free Resume Builder (No Login) | VeriWorkly",
-    description:
-      "Build resumes instantly with no login. Free, open-source, and privacy-first.",
+    description: "Build resumes instantly with no login. Free, open-source, and privacy-first.",
     images: ["/og/landing-page-og.png"],
     creator: "@noober_boy",
   },
