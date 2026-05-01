@@ -47,6 +47,11 @@ export default function robots(): MetadataRoute.Robots {
       },
     ],
 
-    sitemap: `${siteConfig.url}/sitemap.xml`,
+    sitemap: [
+      `${siteConfig.url}/sitemap.xml`,
+      "https://blogs.veriworkly.com/sitemap.xml",
+      "https://docs.veriworkly.com/sitemap.xml",
+    ],
+
   };
 }

@@ -1,8 +1,10 @@
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, Clock, Search } from "lucide-react";
+import { ArrowLeft, ArrowRight, Clock } from "lucide-react";
 
 import { blog } from "@/lib/source";
-import { Container, Button, Card, Input } from "@veriworkly/ui";
+import { siteConfig } from "@/config/site";
+
+import { Container, Card } from "@veriworkly/ui";
 
 const BlogArchive = () => {
   const toBlogMeta = (data: unknown) =>
@@ -41,9 +43,14 @@ const BlogArchive = () => {
               </p>
             </div>
 
-            <div className="relative w-full md:max-w-sm">
-              <Search className="text-muted absolute top-1/2 left-4 size-4 -translate-y-1/2" />
-              <Input placeholder="Search articles..." className="pl-11 border-zinc-200/50" />
+            <div className="flex flex-wrap items-center gap-3 text-sm font-semibold">
+              <Link href={siteConfig.links.app} className="text-accent hover:underline">
+                Resume Builder
+              </Link>
+              <span className="text-muted">•</span>
+              <Link href={siteConfig.links.docs} className="text-accent hover:underline">
+                Documentation
+              </Link>
             </div>
           </div>
         </header>
@@ -93,27 +100,6 @@ const BlogArchive = () => {
             <p className="text-muted text-xl font-medium">No articles found.</p>
           </div>
         )}
-
-        {/* Pagination Placeholder */}
-        <div className="flex items-center justify-center gap-2 pt-12">
-          <Button variant="secondary" className="rounded-xl px-4" disabled>
-            Previous
-          </Button>
-          <div className="flex items-center gap-1">
-            <Button variant="primary" className="size-10 rounded-xl p-0">
-              1
-            </Button>
-            <Button variant="ghost" className="size-10 rounded-xl p-0">
-              2
-            </Button>
-            <Button variant="ghost" className="size-10 rounded-xl p-0">
-              3
-            </Button>
-          </div>
-          <Button variant="secondary" className="rounded-xl px-4">
-            Next
-          </Button>
-        </div>
       </Container>
     </main>
   );

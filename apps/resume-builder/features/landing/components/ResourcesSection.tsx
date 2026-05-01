@@ -32,10 +32,23 @@ const resources = [
   },
 
   {
+    title: "Blog",
+    href: "https://blogs.veriworkly.com",
+    description:
+      "Expert resume tips, ATS strategies, and career insights to help you land your next job.",
+  },
+
+  {
+    title: "Documentation",
+    href: "https://docs.veriworkly.com",
+    description:
+      "Comprehensive guides and API references for using and integrating with VeriWorkly.",
+  },
+
+  {
     title: "Terms",
     href: "/terms",
-    description:
-      "Read the usage rules and ownership expectations for the service.",
+    description: "Read the usage rules and ownership expectations for the service.",
   },
 
   {
@@ -45,6 +58,7 @@ const resources = [
       "Get answers about using the resume builder, templates, exports, and account-free usage.",
   },
 ];
+
 
 const ResourcesSection = () => {
   return (

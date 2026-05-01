@@ -1,14 +1,19 @@
 import type { Metadata } from "next";
 import type { ComponentType } from "react";
+
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Clock, Share2, MoreHorizontal, Calendar } from "lucide-react";
+import { ArrowLeft, Clock, Calendar } from "lucide-react";
 import { DocsBody } from "fumadocs-ui/layouts/notebook/page";
 
 import { blog } from "@/lib/source";
-import { getMDXComponents } from "@/components/mdx";
-import { Container } from "@/components/layout/Container";
 import { siteConfig } from "@/config/site";
+
+import PostActions from "@/components/blog/PostActions";
+
+import { getMDXComponents } from "@/components/mdx";
+
+import { Container } from "@/components/layout/Container";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -29,31 +34,26 @@ export default async function BlogPostPage(props: PageProps) {
   };
 
   const MDX = data.body;
+  const postUrl = `${siteConfig.url}/${params.slug}`;
 
   return (
-    <main className="surface-grid min-h-screen py-14 md:py-20">
+    <main className="surface-grid min-h-screen py-10 md:py-16">
       <Container>
-        <article className="border-border bg-card relative overflow-hidden rounded-4xl border px-6 py-10 shadow-[0_30px_90px_-50px_rgba(0,0,0,0.45)] md:px-16 md:py-20">
-          <div className="bg-accent/5 pointer-events-none absolute -top-24 right-0 h-96 w-96 rounded-full blur-3xl" />
+        <article className="border-border bg-card relative overflow-hidden rounded-4xl border px-6 py-8 shadow-[0_30px_90px_-50px_rgba(0,0,0,0.45)] md:px-14 md:py-14">
+          <div className="bg-accent/5 pointer-events-none absolute -top-24 right-0 h-72 w-72 rounded-full blur-3xl" />
 
-          <nav className="relative mb-12 flex items-center justify-between">
+          <nav className="relative mb-8 flex items-center justify-between">
             <Link
               href="/"
               className="text-muted hover:text-foreground flex items-center gap-2 text-sm font-bold tracking-widest uppercase transition"
             >
               <ArrowLeft className="size-4" /> Back to Blog
             </Link>
-            <div className="flex items-center gap-4">
-              <button className="text-muted hover:text-foreground transition">
-                <Share2 className="size-4" />
-              </button>
-              <button className="text-muted hover:text-foreground transition">
-                <MoreHorizontal className="size-4" />
-              </button>
-            </div>
+
+            <PostActions title={data.title} url={postUrl} />
           </nav>
 
-          <header className="relative mb-16 space-y-8">
+          <header className="relative mb-12 space-y-6 md:mb-14">
             <div className="flex flex-wrap items-center gap-6 text-sm font-medium text-zinc-400">
               <div className="flex items-center gap-2">
                 <Calendar className="size-4" />
@@ -75,14 +75,15 @@ export default async function BlogPostPage(props: PageProps) {
               {data.title}
             </h1>
 
-            <p className="text-muted max-w-3xl text-xl leading-relaxed font-medium">
+            <p className="text-muted max-w-3xl text-lg leading-relaxed font-medium md:text-xl">
               {data.description}
             </p>
 
             <div className="flex items-center gap-4 pt-4">
-              <div className="bg-foreground text-background flex size-12 items-center justify-center rounded-full text-lg font-bold shadow-lg">
-                V
+              <div className="rounded-full border border-border p-1.5">
+                <img width={32} height={32} alt="VeriWorkly Logo" src="/veriworkly-logo.png" />
               </div>
+
               <div>
                 <p className="text-foreground leading-none font-bold">VeriWorkly Team</p>
                 <p className="text-muted mt-1 text-xs">Core Contributors</p>
@@ -90,17 +91,17 @@ export default async function BlogPostPage(props: PageProps) {
             </div>
           </header>
 
-          <div className="relative">
-            <DocsBody className="">
+          <div className="relative rounded-3xl border border-border/60 bg-background/50 p-6 md:p-10">
+            <DocsBody className="max-w-none [&_h2]:mt-10 [&_h2]:text-3xl [&_h2]:font-semibold [&_h2]:tracking-tight [&_h3]:mt-8 [&_h3]:text-2xl [&_h3]:font-semibold [&_p]:my-5 [&_p]:text-base [&_p]:leading-8 md:[&_p]:text-lg [&_ul]:my-4 [&_li]:my-2 [&_code]:rounded-md [&_code]:bg-zinc-500/10 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:text-[0.92em]">
               <MDX components={getMDXComponents()} />
             </DocsBody>
           </div>
 
-          <footer className="border-border mt-20 border-t pt-16">
-            <div className="bg-accent/5 rounded-3xl p-8 md:p-12">
+          <footer className="border-border mt-16 border-t pt-12 md:mt-20 md:pt-14">
+            <div className="bg-accent/5 rounded-3xl p-8 md:p-10">
               <div className="flex flex-col items-center gap-8 text-center md:flex-row md:text-left">
-                <div className="bg-foreground text-background flex size-20 shrink-0 items-center justify-center rounded-2xl text-4xl font-bold shadow-2xl">
-                  V
+                <div className="bg-foreground/10 text-background flex size-20 shrink-0 items-center justify-center rounded-2xl font-bold shadow-2xl">
+                  <img width={48} height={48} alt="VeriWorkly Logo" src="/veriworkly-logo.png" />
                 </div>
                 <div className="space-y-4">
                   <h3 className="text-foreground text-2xl font-bold">Written by VeriWorkly</h3>
@@ -109,6 +110,18 @@ export default async function BlogPostPage(props: PageProps) {
                     platform. Join us in redefining how professional stories are told.
                   </p>
                   <div className="flex flex-wrap justify-center gap-4 pt-2 md:justify-start">
+                    <Link
+                      href={siteConfig.links.app}
+                      className="text-accent text-sm font-bold tracking-wider uppercase hover:underline"
+                    >
+                      Open resume builder
+                    </Link>
+                    <Link
+                      href={siteConfig.links.docs}
+                      className="text-accent text-sm font-bold tracking-wider uppercase hover:underline"
+                    >
+                      Read docs
+                    </Link>
                     <Link
                       href={siteConfig.links.github}
                       className="text-accent text-sm font-bold tracking-wider uppercase hover:underline"

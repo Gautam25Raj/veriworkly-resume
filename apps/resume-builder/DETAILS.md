@@ -20,20 +20,20 @@
 
 ## 📁 Detailed Folder Structure
 
-| Path | Purpose |
-| :--- | :--- |
-| `app/` | Routes, layouts, and API endpoints following Next.js App Router conventions. |
-| `app/(main)/` | Public-facing pages: Home, Editor, Pricing, Documentation. |
+| Path             | Purpose                                                                        |
+| :--------------- | :----------------------------------------------------------------------------- |
+| `app/`           | Routes, layouts, and API endpoints following Next.js App Router conventions.   |
+| `app/(main)/`    | Public-facing pages: Home, Editor, Pricing, Documentation.                     |
 | `app/(private)/` | Protected routes requiring authentication: Dashboard, Saved Resumes, Settings. |
-| `app/api/` | Backend API endpoints for authentication, export, and data sync. |
-| `components/` | Global UI Components: Navbars, Footers, Modals, Cards, shared UI elements. |
-| `features/` | Business logic modules: `resume-editor/`, `preview-panel/`, `export-dialog/`. |
-| `hooks/` | Custom React hooks: `useResumeStore`, `useAuth`, `useWindowResize`, etc. |
-| `lib/` | External client configurations: Auth client, API client, utilities. |
-| `store/` | Zustand store definitions: Resume data, UI state, user preferences. |
-| `templates/` | Resume design system: Professional layout components. |
-| `types/` | TypeScript interfaces and types for Resume, User, API responses. |
-| `utils/` | Pure utility functions: Formatting, validation, data transformation. |
+| `app/api/`       | Backend API endpoints for authentication, export, and data sync.               |
+| `components/`    | Global UI Components: Navbars, Footers, Modals, Cards, shared UI elements.     |
+| `features/`      | Business logic modules: `resume-editor/`, `preview-panel/`, `export-dialog/`.  |
+| `hooks/`         | Custom React hooks: `useResumeStore`, `useAuth`, `useWindowResize`, etc.       |
+| `lib/`           | External client configurations: Auth client, API client, utilities.            |
+| `store/`         | Zustand store definitions: Resume data, UI state, user preferences.            |
+| `templates/`     | Resume design system: Professional layout components.                          |
+| `types/`         | TypeScript interfaces and types for Resume, User, API responses.               |
+| `utils/`         | Pure utility functions: Formatting, validation, data transformation.           |
 
 ---
 
@@ -47,7 +47,6 @@ The Resume Builder leverages Next.js 15's default Server Components for optimal 
   - `app/layout.tsx`: Global layout with metadata, font loading, and provider setup.
   - `app/(main)/page.tsx`: Home page server-rendered.
   - `app/(private)/dashboard/page.tsx`: User dashboard, fetches user data server-side.
-  
 - **Client Components** (Interactive features):
   - `app/(main)/editor/page.tsx`: Main editor marked with `'use client'` for state interactivity.
   - `components/resume-editor.tsx`: Resume editing UI with Zustand state.
@@ -97,8 +96,8 @@ Tailwind 4's `@theme` API enables dynamic, runtime theming without class duplica
   --color-primary: #3b82f6;
   --color-secondary: #1e293b;
   --color-accent: #ec4899;
-  --font-sans: 'Inter', sans-serif;
-  --font-serif: 'Merriweather', serif;
+  --font-sans: "Inter", sans-serif;
+  --font-serif: "Merriweather", serif;
   --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
   --spacing-editor-padding: 2rem;
 }
@@ -113,11 +112,13 @@ The template engine uses CSS variables for real-time styling updates:
 export function ModernTemplate({ resume, colors }: Props) {
   return (
     <div
-      style={{
-        '--primary-color': colors.primary,
-        '--accent-color': colors.accent,
-        '--font-family': colors.fontFamily,
-      } as React.CSSProperties}
+      style={
+        {
+          "--primary-color": colors.primary,
+          "--accent-color": colors.accent,
+          "--font-family": colors.fontFamily,
+        } as React.CSSProperties
+      }
     >
       {/* Resume content */}
     </div>
@@ -151,8 +152,8 @@ The resume data is managed entirely client-side using Zustand with persistence m
 
 ```typescript
 // store/resumeStore.ts
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 interface ResumeState {
   resume: Resume;
@@ -178,11 +179,11 @@ export const useResumeStore = create<ResumeState>()(
       clearResume: () => set({ resume: initialResume }),
     }),
     {
-      name: 'resume-builder-storage',
+      name: "resume-builder-storage",
       storage: localStorage,
       version: 1,
-    }
-  )
+    },
+  ),
 );
 ```
 
@@ -230,13 +231,13 @@ Better-Auth provides session-based authentication with multiple provider support
 
 ```typescript
 // lib/auth-client.ts
-import { createAuthClient } from 'better-auth/client';
+import { createAuthClient } from "better-auth/client";
 
 export const authClient = createAuthClient({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
   plugins: [
     dynamicOAuth({
-      providers: ['google', 'github', 'microsoft'],
+      providers: ["google", "github", "microsoft"],
     }),
   ],
 });
@@ -252,11 +253,11 @@ import { auth } from '@/lib/auth';
 
 export default async function DashboardPage() {
   const session = await auth.api.getSession();
-  
+
   if (!session) {
     redirect('/login');
   }
-  
+
   return (
     <div>
       <h1>Welcome, {session.user.name}!</h1>
@@ -272,11 +273,11 @@ React hooks provide easy access to auth state on the client:
 
 ```typescript
 // hooks/useAuth.ts
-import { authClient } from '@/lib/auth-client';
+import { authClient } from "@/lib/auth-client";
 
 export function useAuth() {
   const { data: session, isLoading } = authClient.useSession();
-  
+
   return {
     user: session?.user,
     isAuthenticated: !!session,
@@ -321,12 +322,12 @@ Client receives binary PDF blob
 
 ```typescript
 // server/src/services/pdf-export.ts
-import { chromium } from 'playwright';
+import { chromium } from "playwright";
 
 export async function generatePDF(resumeData: Resume, template: string) {
   const browser = await chromium.launch({
     headless: true,
-    args: ['--no-sandbox'],
+    args: ["--no-sandbox"],
   });
 
   const page = await browser.newPage({
@@ -337,12 +338,12 @@ export async function generatePDF(resumeData: Resume, template: string) {
   const html = renderResumeTemplate(resumeData, template);
 
   await page.setContent(html, {
-    waitUntil: 'networkidle',
+    waitUntil: "networkidle",
   });
 
   // Generate PDF with semantic text layer for ATS
   const pdfBuffer = await page.pdf({
-    format: 'A4',
+    format: "A4",
     printBackground: true,
     margin: { top: 0, bottom: 0, left: 0, right: 0 },
   });
@@ -357,8 +358,8 @@ export async function generatePDF(resumeData: Resume, template: string) {
 
 ```typescript
 // app/api/resume/export/pdf/route.ts
-import { generatePDF } from '@/services/pdf-export';
-import { NextRequest, NextResponse } from 'next/server';
+import { generatePDF } from "@/services/pdf-export";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   const { resumeData, template } = await req.json();
@@ -369,15 +370,12 @@ export async function POST(req: NextRequest) {
     return new NextResponse(pdfBuffer, {
       status: 200,
       headers: {
-        'Content-Type': 'application/pdf',
-        'Content-Disposition': 'attachment; filename="resume.pdf"',
+        "Content-Type": "application/pdf",
+        "Content-Disposition": 'attachment; filename="resume.pdf"',
       },
     });
   } catch (error) {
-    return NextResponse.json(
-      { error: 'PDF generation failed' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "PDF generation failed" }, { status: 500 });
   }
 }
 ```
@@ -394,17 +392,17 @@ export function useExportResume() {
     setIsExporting(true);
 
     try {
-      const response = await fetch('/api/resume/export/pdf', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/resume/export/pdf", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ resumeData: resume, template }),
       });
 
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
+      const link = document.createElement("a");
       link.href = url;
-      link.download = `${resume.name || 'resume'}.pdf`;
+      link.download = `${resume.name || "resume"}.pdf`;
       link.click();
     } finally {
       setIsExporting(false);

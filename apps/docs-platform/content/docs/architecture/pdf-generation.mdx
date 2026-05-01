@@ -5,7 +5,7 @@ description: Deep dive into the server-side ATS-friendly PDF generation pipeline
 
 # PDF Export Engine
 
-The most critical feature of VeriWorkly is its ability to generate Applicant Tracking System (ATS) compliant PDFs. 
+The most critical feature of VeriWorkly is its ability to generate Applicant Tracking System (ATS) compliant PDFs.
 
 A common pitfall inside many modern resume builders is the reliance on client-side rendering packages like \html2canvas\ or \jsPDF\. These libraries take a "screenshot" of a DOM container and embed it inside a PDF file format. The resulting document looks beautiful to a human, but it creates a disastrous problem: **The text cannot be highlighted, selected, or read by an ATS machine**.
 
@@ -21,9 +21,10 @@ VeriWorkly utilizes a heavy-duty backend pipeline powered by a Node.js API and *
 2. **Headless Chromium Initialization**: The server spins up a completely hidden instance of the Chromium browser via \@playwright/test\.
 3. **Template Mounting**: The Chromium instance intercepts the payload and mounts your specifically chosen layout using Tailwind CSS 4 variables and styles sent directly from the UI.
 4. **Font Loading & Race Conditions**: The instance intercepts Next.js fonts, fully rendering "Inter" and "Roboto" locally without external HTTP delays blocking execution.
-5. **Native Print to PDF**: Once the Chromium DOM is perfectly stable and mathematically accurate, the server invokes the Chromium-native \page.pdf()\ function. 
+5. **Native Print to PDF**: Once the Chromium DOM is perfectly stable and mathematically accurate, the server invokes the Chromium-native \page.pdf()\ function.
 
 ### Why This is Groundbreaking for ATS Parsers
+
 Because Chromium natively prints the Document Object Model (DOM) to the PDF format, VeriWorkly PDFs contain a true **Semantic Text Layer**.
 
 - **Selectable text**: Highlighting a skill works instantly.
@@ -31,4 +32,4 @@ Because Chromium natively prints the Document Object Model (DOM) to the PDF form
 - **Real hyperlinking**: Links natively snap to \<a href>\ tags.
 - **Structure**: Columnar logic is understood via block formatting inside the PDF itself.
 
-This approach—offloading processing power entirely to our scalable backend—requires no massive library shipping to clients via Next.js and guarantees a flawless scanning score for recruiters and hiring ATS platforms worldwide.
+This approach-offloading processing power entirely to our scalable backend-requires no massive library shipping to clients via Next.js and guarantees a flawless scanning score for recruiters and hiring ATS platforms worldwide.

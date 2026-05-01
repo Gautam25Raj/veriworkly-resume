@@ -9,9 +9,7 @@ const FeaturesSection = () => {
     <section className="space-y-6" aria-labelledby="features-heading">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="space-y-2">
-          <p className="text-muted text-xs font-semibold tracking-[0.24em] uppercase">
-            Experience
-          </p>
+          <p className="text-muted text-xs font-semibold tracking-[0.24em] uppercase">Experience</p>
 
           <h2
             id="features-heading"
@@ -21,8 +19,7 @@ const FeaturesSection = () => {
           </h2>
 
           <p className="sr-only">
-            ATS-friendly resume builder features for creating professional
-            resumes quickly.
+            ATS-friendly resume builder features for creating professional resumes quickly.
           </p>
         </div>
 
@@ -37,14 +34,12 @@ const FeaturesSection = () => {
 
       <div className="grid gap-6 md:grid-cols-3">
         {featureItems.map((item, index) => (
-          <Card className="space-y-3" key={item.title}>
+          <Card className="space-y-3 p-6" key={item.title}>
             <p className="text-accent text-xs font-semibold tracking-[0.22em] uppercase">
               {String(index + 1).padStart(2, "0")}
             </p>
 
-            <h3 className="text-foreground text-xl font-semibold tracking-tight">
-              {item.title}
-            </h3>
+            <h3 className="text-foreground text-xl font-semibold tracking-tight">{item.title}</h3>
 
             <p className="text-muted text-sm leading-6">{item.body}</p>
           </Card>

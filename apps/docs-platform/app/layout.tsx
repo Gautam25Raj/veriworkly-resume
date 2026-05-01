@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 
 import "./globals.css";
 
@@ -60,7 +61,7 @@ export const metadata: Metadata = {
   },
 
   alternates: {
-    canonical: `${siteConfig.url}/docs`,
+    canonical: siteConfig.url,
   },
 };
 
@@ -70,7 +71,7 @@ const DocsPlatformLayout = ({ children }: { children: React.ReactNode }) => {
     "@type": "TechArticle",
 
     name: "VeriWorkly Documentation",
-    url: `${siteConfig.url}/docs`,
+    url: siteConfig.url,
 
     description: "Technical documentation and guides for VeriWorkly resume builder.",
 
@@ -88,6 +89,7 @@ const DocsPlatformLayout = ({ children }: { children: React.ReactNode }) => {
     <html lang="en" suppressHydrationWarning data-scroll-behavior="smooth">
       <head>
         <script
+          id="json-ld"
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
@@ -101,6 +103,7 @@ const DocsPlatformLayout = ({ children }: { children: React.ReactNode }) => {
           attribute="class"
           defaultTheme="system"
           disableTransitionOnChange
+          storageKey="veriworkly-theme"
         >
           <RootProvider search={{ options: { delayMs: 500 } }}>{children}</RootProvider>
         </ThemeProvider>

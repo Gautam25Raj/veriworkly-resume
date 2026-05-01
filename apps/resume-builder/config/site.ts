@@ -45,8 +45,12 @@ export const siteConfig = {
 
   navigation: [
     { href: "/dashboard", label: "Dashboard" },
-    { href: "/templates", label: "Templates" },
+
     { href: "/roadmap", label: "Roadmap" },
     { href: "/stats", label: "Development" },
+    { href: "https://blogs.veriworkly.com", label: "Blog" },
+    { href: "https://docs.veriworkly.com", label: "Docs" },
   ],
+
+
 } as const;

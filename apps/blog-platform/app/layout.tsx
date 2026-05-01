@@ -5,6 +5,8 @@ import "./globals.css";
 import { ThemeProvider } from "next-themes";
 import { RootProvider } from "fumadocs-ui/provider/next";
 
+import { globalFontVariables } from "@veriworkly/ui";
+
 import { siteConfig } from "@/config/site";
 
 export const metadata: Metadata = {
@@ -71,7 +73,7 @@ export const metadata: Metadata = {
   },
 
   alternates: {
-    canonical: `${siteConfig.url}/blog`,
+    canonical: siteConfig.url,
   },
 };
 
@@ -81,7 +83,7 @@ const BlogLayout = ({ children }: { children: React.ReactNode }) => {
     "@type": "Blog",
 
     name: "VeriWorkly Blog",
-    url: `${siteConfig.url}/blog`,
+    url: siteConfig.url,
 
     description: "Career advice, resume tips, and technical insights from VeriWorkly.",
 
@@ -99,6 +101,7 @@ const BlogLayout = ({ children }: { children: React.ReactNode }) => {
     <html lang="en" suppressHydrationWarning data-scroll-behavior="smooth">
       <head>
         <script
+          id="json-ld"
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
@@ -106,12 +109,15 @@ const BlogLayout = ({ children }: { children: React.ReactNode }) => {
         />
       </head>
 
-      <body>
+      <body
+        className={`${globalFontVariables} bg-background text-foreground flex min-h-screen flex-col font-sans antialiased`}
+      >
         <ThemeProvider
           enableSystem
           attribute="class"
           defaultTheme="system"
           disableTransitionOnChange
+          storageKey="veriworkly-theme"
         >
           <RootProvider search={{ options: { delayMs: 450 } }}>{children}</RootProvider>
         </ThemeProvider>

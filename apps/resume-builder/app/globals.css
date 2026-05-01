@@ -1,5 +1,6 @@
 @import "tailwindcss";
-@source "../packages/ui/src";
+
+@source "../../../packages/ui/src";
 
 @import "@veriworkly/ui/styles/themes.css";
 @import "@veriworkly/ui/styles/globals.css";
