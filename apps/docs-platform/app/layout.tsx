@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 
 import "./globals.css";
 
 import { ThemeProvider } from "next-themes";
 import { RootProvider } from "fumadocs-ui/provider/next";
+
+import { globalFontVariables } from "@veriworkly/ui";
 
 import { siteConfig } from "@/config/site";
 
@@ -97,7 +98,9 @@ const DocsPlatformLayout = ({ children }: { children: React.ReactNode }) => {
         />
       </head>
 
-      <body>
+      <body
+        className={`${globalFontVariables} bg-background text-foreground flex min-h-screen flex-col font-sans antialiased`}
+      >
         <ThemeProvider
           enableSystem
           attribute="class"

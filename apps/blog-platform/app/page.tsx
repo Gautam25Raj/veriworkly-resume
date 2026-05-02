@@ -25,7 +25,7 @@ const BlogHome = () => {
     );
 
   const featuredPost = allPosts[0];
-  const remainingPosts = allPosts.slice(1, 4); // Show only next 3 posts
+  const remainingPosts = allPosts.slice(1, 4);
 
   return (
     <main className="surface-grid min-h-screen py-14 md:py-20">

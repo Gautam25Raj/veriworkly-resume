@@ -13,5 +13,3 @@ void generateFiles({
   per: "operation",
   groupBy: "tag",
 });
-
-// No need to copy anymore as it's already in docs-platform

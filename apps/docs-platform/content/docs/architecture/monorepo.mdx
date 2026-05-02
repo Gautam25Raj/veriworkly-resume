@@ -1,47 +1,58 @@
 ---
 title: Monorepo Architecture
-description: Overview of the 4 independent services running inside the VeriWorkly NPM Workspace.
+description: How VeriWorkly organizes apps and shared code in a single repository.
 ---
 
 # Monorepo Architecture
 
-VeriWorkly uses an **NPM Workspace Monorepo** to manage its massive scale.
+VeriWorkly is organized as a single repository with multiple applications and one shared UI package.
 
-Instead of a single Next.js monolith doing everything-serving marketing pages, dynamic builder routes, API logic, and PDF rendering - we split our infrastructure strictly by concern. This structure creates significant benefits for both DX (Developer Experience) and Production Scalability.
+The goal is straightforward: keep product areas independent (builder, docs, blog, backend) while still sharing core styles and components where it makes sense.
 
 ## The 4 Core Applications
 
-### 1. Resume Builder (\apps/resume-builder\)
+### 1. Resume Builder (`apps/resume-builder`)
 
 - **Port:** 3000
-- **Framework:** Next.js 16+ (App Router)
-- **Role:** The highly interactive flagship application.
-- **Tech:** Uses **Zustand** + \persist\ for local-first storage, minimizing database calls. React Hook Form drives editor states.
+- **Framework:** Next.js (App Router)
+- **Role:** Main product experience for creating and editing resumes
+- **Tech highlights:** local-first state with Zustand + persist, template system, export/share flows
 
-### 2. Node.js API Server (\apps/server\)
+### 2. Node.js API Server (`apps/server`)
 
 - **Port:** 8080
 - **Framework:** Express + Node.js 20+
-- **Role:** Heavy backend operations.
-- **Tech:** Handles PostgreSQL via **Prisma** and Neon DB. Hosts connection pools. Crucially, runs **Playwright Chromium** to execute memory-intensive PDF generation on a secondary thread, ensuring the frontend never freezes.
+- **Role:** Auth, sync, sharing, export orchestration, and background processing
+- **Tech highlights:** Prisma + PostgreSQL, queue-based export jobs, Playwright-powered PDF rendering
 
-### 3. Docs Platform (\apps/docs-platform\)
+### 3. Docs Platform (`apps/docs-platform`)
 
 - **Port:** 3001
-- **Framework:** Next.js 16+ / Fumadocs
-- **Role:** Static Site documentation and interactive API explorers.
-- **Tech:** Keeps heavy OpenAPI specs completely out of the Resume Builder bundle.
+- **Framework:** Next.js + Fumadocs
+- **Role:** Product docs, architecture notes, and API reference
+- **Tech highlights:** MDX content and generated OpenAPI artifacts
 
-### 4. Blog Platform (\apps/blog-platform\)
+### 4. Blog Platform (`apps/blog-platform`)
 
 - **Port:** 3002
-- **Framework:** Next.js 16+ / Fumadocs
-- **Role:** Fast, SEO-optimized marketing hub.
+- **Framework:** Next.js + Fumadocs
+- **Role:** Product updates, engineering writeups, and career-focused content
 
-## 📦 Shared Packages (\packages/ui\)
+## Shared Package (`packages/ui`)
 
-All three frontends share a single source of truth for design via \@veriworkly/ui\. Because of the monorepo workspace, Button components updated in UI immediately propagate exactly to the Blog, Docs, and Editor, powered seamlessly by **Tailwind CSS 4**.
+`@veriworkly/ui` is an internal workspace package used across frontends for:
 
-## Scalability Benefits
+- Reusable primitives (buttons, cards, modals, menus, inputs)
+- Shared container/layout utilities
+- Font and theme variables
 
-If our blog goes viral, caching handles the load without stealing Next.js server cycles from our authenticated Resume Editor users. If a massive amount of users request PDF exports, the Playwright Chromium threads scale the \pps/server\ container entirely independently.
+This keeps the look and behavior consistent without turning every app into one giant deploy unit.
+
+## Why This Layout Works
+
+- **Clear ownership:** each app has a clear responsibility and code boundary.
+- **Faster iteration:** docs/blog updates do not require shipping resume-builder changes.
+- **Operational flexibility:** services can be deployed and scaled independently.
+- **Shared consistency:** common UI stays aligned through one internal package.
+
+For local development and production setup details, continue with [Quick Start](/docs/getting-started/quick-start) and [Docker Deployment](/docs/getting-started/docker-deployment).

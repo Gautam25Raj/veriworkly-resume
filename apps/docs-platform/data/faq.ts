@@ -2,7 +2,7 @@ export const docsFaqs = [
   {
     question: "Is the API free to use?",
     answer:
-      "Yes, our API and architecture are open-source. You can integrate VeriWorkly features into your own applications without cost.",
+      "The codebase is open-source, and you can run your own instance. Managed infrastructure costs depend on how and where you deploy.",
   },
   {
     question: "How do I contribute to the documentation?",
