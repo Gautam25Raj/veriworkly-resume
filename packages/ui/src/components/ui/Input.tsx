@@ -20,20 +20,14 @@ const inputSizes = {
 export type InputVariant = keyof typeof inputVariants;
 export type InputSize = keyof typeof inputSizes;
 
-export interface InputProps extends Omit<
-  React.InputHTMLAttributes<HTMLInputElement>,
-  "size"
-> {
+export interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "size"> {
   variant?: InputVariant;
   inputSize?: InputSize;
   error?: boolean;
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  (
-    { className, type, variant = "outline", inputSize = "md", error, ...props },
-    ref,
-  ) => {
+  ({ className, type, variant = "outline", inputSize = "md", error, ...props }, ref) => {
     return (
       <input
         type={type}

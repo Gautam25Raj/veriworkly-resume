@@ -39,11 +39,7 @@ function ModalRoot({ open, onClose, children }: ModalProps) {
   );
 }
 
-function ModalContent({
-  children,
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
+function ModalContent({ children, className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
       role="dialog"
@@ -66,48 +62,23 @@ function ModalContent({
   );
 }
 
-function ModalHeader({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
+function ModalHeader({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return <div className={cn("mb-2 space-y-1", className)} {...props} />;
 }
 
-function ModalTitle({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLHeadingElement>) {
-  return (
-    <h2
-      className={cn("text-foreground text-lg font-semibold", className)}
-      {...props}
-    />
-  );
+function ModalTitle({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) {
+  return <h2 className={cn("text-foreground text-lg font-semibold", className)} {...props} />;
 }
 
-function ModalDescription({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLParagraphElement>) {
+function ModalDescription({ className, ...props }: React.HTMLAttributes<HTMLParagraphElement>) {
   return <p className={cn("text-muted text-sm", className)} {...props} />;
 }
 
-function ModalBody({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
-  return (
-    <div
-      className={cn("max-h-[60vh] overflow-y-auto py-2", className)}
-      {...props}
-    />
-  );
+function ModalBody({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+  return <div className={cn("max-h-[60vh] overflow-y-auto py-2", className)} {...props} />;
 }
 
-function ModalFooter({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
+function ModalFooter({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
       className={cn(

@@ -9,6 +9,8 @@ export * from "./components/ui/Switch";
 export * from "./components/ui/TextArea";
 export * from "./components/ui/Checkbox";
 export * from "./components/ui/Accordion";
+
 export * from "./components/layout/Container";
 
 export * from "./utils";
+export * from "./lib/fonts";

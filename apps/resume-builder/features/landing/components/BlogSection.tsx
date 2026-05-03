@@ -1,27 +1,33 @@
 import Link from "next/link";
 import { ArrowRight, Clock, Calendar } from "lucide-react";
+
 import { Card } from "@veriworkly/ui";
 
 const latestPosts = [
   {
-    title: "How to Beat the ATS: The 2026 Strategy Guide",
-    description: "Learn the latest algorithms used by modern applicant tracking systems and how to optimize your resume for them.",
-    href: "https://blogs.veriworkly.com/blog/beat-the-ats",
-    date: "April 24, 2026",
-    readTime: "8 min read",
+    title: "Building a Scalable Resume Platform: The VeriWorkly Multi-App Architecture",
+    description:
+      "Why we run separate apps for builder, docs, blog, and backend, and how that keeps development and deployments reliable.",
+    href: "https://blogs.veriworkly.com/building-scalable-resume-platform-multi-app-architecture",
+    date: "April 28, 2026",
+    readTime: "5 min read",
   },
+
   {
-    title: "Why Local-First is the Future of Career Data",
-    description: "Discover why we chose a local-first architecture and how it protects your professional identity better than cloud-only solutions.",
-    href: "https://blogs.veriworkly.com/blog/local-first-future",
-    date: "April 18, 2026",
-    readTime: "12 min read",
+    title: "Mastering ATS-Friendly Resumes in 2026",
+    description:
+      "A deep dive into how modern Applicant Tracking Systems parse resumes and why structure matters more than visual design.",
+    href: "https://blogs.veriworkly.com/mastering-ats-friendly-resumes-2026",
+    date: "April 27, 2026",
+    readTime: "6 min read",
   },
+
   {
-    title: "Mastering the Art of Modern Storytelling",
-    description: "A guide on how to structure your experience to tell a compelling career story that recruiters will remember.",
-    href: "https://blogs.veriworkly.com/blog/modern-storytelling",
-    date: "April 10, 2026",
+    title: "Why Privacy is the Future of Resume Technology",
+    description:
+      "Exploring data ownership in modern resume tools and why VeriWorkly is built on a local-first architecture.",
+    href: "https://blogs.veriworkly.com/privacy-future-local-first-resume-builder",
+    date: "April 26, 2026",
     readTime: "6 min read",
   },
 ];
@@ -34,11 +40,17 @@ const BlogSection = () => {
           <p className="text-muted text-xs font-semibold tracking-[0.24em] uppercase">
             Latest Insights
           </p>
-          <h2 id="blog-heading" className="text-foreground text-3xl font-semibold tracking-tight md:text-4xl">
+
+          <h2
+            id="blog-heading"
+            className="text-foreground text-3xl font-semibold tracking-tight md:text-4xl"
+          >
             Engineering stories & career advice
           </h2>
+
           <p className="text-muted max-w-2xl text-base leading-7">
-            Deep dives into our technology stack, privacy-first engineering, and actionable advice to help you build a better career.
+            Deep dives into our technology stack, privacy-first engineering, and actionable advice
+            to help you build a better career.
           </p>
         </div>
 
@@ -58,7 +70,9 @@ const BlogSection = () => {
                 <span className="flex items-center gap-1.5">
                   <Calendar className="h-3 w-3" /> {post.date}
                 </span>
+
                 <span className="size-1 rounded-full bg-zinc-300" />
+
                 <span className="flex items-center gap-1.5">
                   <Clock className="h-3 w-3" /> {post.readTime}
                 </span>
@@ -72,9 +86,9 @@ const BlogSection = () => {
                 {post.description}
               </p>
 
-
               <div className="mt-auto flex items-center gap-2 text-xs font-bold tracking-widest text-blue-600 uppercase transition-colors group-hover:text-blue-500">
-                Read Article <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                Read Article{" "}
+                <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
               </div>
             </Card>
           </Link>

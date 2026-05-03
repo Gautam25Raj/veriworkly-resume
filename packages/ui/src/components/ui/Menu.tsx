@@ -3,11 +3,8 @@
 import * as React from "react";
 
 import { cn } from "../../utils";
-import {
-  Button,
-  type ButtonSize,
-  type ButtonVariant,
-} from "./Button";
+
+import { Button, type ButtonSize, type ButtonVariant } from "./Button";
 
 type MenuRenderProps = {
   close: () => void;
@@ -23,12 +20,7 @@ interface MenuProps {
   trigger: (props: MenuRenderProps) => React.ReactNode;
 }
 
-export function Menu({
-  align = "right",
-  children,
-  panelClassName,
-  trigger,
-}: MenuProps) {
+export function Menu({ align = "right", children, panelClassName, trigger }: MenuProps) {
   const rootRef = React.useRef<HTMLDivElement>(null);
   const menuId = React.useId();
   const [open, setOpen] = React.useState(false);
@@ -86,14 +78,11 @@ export function Menu({
               return;
             }
 
-            const activeIndex = items.findIndex(
-              (item) => item === document.activeElement,
-            );
+            const activeIndex = items.findIndex((item) => item === document.activeElement);
 
             if (event.key === "ArrowDown") {
               event.preventDefault();
-              const next =
-                activeIndex < 0 ? 0 : (activeIndex + 1) % items.length;
+              const next = activeIndex < 0 ? 0 : (activeIndex + 1) % items.length;
               items[next]?.focus();
             }
 
@@ -125,10 +114,7 @@ export function Menu({
   );
 }
 
-interface MenuItemProps extends Omit<
-  React.ButtonHTMLAttributes<HTMLButtonElement>,
-  "size"
-> {
+interface MenuItemProps extends Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "size"> {
   size?: ButtonSize;
   variant?: ButtonVariant;
 }

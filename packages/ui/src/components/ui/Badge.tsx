@@ -1,12 +1,6 @@
 import { cn } from "../../utils";
 
-export function Badge({
-  children,
-  className,
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) {
+export function Badge({ children, className }: { children: React.ReactNode; className?: string }) {
   return (
     <span
       className={cn(

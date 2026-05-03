@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 import "./globals.css";
-import { globalFontVariables } from "@/app/global-fonts";
+import { globalFontVariables } from "@veriworkly/ui";
 
 import { siteConfig } from "@/config/site";
 

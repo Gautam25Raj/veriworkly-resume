@@ -1,4 +1,5 @@
 import * as React from "react";
+
 import { cn } from "../../utils";
 
 type ChildWithProps = {
@@ -8,8 +9,7 @@ type ChildWithProps = {
 
 const buttonVariants = {
   primary: "bg-accent text-accent-foreground shadow-sm hover:opacity-90",
-  secondary:
-    "bg-card text-foreground ring-1 ring-inset ring-border hover:bg-background",
+  secondary: "bg-card text-foreground ring-1 ring-inset ring-border hover:bg-background",
   ghost: "bg-transparent text-foreground hover:bg-card",
 } as const;
 

@@ -1,7 +1,6 @@
 import Link from "next/link";
 
-import { Badge } from "@veriworkly/ui";
-import { Container } from "@veriworkly/ui";
+import { Container, Badge } from "@veriworkly/ui";
 
 import { siteConfig } from "@/config/site";
 
@@ -22,8 +21,8 @@ const Footer = () => {
           </Link>
 
           <p className="text-muted max-w-md text-sm leading-relaxed">
-            A local-first resume studio with cloud sync, public roadmap views,
-            and a cleaner workflow for people who want control over their data.
+            A local-first resume studio with cloud sync, public roadmap views, and a cleaner
+            workflow for people who want control over their data.
           </p>
 
           <div className="flex flex-wrap gap-2">
@@ -79,8 +78,14 @@ const Footer = () => {
           >
             Documentation
           </Link>
-        </div>
 
+          <Link
+            href="/style-guide"
+            className="text-muted hover:text-foreground w-fit text-sm transition-colors"
+          >
+            Style Guide
+          </Link>
+        </div>
 
         <div className="flex flex-col gap-4">
           <p className="text-foreground text-xs font-semibold tracking-[0.2em] uppercase">
@@ -110,9 +115,7 @@ const Footer = () => {
         </div>
 
         <div className="flex flex-col gap-4">
-          <p className="text-foreground text-xs font-semibold tracking-[0.2em] uppercase">
-            Legal
-          </p>
+          <p className="text-foreground text-xs font-semibold tracking-[0.2em] uppercase">Legal</p>
 
           <Link
             href="/privacy"

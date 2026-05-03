@@ -27,8 +27,7 @@ const resources = [
   {
     title: "Security",
     href: "/security",
-    description:
-      "Review the practical security model, limits, and responsible disclosure path.",
+    description: "Review the practical security model, limits, and responsible disclosure path.",
   },
 
   {
@@ -46,6 +45,13 @@ const resources = [
   },
 
   {
+    title: "Style Guide",
+    href: "/style-guide",
+    description:
+      "See the official colors, typography, spacing, and reusable UI standards used across VeriWorkly.",
+  },
+
+  {
     title: "Terms",
     href: "/terms",
     description: "Read the usage rules and ownership expectations for the service.",
@@ -59,14 +65,11 @@ const resources = [
   },
 ];
 
-
 const ResourcesSection = () => {
   return (
     <section className="space-y-6" aria-labelledby="resources-heading">
       <div className="space-y-2">
-        <p className="text-muted text-xs font-semibold tracking-[0.24em] uppercase">
-          Explore More
-        </p>
+        <p className="text-muted text-xs font-semibold tracking-[0.24em] uppercase">Explore More</p>
 
         <h2
           id="resources-heading"
@@ -76,8 +79,8 @@ const ResourcesSection = () => {
         </h2>
 
         <p className="text-muted -mt-1 text-base leading-7">
-          These pages explain what VeriWorkly does, how data is handled, and
-          where to get help when you need it.
+          These pages explain what VeriWorkly does, how data is handled, and where to get help when
+          you need it.
         </p>
       </div>
 
@@ -91,16 +94,14 @@ const ResourcesSection = () => {
               {resource.title}
             </Link>
 
-            <p className="text-muted text-sm leading-6">
-              {resource.description}
-            </p>
+            <p className="text-muted text-sm leading-6">{resource.description}</p>
           </Card>
         ))}
       </div>
 
       <p className="sr-only">
-        Learn about the resume builder, privacy policy, security, templates, and
-        how to create resumes online.
+        Learn about the resume builder, privacy policy, security, templates, and how to create
+        resumes online.
       </p>
     </section>
   );

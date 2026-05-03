@@ -1,11 +1,10 @@
 import Link from "next/link";
 
-import { Card } from "@veriworkly/ui";
-import { Button } from "@veriworkly/ui";
+import { Card, Button } from "@veriworkly/ui";
 
 const HeroSection = () => {
   return (
-    <section
+    <header
       aria-labelledby="hero-heading"
       className="border-border bg-card relative overflow-hidden rounded-4xl border px-6 py-10 shadow-[0_30px_90px_-50px_rgba(0,0,0,0.45)] md:px-10 md:py-14"
     >
@@ -22,7 +21,7 @@ const HeroSection = () => {
             id="hero-heading"
             className="text-foreground text-4xl font-semibold tracking-tight sm:text-5xl md:text-6xl"
           >
-            Build professional resumes in minutes — no login required.
+            Build professional resumes in minutes - no login required.
           </h1>
 
           <p className="text-muted max-w-2xl text-base leading-8 md:text-lg">
@@ -42,7 +41,6 @@ const HeroSection = () => {
                 Read Documentation
               </Link>
             </Button>
-
           </div>
         </div>
 
@@ -58,7 +56,7 @@ const HeroSection = () => {
           </Card>
         </div>
       </div>
-    </section>
+    </header>
   );
 };
 
