@@ -1,150 +1,185 @@
 <div align="center">
   <a href="https://veriworkly.com">
-    <img src="public/og/landing-page-og.png" alt="VeriWorkly Resume" />
+    <img src="apps/resume-builder/public/og/landing-page-og.png" alt="VeriWorkly Resume" />
   </a>
 
   <h1>VeriWorkly Resume</h1>
 
-  <p>Build professional resumes without limits, accounts, or friction. 100% local-first and private.</p>
+  <p><strong>Professional, privacy-centric, and open-source resume engineering platform.</strong></p>
 
   <p>
-    <a href="https://veriworkly.com"><strong>Get Started</strong></a>
+    <a href="https://veriworkly.com">Main Application</a>
     ·
-    <a href="#"><strong>Learn More</strong></a>
+    <a href="https://docs.veriworkly.com">Documentation</a>
     ·
-    <a href="https://veriworkly.com/roadmap"><strong>Public Roadmap</strong></a>
+    <a href="https://blog.veriworkly.com">Official Blog</a>
+    ·
+    <a href="https://veriworkly.com/roadmap">Product Roadmap</a>
   </p>
 
   <p>
-    <img src="https://img.shields.io/github/package-json/v/Gautam25Raj/veriworkly-resume?style=flat-square" alt="VeriWorkly Resume version">
-    <img src="https://img.shields.io/github/stars/Gautam25Raj/veriworkly-resume?style=flat-square" alt="GitHub Stars">
+    <img src="https://img.shields.io/github/package-json/v/Gautam25Raj/veriworkly-resume?style=flat-square" alt="Version">
+    <img src="https://img.shields.io/github/stars/Gautam25Raj/veriworkly-resume?style=flat-square" alt="Stars">
     <img src="https://img.shields.io/github/license/Gautam25Raj/veriworkly-resume?style=flat-square" alt="License" />
   </p>
 </div>
 
 ---
 
-**VeriWorkly Resume** is a modern, production-quality resume builder designed to be 100% local-first and private. It features a distraction-free editor, real-time sync, and professional PDF/DOCX exports.
+## Executive Summary
 
-Built with privacy as a core principle, VeriWorkly gives you complete ownership of your data. The codebase is fully open-source under the MIT license, with no tracking, no ads, and no hidden costs.
+VeriWorkly is a **high-performance, privacy-centric resume building ecosystem** that challenges the traditional SaaS resume builder model. Unlike competitors that require accounts and store sensitive career data on remote servers, VeriWorkly operates on a **Local-First principle**, combining a state-of-the-art Next.js frontend with a robust Node.js/Express backend to provide a seamless, secure, and professional experience.
 
-## ✨ Features
+The platform empowers users to:
 
-**Resume Building**
+- **Build & Edit** professional resumes in real-time with instant visual feedback
+- **Export** in multiple formats (ATS-optimized PDF, editable DOCX) with pixel-perfect accuracy
+- **Manage** their career data locally without surveillance or tracking
+- **Sync** securely to the cloud when they choose to collaborate or access across devices
+- **Integrate** with external tools through a fully documented OpenAPI specification
 
-- **Local-First & Private:** Your data stays in your browser. No login, no tracking, no data leaks.
-- **Real-Time Editor:** Watch your resume update instantly as you type with zero lag.
-- **Distraction-Free Mode:** Focus on your content with a clean, focused editing environment.
-- **Rich Text Support:** Professional formatting with markdown-inspired simplicity.
+All while maintaining **100% open-source transparency** and enabling self-hosting for enterprises.
 
-**Templates**
-
-- **Professionally Designed:** Switch between multiple high-impact styles without losing data.
-- **Dynamic Customization:** Adjust colors, fonts, and spacing in real-time.
-- **ATS-Optimized:** Templates designed to pass through Automated Tracking Systems with ease.
-- **Multi-Format Export:** Export to high-quality PDF (via `jsPDF`) and DOCX (via `docx`).
-
-**Platform**
-
-- **Public Roadmap:** Built by the community. Vote on features and track progress.
-- **Self-Hostable:** Run it locally or in production via Docker with minimal configuration.
-- **Modern Tech:** Built with Next.js 16 (App Router), TypeScript, and Tailwind CSS 4.
-
-## 🎨 Templates
+## Templates
 
 <table>
   <tr>
     <td align="center">
-      <img src="public/templates/modern-resume-template.png" alt="Modern" width="150" />
+      <img src="apps/resume-builder/public/templates/modern-resume-template.png" alt="Modern" width="150" />
       <br /><sub><b>Modern</b></sub>
     </td>
     <td align="center">
-      <img src="public/templates/minimal-resume-template.png" alt="Minimal" width="150" />
+      <img src="apps/resume-builder/public/templates/minimal-resume-template.png" alt="Minimal" width="150" />
       <br /><sub><b>Minimal</b></sub>
     </td>
     <td align="center">
-      <img src="public/templates/executive-resume-template.png" alt="Executive" width="150" />
+      <img src="apps/resume-builder/public/templates/executive-resume-template.png" alt="Executive" width="150" />
       <br /><sub><b>Executive</b></sub>
     </td>
     <td align="center">
-      <img src="public/templates/classic-resume-template.png" alt="ATS Classic" width="150" />
+      <img src="apps/resume-builder/public/templates/classic-resume-template.png" alt="ATS Classic" width="150" />
       <br /><sub><b>ATS Classic</b></sub>
     </td>
   </tr>
   <tr>
     <td align="center">
-      <img src="public/templates/professional-resume-template.png" alt="Professional" width="150" />
+      <img src="apps/resume-builder/public/templates/professional-resume-template.png" alt="Professional" width="150" />
       <br /><sub><b>Professional</b></sub>
     </td>
     <td align="center">
-      <img src="public/templates/structured-resume-template.png" alt="Structured" width="150" />
+      <img src="apps/resume-builder/public/templates/structured-resume-template.png" alt="Structured" width="150" />
       <br /><sub><b>Structured</b></sub>
     </td>
     <td align="center">
-      <img src="public/templates/academic-resume-template.png" alt="Academic" width="150" />
+      <img src="apps/resume-builder/public/templates/academic-resume-template.png" alt="Academic" width="150" />
       <br /><sub><b>Academic Serif</b></sub>
     </td>
   </tr>
 </table>
 
-## 🚀 Quick Start
+## Architecture and Technology Stack
 
-The quickest way to run VeriWorkly Resume locally:
+VeriWorkly utilizes a modern, type-safe monorepo architecture to ensure service isolation and scalability.
+
+| Component            | Technology                                     |
+| :------------------- | :--------------------------------------------- |
+| **Frontend**         | Next.js (App Router), React 19, Tailwind CSS 4 |
+| **Backend API**      | Node.js, Express, ORPC                         |
+| **Data Persistence** | PostgreSQL (Prisma ORM), Redis (BullMQ)        |
+| **Rendering Engine** | Playwright (Server-side document generation)   |
+| **Authentication**   | Better-Auth (Passwordless OTP)                 |
+| **State Management** | Zustand (with persistence)                     |
+
+## Repository Structure
+
+The project is organized into independent applications and shared packages:
+
+- **`apps/resume-builder`**: The primary user interface for resume management.
+- **`apps/server`**: Centralized API service handling auth, sync, and exports.
+- **`apps/docs-platform`**: Technical and user documentation (powered by Fumadocs).
+- **`apps/blog-platform`**: Official product communications and career guides.
+- **`packages/ui`**: Shared design system and component library.
+
+## Deployment and Development
+
+Detailed technical documentation is available at [docs.veriworkly.com](https://docs.veriworkly.com).
+
+### Quick Start (Local Development)
+
+1. **Initialize Workspace**:
+   ```bash
+   npm install
+   ```
+2. **Environment Configuration**:
+   ```bash
+   cp .env.example .env
+   cp apps/server/.env.example apps/server/.env
+   ```
+3. **Database Migration**:
+   ```bash
+   npm run db:push -w @veriworkly/server
+   ```
+4. **Launch Services**:
+   ```bash
+   npm run dev
+   ```
+
+### Quick Start (Docker)
+
+Deploy the entire ecosystem using our optimized Docker Compose configuration:
 
 ```bash
-# Clone the repository
-git clone https://github.com/Gautam25Raj/veriworkly-resume.git
-cd veriworkly-resume
-
-# Start development server
-npm install
-npm run dev
-
-# Access the app
-open http://localhost:3000
+docker compose --env-file .env.docker up -d --build
 ```
 
-For dockerized production setups and backend services, see the [Local Setup Guide](README.Local.md) or [Docker Guide](README.Docker.md).
+## Documentation Index
 
-## 🛠️ Tech Stack
+| Resource                                                                                | Scope                                        |
+| :-------------------------------------------------------------------------------------- | :------------------------------------------- |
+| [Technical Documentation](https://docs.veriworkly.com)                                  | Architecture, API Reference, and Deployment. |
+| [User Support](https://docs.veriworkly.com/docs/user-guides/creating-your-first-resume) | Guides for building and managing resumes.    |
+| [Local Setup Guide](README.Local.md)                                                    | Detailed manual installation instructions.   |
+| [Docker Deployment](README.Docker.md)                                                   | Production self-hosting instructions.        |
+| [Contributing Guidelines](https://docs.veriworkly.com/docs/contributing/index)          | Standards and protocols for contributors.    |
 
-| Category         | Technology                     |
-| ---------------- | ------------------------------ |
-| Framework        | Next.js 16 (App Router)        |
-| Runtime          | Node.js                        |
-| Language         | TypeScript                     |
-| Database         | PostgreSQL (Neon) with Prisma  |
-| Styling          | Tailwind CSS 4                 |
-| State Management | Zustand                        |
-| Export           | `jspdf`, `html2canvas`, `docx` |
-| Auth             | Better Auth (OTP)              |
+## Security & Privacy
 
-## 📖 Documentation
+### Data Protection
 
-Detailed guides for various parts of the ecosystem:
+- **Local-First**: Resume data stored locally in browser by default
+- **Encryption**: All data encrypted in transit (HTTPS) and at rest (database)
+- **No Tracking**: Zero analytics or tracking of user behavior
+- **Open Source**: Code transparency enables community security audits
 
-| Guide                                          | Description                                  |
-| ---------------------------------------------- | -------------------------------------------- |
-| [Local Setup](README.Local.md)                 | Manual installation and environment config   |
-| [Docker Deployment](README.Docker.md)          | Self-hosting with Docker Compose             |
-| [Environment Setup](ENV_SETUP.md)              | Global configuration for API and Web         |
-| [Project Architecture](server/ARCHITECTURE.md) | Deep dive into the backend and schema design |
-| [Contributing](CONTRIBUTING.md)                | How to help build the future of VeriWorkly   |
+### Reporting Vulnerabilities
 
-## 🤝 Support & Contributing
+Please do NOT open GitHub issues for security vulnerabilities. Instead, email info@veriworkly.com with:
 
-VeriWorkly Resume is and always will be free and open-source. If it has helped you land a job or saved you time, please consider supporting continued development:
+- Description of the vulnerability
+- Steps to reproduce
+- Potential impact assessment
 
-- **Star this repository** to help others discover it.
-- **Follow the [Public Roadmap](app/admin/roadmap/page.tsx)** to suggest new features.
-- **Submit a Pull Request** for bug fixes or new templates.
+For complete security policy, see [SECURITY.md](SECURITY.md)
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) for more information.
+## Contributing
 
-## 📜 License
+VeriWorkly is an open-source project and welcomes community contributions. Please review our [Contributing Guide](https://docs.veriworkly.com/docs/contributing/index) before submitting Pull Requests.
 
-Distributed under the MIT License. See [LICENSE](LICENSE) for more information.
+### Ways to Contribute
 
----
+1. **Code**: Submit bug fixes, features, or performance improvements
+2. **Design**: Contribute new resume templates
+3. **Documentation**: Improve guides, add examples, fix typos
+4. **Translation**: Help localize content to other languages
+5. **Feedback**: Report bugs, suggest features on the roadmap
+6. **Sponsorship**: Support the project financially
 
-Built with ❤️ by [VeriWorkly Team](https://veriworkly.com)
+## License
+
+VeriWorkly is released under the **MIT License**. See [LICENSE](LICENSE) file for full details.
+
+## ❤️ Built With Love
+
+VeriWorkly is built by a community of developers passionate about simplifying career building and protecting user privacy. Every line of code reflects our commitment to transparency, security, and user empowerment.
+
+**Made with ❤️ by [VeriWorkly Team](https://veriworkly.com) and [Contributors](https://github.com/Gautam25Raj/veriworkly-resume/graphs/contributors)**

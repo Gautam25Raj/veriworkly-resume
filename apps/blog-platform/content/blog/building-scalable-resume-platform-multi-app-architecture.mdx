@@ -1,0 +1,69 @@
+---
+title: "Building a Scalable Resume Platform: The VeriWorkly Multi-App Architecture"
+description: "Why VeriWorkly is split into separate apps for the builder, docs, blog, and backend, and how that helps us ship reliably."
+author: "VeriWorkly Engineering"
+date: "2026-04-28"
+---
+
+# Building a Scalable Resume Platform
+
+VeriWorkly is organized as a multi-app repository with a clear split of concerns:
+
+1. Resume Builder (`apps/resume-builder`)
+2. Docs Platform (`apps/docs-platform`)
+3. Blog Platform (`apps/blog-platform`)
+4. API Server (`apps/server`)
+
+We also maintain one internal shared package, `@veriworkly/ui` (`packages/ui`), for reusable UI primitives and theme tokens.
+
+This is not about sounding big. It is about keeping each surface focused and easier to maintain.
+
+## Why We Keep It Split
+
+### 1. Clear responsibilities
+
+The resume editor remains focused on editing workflows, while docs/blog focus on content delivery and discovery. The API server handles persistence, sharing, and export workloads.
+
+### 2. Independent deployment and scaling
+
+Each service can be deployed independently. If export traffic spikes, we can tune backend resources without touching blog/docs deployments.
+
+### 3. Shared UI consistency without hard coupling
+
+`@veriworkly/ui` gives us a single place for base components and theme variables, while each app still controls its own page composition and behavior.
+
+## What Each App Does
+
+### Resume Builder (`apps/resume-builder`)
+
+- Interactive editing experience
+- Local-first by default, with optional sync
+- Template rendering and export orchestration from the UI
+
+### API Server (`apps/server`)
+
+- Express + Prisma-based backend
+- Share links and sync endpoints
+- Queue-driven export pipeline and Playwright PDF rendering
+
+### Docs Platform (`apps/docs-platform`)
+
+- Product and architecture documentation
+- API reference generated from OpenAPI assets
+- Setup and operations guides
+
+### Blog Platform (`apps/blog-platform`)
+
+- Product updates and engineering articles
+- SEO-focused long-form content
+- Lightweight structure optimized for publishing workflows
+
+## Deployment Model
+
+For local development, services run via the repository scripts and `compose.yaml` where appropriate. In production, frontend and backend workloads are hosted separately so each can evolve on its own release cycle.
+
+## Final Takeaway
+
+This structure has made the codebase easier to reason about and safer to ship. The most important part is not the buzzword; it is that each app has one job and clear boundaries.
+
+If you want to explore implementation details next, start with the docs at https://docs.veriworkly.com/docs/architecture/monorepo.

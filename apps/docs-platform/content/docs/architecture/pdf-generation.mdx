@@ -1,0 +1,47 @@
+---
+title: PDF Export Engine
+description: Technical analysis of the server-side, ATS-compatible document generation pipeline.
+---
+
+# PDF Export Engine
+
+The generation of Applicant Tracking System (ATS) compliant documents is a core requirement of the VeriWorkly platform. Our architecture avoids common client-side rendering limitations to ensure that exported documents maintain perfect visual fidelity while remaining fully machine-readable.
+
+## Technical Problem Statement
+
+Many legacy resume builders rely on client-side libraries such as `html2canvas` or `jsPDF`. These tools typically generate a rasterized "screenshot" of the document, which is then embedded within a PDF container. While visually acceptable, this approach results in documents where the text is not selectable or indexable, causing them to fail ATS parsing and scoring algorithms.
+
+---
+
+## The Server-Side Architecture
+
+VeriWorkly implements a robust server-side pipeline utilizing a Node.js API and the **Playwright** automation framework to ensure native document rendering.
+
+### Export Workflow
+
+1. **State Transmission**: The frontend application (`apps/resume-builder`) extracts the current document state from the Zustand store and transmits the JSON payload to the backend API (`apps/server`).
+2. **Chromium Initialization**: The server initializes a headless Chromium instance via the Playwright library.
+3. **Template Rendering**: The Chromium instance mounts the document utilizing the specific template logic and Tailwind CSS 4 variables provided in the request.
+4. **Asset Resolution**: The rendering process ensures that all fonts and assets are resolved locally to prevent network delays from impacting document accuracy.
+5. **Native PDF Generation**: Upon DOM stabilization, the server executes the native `page.pdf()` function, which produces a high-fidelity vector document.
+
+### Advantages of Native Rendering
+
+By utilizing Chromium's native printing capabilities, VeriWorkly produces documents with a true **Semantic Text Layer**:
+- **Indexable Content**: Text is fully selectable and searchable by recruitment software.
+- **Vector Precision**: Fonts and graphics maintain sharpness at any zoom level.
+- **Native Hyperlinks**: URI references are correctly embedded as interactive elements.
+- **Structural Integrity**: The document hierarchy is maintained within the PDF's internal formatting.
+
+---
+
+## Distributed Processing with BullMQ
+
+Document rendering is a resource-intensive operation. To ensure system scalability and responsiveness, VeriWorkly utilizes a distributed job queue architecture.
+
+1. **Job Enqueueing**: Export requests are registered as jobs within a **Redis-backed BullMQ** system.
+2. **Worker Isolation**: Dedicated worker processes monitor the queue and execute the rendering logic independently of the main API thread.
+3. **Status Monitoring**: The frontend application monitors the job's progress via a status endpoint. Upon completion, a secure reference to the generated artifact is returned.
+4. **Automated Lifecycle Management**: The system automatically purges completed jobs and expired artifacts after a predefined Time-To-Live (TTL) to ensure optimal resource utilization.
+
+This architecture enables horizontal scaling of rendering workers, allowing the platform to manage high-concurrency scenarios without impacting API performance.

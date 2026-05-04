@@ -1,0 +1,129 @@
+---
+title: Local Development Setup
+description: Technical guide for configuring the VeriWorkly development environment.
+---
+
+import { Step, Steps } from "fumadocs-ui/components/steps";
+
+# Local Development Setup
+
+This guide provides comprehensive instructions for configuring a local development environment. This path is intended for developers, contributors, and those wishing to customize the platform's core functionality.
+
+---
+
+## Prerequisites
+
+Before initialization, ensure the following dependencies are installed:
+
+- **Node.js**: Version 20 or higher is required.
+- **Package Manager**: NPM, PNPM, or Yarn.
+- **PostgreSQL**: A valid connection string is required. We recommend [Neon](https://neon.tech) for a managed serverless experience.
+- **Redis**: Required for rate limiting and background job processing.
+
+---
+
+## Installation Process
+
+<Steps>
+  <Step>
+    ### Clone the Repository
+    Initialize your local environment by cloning the official repository:
+
+    ```bash
+    git clone https://github.com/Gautam25Raj/veriworkly-resume.git
+    cd veriworkly-resume
+    ```
+  </Step>
+
+  <Step>
+    ### Install Dependencies
+    Install all required packages across the monorepo workspaces:
+
+    ```bash
+    npm install
+    ```
+  </Step>
+
+  <Step>
+    ### Configure Environment Variables
+    Environment configuration is required for both the frontend and the backend services.
+
+    ```bash
+    # Duplicate example configuration files
+    cp .env.example .env
+    cp apps/server/.env.example apps/server/.env
+    ```
+
+    Ensure the following critical variables are populated:
+    - `DATABASE_URL`: PostgreSQL connection string.
+    - `REDIS_URL`: Redis connection string.
+    - `AUTH_SECRET`: Security secret for session encryption.
+    - `NEXT_PUBLIC_BACKEND_URL`: Typically `http://localhost:8080/api/v1`.
+  </Step>
+
+  <Step>
+    ### Initialize Redis
+    VeriWorkly utilizes Redis for its asynchronous job queue and rate limiting.
+
+    <CodeBlockTabs defaultValue="docker" groupId="redis-setup">
+      <CodeBlockTabsList>
+        <CodeBlockTabsTrigger value="docker">Docker</CodeBlockTabsTrigger>
+        <CodeBlockTabsTrigger value="mac">macOS</CodeBlockTabsTrigger>
+        <CodeBlockTabsTrigger value="linux">Linux</CodeBlockTabsTrigger>
+      </CodeBlockTabsList>
+
+      <CodeBlockTab value="docker">
+        ```bash
+        docker run -d -p 6379:6379 --name redis redis:7
+        ```
+      </CodeBlockTab>
+
+      <CodeBlockTab value="mac">
+        ```bash
+        brew install redis
+        brew services start redis
+        ```
+      </CodeBlockTab>
+
+      <CodeBlockTab value="linux">
+        ```bash
+        sudo apt update
+        sudo apt install redis-server
+        sudo systemctl start redis
+        ```
+      </CodeBlockTab>
+    </CodeBlockTabs>
+  </Step>
+
+  <Step>
+    ### Database Initialization
+    Synchronize your PostgreSQL database with the current Prisma schema:
+
+    ```bash
+    npm run db:push -w @veriworkly/server
+    ```
+  </Step>
+
+  <Step>
+    ### Start Development Servers
+    The monorepo requires concurrent execution of the frontend and backend services.
+
+    **Terminal 1: Backend API**
+    ```bash
+    npm run dev:server
+    ```
+
+    **Terminal 2: Frontend Application**
+    ```bash
+    npm run dev
+    ```
+  </Step>
+</Steps>
+
+---
+
+## Environment Verification
+
+To confirm a successful installation:
+1. Navigate to `http://localhost:3000` to access the user interface.
+2. Access `http://localhost:8080/api/v1/health` to verify the backend's connectivity to PostgreSQL and Redis.

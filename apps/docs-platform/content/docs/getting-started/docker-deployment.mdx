@@ -1,0 +1,111 @@
+---
+title: Docker Production Deployment
+description: Comprehensive guide for self-hosting VeriWorkly utilizing Docker Compose in a production environment.
+---
+
+import { Step, Steps } from "fumadocs-ui/components/steps";
+
+# Docker Production Deployment
+
+VeriWorkly utilizes a standardized Docker Compose configuration to orchestrate its core services, including the Next.js frontend, the Express API, and the Redis cache. This architecture ensures service isolation and consistent operational behavior across different hosting environments.
+
+<Callout type="warn" title="Database Management">
+  **PostgreSQL is not containerized by default.** Due to the complexities of production-grade persistence, backups, and volume management, our `compose.yaml` is configured to utilize an external PostgreSQL instance (e.g., Neon, AWS RDS, or a managed VPS instance).
+</Callout>
+
+---
+
+## Deployment Prerequisites
+
+Before initialization, ensure the target environment meets the following requirements:
+
+- **Docker Engine**: Version 24 or higher.
+- **Docker Compose**: Version 2 or higher.
+- **External Database**: A valid PostgreSQL connection string.
+
+---
+
+## Configuration Protocol
+
+Accurate environment configuration is essential for secure inter-container communication and public accessibility.
+
+<Steps>
+  <Step>
+    ### Initialize Configuration Files
+    Generate the required environment files by duplicating the provided examples:
+
+    ```bash
+    # Docker orchestration configuration
+    cp .env.docker.example .env.docker
+
+    # Frontend and shared configuration
+    cp .env.example .env
+
+    # Backend API configuration
+    cp apps/server/.env.example apps/server/.env
+    ```
+  </Step>
+
+  <Step>
+    ### Configure Network Resolution
+    Properly define the following variables to ensure correct traffic routing between the user's browser, the frontend, and the API server:
+
+    - **`NEXT_PUBLIC_BACKEND_URL`**: The publicly accessible endpoint utilized by the client-side browser (e.g., `https://api.yourdomain.com/api/v1`).
+    - **`BACKEND_INTERNAL_URL`**: The internal Docker network address utilized by Next.js for Server-Side Rendering (SSR). Set this to `http://api:8080/api/v1`.
+  </Step>
+</Steps>
+
+---
+
+## Deployment Execution
+
+<Steps>
+  <Step>
+    ### Build and Orchestrate Services
+    Execute the following command from the root directory to build the application images and launch the services in detached mode:
+
+    ```bash
+    docker compose --env-file .env.docker up -d --build
+    ```
+  </Step>
+
+  <Step>
+    ### Verify Operational Status
+    Review the status of the containerized services and monitor system logs to confirm successful initialization and database connectivity:
+
+    ```bash
+    # View service status
+    docker compose ps
+
+    # Monitor unified logs
+    docker compose logs -f
+
+    # Monitor specific service (API)
+    docker compose logs -f api
+    ```
+  </Step>
+</Steps>
+
+---
+
+## Production Security and Optimization
+
+Exposing application ports directly to the internet is not recommended for production deployments. We strongly advise utilizing a **Reverse Proxy / TLS Terminator** (e.g., Nginx, Traefik, or Caddy) to manage:
+
+- **SSL/TLS Termination**: Ensuring all traffic is encrypted via HTTPS.
+- **Domain Routing**: Mapping subdomains (e.g., `api.example.com`) to the appropriate internal ports.
+- **Request Filtering**: Providing an additional layer of security against common web-based attacks.
+
+---
+
+## Maintenance and Updates
+
+To update your VeriWorkly deployment with the latest stable release:
+
+```bash
+# Retrieve latest source code
+git pull origin main
+
+# Rebuild and restart services
+docker compose --env-file .env.docker up -d --build
+```

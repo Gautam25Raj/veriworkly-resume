@@ -1,0 +1,67 @@
+---
+title: Migration Guide (v2.x)
+description: Protocol for transitioning from legacy project structures to the current monorepo architecture.
+---
+
+# Migration to VeriWorkly v2
+
+The transition to VeriWorkly v2 introduces a standardized monorepo architecture designed to enhance service isolation, maintainability, and resource sharing. This guide outlines the mandatory steps for migrating existing development environments to the current project structure.
+
+## Architectural Modifications
+
+### 1. Unified Monorepo Structure
+The project has transitioned from a decoupled frontend/backend directory structure to a consolidated **npm workspaces** model. All core services are now located within the `apps/` directory:
+
+- **`apps/resume-builder`**: The primary Next.js application.
+- **`apps/server`**: The centralized Express.js API.
+- **`apps/docs-platform`**: The technical documentation platform.
+- **`apps/blog-platform`**: The product blog.
+- **`packages/ui`**: The shared design system and component library.
+
+### 2. Operational Workflow
+Deployment and development commands are now orchestrated from the root workspace directory.
+
+**Legacy Workflow (v1.x):**
+```bash
+cd server && npm run dev
+# Separate terminal
+npm run dev
+```
+
+**Current Workflow (v2.x):**
+```bash
+npm run dev           # Initializes all workspace applications
+npm run dev:resume    # Scoped execution for the builder application
+npm run dev:server    # Scoped execution for the API service
+```
+
+---
+
+## Migration Protocol
+
+### 1. Repository Synchronization
+Ensure your local branch is synchronized with the upstream repository and reset the dependency tree to prevent workspace conflicts.
+
+```bash
+git pull origin main
+rm -rf node_modules
+npm install
+```
+
+### 2. Environment Configuration
+Environment variables are now scoped to individual applications. Refer to the `.env.example` files within the root and `apps/server/` directories for the required configuration keys.
+
+### 3. Database Schema Alignment
+The v2.x release includes significant modifications to the Prisma schema. Execute the following command to synchronize your local database instance with the current data model:
+
+```bash
+npm run db:push -w @veriworkly/server
+```
+
+---
+
+## Strategic Rationale
+
+- **Horizontal Scalability**: Individual services, such as the PDF rendering worker, can be scaled independently of the web frontend.
+- **Visual Consistency**: The centralized `packages/ui` library ensures design token parity across all user interfaces.
+- **Type Safety**: The monorepo structure facilitates cross-workspace type sharing, reducing the risk of API-related runtime errors.

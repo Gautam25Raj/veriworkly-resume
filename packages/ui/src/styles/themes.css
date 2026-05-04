@@ -1,0 +1,97 @@
+:root {
+  --background: #f5f4ef;
+  --foreground: #171717;
+  --card: #ffffff;
+  --muted: #5f5c54;
+  --muted-foreground: #171717;
+  --border: rgba(23, 23, 23, 0.12);
+  --accent: #2563eb;
+  --accent-foreground: #f8fbff;
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+  --fd-accent: rgba(96, 165, 250, 0.2);
+}
+
+.dark {
+  --background: #0d1117;
+  --foreground: #f3f4f6;
+  --card: #121924;
+  --muted: #94a3b8;
+  --muted-foreground: #171717;
+  --border: rgba(148, 163, 184, 0.25);
+  --accent: #60a5fa;
+  --accent-foreground: #0f172a;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --fd-accent: rgba(130, 139, 2, 0.8);
+}
+
+@theme {
+  /* --- LIGHT MODE (VeriWorkly Theme) --- */
+  --color-fd-background: #f5f4ef;
+  --color-fd-foreground: #171717;
+
+  /* Cards & Dropdowns */
+  --color-fd-card: #ffffff;
+  --color-fd-card-foreground: #171717;
+  --color-fd-popover: #ffffff;
+  --color-fd-popover-foreground: #171717;
+
+  /* Borders */
+  --color-fd-border: rgba(23, 23, 23, 0.12);
+  --color-fd-ring: #2563eb;
+
+  /* Muted elements (like inline code backgrounds and secondary text) */
+  --color-fd-muted: rgba(23, 23, 23, 0.06); /* Soft background */
+  --color-fd-muted-foreground: #5f5c54; /* Readable gray text */
+
+  /* Primary accents (Buttons, active states) */
+  --color-fd-primary: #2563eb;
+  --color-fd-primary-foreground: #ffffff;
+
+  /* Secondary/Hover states */
+  --color-fd-secondary: rgba(37, 99, 235, 0.1);
+  --color-fd-secondary-foreground: #2563eb;
+  --color-fd-accent: rgba(
+    23,
+    23,
+    23,
+    0.05
+  ); /* Hover background for menu items */
+  --color-fd-accent-foreground: #171717;
+}
+
+.dark {
+  /* --- DARK MODE (VeriWorkly Theme) --- */
+  --color-fd-background: #0d1117;
+  --color-fd-foreground: #f3f4f6;
+
+  /* Cards & Dropdowns */
+  --color-fd-card: #121924;
+  --color-fd-card-foreground: #f3f4f6;
+  --color-fd-popover: #121924;
+  --color-fd-popover-foreground: #f3f4f6;
+
+  /* Borders */
+  --color-fd-border: rgba(148, 163, 184, 0.24);
+  --color-fd-ring: #60a5fa;
+
+  /* Muted elements (like inline code backgrounds and secondary text) */
+  --color-fd-muted: rgba(148, 163, 184, 0.1); /* Soft background */
+  --color-fd-muted-foreground: #94a3b8; /* Readable gray text */
+
+  /* Primary accents (Buttons, active states) */
+  --color-fd-primary: #60a5fa;
+  --color-fd-primary-foreground: #0f172a;
+
+  /* Secondary/Hover states */
+  --color-fd-secondary: rgba(96, 165, 250, 0.1);
+  --color-fd-secondary-foreground: #60a5fa;
+  --color-fd-accent: rgba(
+    148,
+    163,
+    184,
+    0.1
+  ); /* Hover background for menu items */
+  --color-fd-accent-foreground: #f3f4f6;
+}

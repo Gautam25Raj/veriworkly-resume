@@ -1,0 +1,67 @@
+openapi: 3.1.0
+info:
+  title: VeriWorkly API
+  version: 1.0.0
+  description: |
+    The official API reference for VeriWorkly.
+
+    Authentication:
+    This API uses session-based authentication via cookies.
+
+    - Local: `veriworkly-auth.session_token`
+    - Production: `__Secure-veriworkly-auth.session_token`
+
+servers:
+  - url: https://api.veriworkly.com
+    description: Production Server
+  - url: http://localhost:8080
+    description: Local Development
+
+tags:
+  - name: Health
+    description: Service health and readiness checks.
+  - name: Users
+    description: Operations related to authenticated users.
+  - name: Roadmap
+    description: Operations related to roadmap.
+  - name: GitHub
+    description: GitHub issues, pull requests, and repository statistics.
+
+paths:
+  /api/v1/health:
+    $ref: "./paths/health.yaml#/healthCheck"
+
+  /api/v1/users/me:
+    $ref: "./paths/users.yaml#/getCurrentUser"
+  /api/v1/users/me/name:
+    $ref: "./paths/users.yaml#/updateUserName"
+
+  /api/v1/roadmap:
+    $ref: "./paths/roadmap.yaml#/getRoadmap"
+  /api/v1/roadmap/stats:
+    $ref: "./paths/roadmap.yaml#/getRoadmapStats"
+  /api/v1/roadmap/{id}:
+    $ref: "./paths/roadmap.yaml#/getRoadmapFeatureById"
+
+  /api/v1/github/stats:
+    $ref: "./paths/github.yaml#/getGitHubStats"
+  /api/v1/github/issues:
+    $ref: "./paths/github.yaml#/getGitHubIssues"
+  /api/v1/github/sync:
+    $ref: "./paths/github.yaml#/syncGitHubStats"
+
+components:
+  securitySchemes:
+    LocalSession:
+      type: apiKey
+      in: cookie
+      name: veriworkly-auth.session_token
+    ProdSession:
+      type: apiKey
+      in: cookie
+      name: __Secure-veriworkly-auth.session_token
+
+  schemas:
+    $ref: "./components/schemas.yaml"
+  responses:
+    $ref: "./components/responses.yaml"

@@ -1,0 +1,88 @@
+---
+title: System Overview
+description: A high-level analysis of the VeriWorkly architecture, data flow, and processing pipeline.
+---
+
+import { Database, Laptop, Cloud, Workflow } from "lucide-react";
+
+# System Overview
+
+VeriWorkly utilizes a decoupled, monorepo architecture designed to prioritize user privacy while maintaining the performance required for document rendering and synchronization. The platform operates on a **Local-First Architecture** with an optional cloud-sync layer.
+
+---
+
+## Local-First Engine
+
+By default, VeriWorkly operates as a client-side application to ensure maximum data privacy.
+
+- **Client Storage**: When a user interacts with the dashboard, their Master Profile and resume layouts are saved directly to the browser's persistent storage (IndexedDB/LocalStorage) via Zustand.
+- **Service Independence**: Users can create, modify, and preview resumes without any mandatory interaction with the backend API.
+- **Privacy by Design**: Personal data remains on the user's device unless they explicitly opt-in to cloud services.
+
+---
+
+## Optional Cloud Layer
+
+For users requiring cross-device synchronization or managed sharing, VeriWorkly provides an optional cloud layer.
+
+- **Data Synchronization**: Local state is bridged with the backend PostgreSQL database via the Express API using the Better-Auth session framework.
+- **Conflict Management**: We implement optimistic concurrency strategies to ensure data integrity across multiple active sessions.
+
+---
+
+## Asynchronous PDF Rendering
+
+To ensure consistent, ATS-optimized document layouts, VeriWorkly utilizes a server-side rendering pipeline.
+
+### Rendering Pipeline
+
+1. **Request**: The frontend transmits the resume JSON payload to the Express API.
+2. **Queueing**: The API registers a new job in **Redis** (managed via **BullMQ**) to handle processing asynchronously and ensure system stability.
+3. **Rendering**: A dedicated worker process initializes a **Playwright** (Chromium) instance to render the resume in a headless environment.
+4. **Distribution**: The finalized document is stored in **S3-compatible storage** and made available via a secure, temporary download link.
+
+---
+
+## Technology Stack
+
+The platform utilizes a modern stack optimized for type safety and scalability.
+
+### Frontend Stack
+
+| Layer                | Technology               | Purpose                                       |
+| :------------------- | :----------------------- | :-------------------------------------------- |
+| **Framework**        | Next.js 16+ (App Router) | React meta-framework with SSR, static export  |
+| **UI Library**       | React 19                 | Modern component architecture                 |
+| **Styling**          | Tailwind CSS 4           | Utility-first CSS framework with `@theme` API |
+| **Design System**    | Radix UI                 | Unstyled, accessible components               |
+| **State Management** | Zustand                  | Lightweight, flexible store with middleware   |
+| **Forms**            | React Hook Form          | Performant form handling                      |
+| **Validation**       | Zod                      | TypeScript-first schema validation            |
+| **Icons**            | Lucide React             | Consistent icon library                       |
+| **Markdown**         | MDX                      | JSX in Markdown for docs/blog                 |
+
+### Backend Stack
+
+| Layer                   | Technology          | Purpose                                    |
+| :---------------------- | :------------------ | :----------------------------------------- |
+| **Runtime**             | Node.js 20+         | JavaScript/TypeScript on the backend       |
+| **Framework**           | Express             | Minimal, flexible HTTP server              |
+| **Language**            | TypeScript (Strict) | Type safety across the backend             |
+| **Database**            | PostgreSQL          | Reliable, feature-rich relational database |
+| **ORM**                 | Prisma              | Type-safe database access with migrations  |
+| **Cache/Queue**         | Redis + BullMQ      | Session storage, rate limiting, job queues |
+| **Authentication**      | Better-Auth         | Modern, secure passwordless auth           |
+| **PDF Generation**      | Playwright          | Server-side headless browser rendering     |
+| **Document Generation** | `docx`              | Native Word document generation            |
+| **Validation**          | Zod                 | Schema validation for API payloads         |
+| **Testing**             | Vitest              | Fast unit & integration testing            |
+| **Security**            | Helmet              | HTTP security headers                      |
+
+---
+
+## Reference Guides
+
+- **[Monorepo Architecture](/docs/architecture/monorepo)**: Detailed breakdown of the repository structure.
+- **[Database Schema](/docs/architecture/database-schema)**: Relational data model and Prisma configuration.
+- **[Export Pipeline](/docs/architecture/pdf-generation)**: Deep-dive into the BullMQ and Playwright integration.
+- **[Local Setup](/docs/getting-started/local-setup)**: Instructions for configuring the development environment.
