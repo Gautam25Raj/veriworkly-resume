@@ -1,27 +1,24 @@
 ---
-title: Checking Service Status
-description: A DevOps playbook for monitoring health, diagnosing container crashes, and ensuring uptime.
+title: Service Status and Diagnostics
+description: Operational playbook for monitoring system health, diagnosing service failures, and maintaining platform uptime.
 ---
 
 import { Activity, Terminal, AlertTriangle, Cpu, Network, Server, Database } from "lucide-react";
 
-# Checking Service Status
+# Service Status and Diagnostics
 
-In a production environment, simply checking if the homepage loads is not enough. VeriWorkly relies on background workers (Playwright/BullMQ) and external databases.
-
-This guide provides the exact workflows to monitor uptime, inspect resource constraints, and debug Docker container failures.
+Maintaining high availability for VeriWorkly requires active monitoring of its distributed components, including the primary API, background workers, and persistent data stores. This guide outlines the procedures for health assessment and technical diagnostics.
 
 ---
 
-## 1. The Automated Health Endpoint
+## 1. Automated Health Monitoring
 
-The most reliable way to monitor VeriWorkly is via the backend's automated health endpoint. This route actively probes the database and the Redis queue rather than just returning a static 200 response.
+The most reliable mechanism for assessing system state is the backend health endpoint. This route performs active probes of the PostgreSQL database and Redis connection state rather than simply confirming service availability.
 
 **Endpoint:** `GET /api/v1/health`
 
-### Healthy Response (`200 OK`)
-
-If all systems are nominal, the API will return:
+### Nominal Operational State (`200 OK`)
+When all integrated systems are functioning within defined parameters, the API returns a success response:
 
 ```json
 {
@@ -36,9 +33,8 @@ If all systems are nominal, the API will return:
 }
 ```
 
-### Unhealthy Response (`503 Service Unavailable`)
-
-If there are issues with the database or Redis connection, the API will return:
+### Degraded Operational State (`503 Service Unavailable`)
+If a dependency failure is detected, the API returns a service unavailable status:
 
 ```json
 {
@@ -53,115 +49,67 @@ If there are issues with the database or Redis connection, the API will return:
 }
 ```
 
-<Callout type="info" title="Monitoring Integration">
-  We highly recommend plugging `https://api.yourdomain.com/api/v1/health` into a monitoring tool
-  like Datadog, UptimeRobot, or Better Stack. Configure the monitor to alert your team immediately
-  if the status code deviates from 200.
-</Callout>
+**Implementation Recommendation**: Integrate this endpoint with monitoring services such as Datadog, UptimeRobot, or Better Stack to facilitate automated alerting upon state transitions.
 
 ---
 
-## 2. Docker Container Diagnostics
+## 2. Containerized Environment Diagnostics
 
-If the health check returns a 503 or a container is stuck in a restart loop, you need to drop into the CLI to diagnose the issue.
+In scenarios where health checks fail or containers exhibit unstable behavior (e.g., restart loops), utilize the following diagnostic commands.
 
-### Check Container States
-
-Ensure all defined services in your `compose.yaml` are running:
+### Service State Assessment
+Verify the operational status of all containerized services defined in the orchestration configuration:
 
 ```bash
 docker compose ps
 ```
 
-If the `api` or `web` containers say `Exited (1)`, the Node process crashed.
-
-### Monitor Resource Usage (OOM Kills)
-
-Playwright PDF rendering can be memory-intensive. If background jobs are failing silently, your container might be running out of RAM and getting killed by the Docker daemon.
+### Resource Utilization Analysis
+Document rendering via Playwright is memory-intensive. Monitor resource consumption to identify potential Out-of-Memory (OOM) conditions:
 
 ```bash
 docker stats
 ```
 
-Look at the `MEM USAGE / LIMIT` column. If the `api` container is hitting 100%, you need to provision more RAM to your host machine or limit concurrency in BullMQ.
+Significant memory consumption (approaching 100% of the allocated limit) necessitates either additional host resources or a reduction in concurrent rendering job limits.
 
 ---
 
-## 3. Advanced Log Analysis
+## 3. Log Analysis and Troubleshooting
 
-When a service crashes, the logs hold the answer. Run these commands from the directory containing your `compose.yaml`.
+Technical diagnostics require analysis of service-specific logs. Execute these commands from the root directory containing the `compose.yaml` file.
 
 <Cards>
-  <Card title="Tail Backend API" icon={<Terminal />}>
-
+  <Card title="Backend API Logs" icon={<Terminal />}>
     ```bash
     docker compose logs --tail=100 -f api
     ```
-
-    **What to look for:** Uncaught exceptions, Prisma connection errors, or missing environment variables.
-
+    **Key Indicators**: Uncaught exceptions, Prisma connectivity errors, or Zod validation failures for environment variables.
   </Card>
 
-  <Card title="Tail Redis Logs" icon={<Server />}>
-
+  <Card title="Redis Service Logs" icon={<Server />}>
     ```bash
     docker compose logs --tail=100 -f redis
     ```
-
-    **What to look for:** `OOM command not allowed` (Redis ran out of memory) or background save failures.
-
+    **Key Indicators**: Memory allocation failures or persistence (RDB/AOF) errors.
   </Card>
 
-  <Card title="Tail Next.js Frontend" icon={<Cpu />}>
-
+  <Card title="Frontend Application Logs" icon={<Cpu />}>
     ```bash
     docker compose logs --tail=100 -f web
     ```
-
-    **What to look for:** Fetch errors complaining about `ECONNREFUSED` (Frontend cannot reach the Backend internally).
-
+    **Key Indicators**: Fetch errors or internal network resolution failures (`ECONNREFUSED`).
   </Card>
 </Cards>
 
 ---
 
-## 4. Common Failure Modes
+## 4. Common Operational Failure Modes
 
-If you are experiencing downtime, check these common production pitfalls:
-
-<Accordions>
-  <Accordion id="redis-oom" title="Redis Memory Issues">
-    If the Redis container is crashing or you see OOM errors in the logs, it means your queue is getting backed up and consuming too much memory.
-
-    **Solution:** Consider increasing the RAM allocated to Docker or optimizing your BullMQ job processing limits.
-
-  </Accordion>
-
-  <Accordion id="db-conn" title="Database Connection Failures">
-    If the API logs show repeated connection timeouts to PostgreSQL, ensure your `DATABASE_URL` is correct and that your database instance is healthy.
-
-    **Solution:** Check for network issues or firewall rules blocking access to your external database (e.g., Neon).
-
-  </Accordion>
-
-  <Accordion id="startup-crash" title="API Crashes on Startup">
-    If the API container fails immediately on startup, check for syntax errors in your `server/.env` file or missing environment variables.
-
-    **Solution:** The logs will indicate which variable failed Zod validation.
-
-  </Accordion>
-
-  <Accordion id="cors-blocks" title="CORS Errors on the Frontend">
-    If the UI loads but saving resumes fails silently or shows CORS errors in the browser console.
-
-    **Solution:** Ensure the `FRONTEND_URL` in your `server/.env` exactly matches the URL in the browser (including `https://` and no trailing slashes).
-
-  </Accordion>
-
-  <Accordion id="playwright-zombies" title="PDF Generation Hanging">
-    If BullMQ jobs are piling up but PDFs are not rendering, Playwright zombie processes might be hanging the worker thread.
-
-    **Solution:** Restart the API container specifically by running `docker compose restart api`.
-
-  </Accordion>
-</Accordions>
+| Issue | Potential Cause | Resolution Strategy |
+| :--- | :--- | :--- |
+| **Database Connectivity** | Invalid `DATABASE_URL` or network firewall restrictions. | Verify credentials and ensure the API has network access to the PostgreSQL instance. |
+| **Redis Memory Exhaustion** | Backed-up job queue or excessive data caching. | Increase container memory limits or optimize job processing frequency. |
+| **CORS Policy Violations** | Misconfigured `ALLOWED_ORIGINS` variable. | Ensure the backend environment configuration exactly matches the public frontend URI. |
+| **Document Rendering Delay** | Hanging Playwright processes or zombie Chromium instances. | Restart the API service to clear the process tree and re-initialize the rendering workers. |
+| **Zod Validation Failure** | Missing or malformed environment variables in production. | Review the startup logs to identify the specific variable failing validation. |

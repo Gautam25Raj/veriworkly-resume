@@ -1,6 +1,6 @@
 {
   "name": "@veriworkly/docs-platform",
-  "version": "1.11.0",
+  "version": "2.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",

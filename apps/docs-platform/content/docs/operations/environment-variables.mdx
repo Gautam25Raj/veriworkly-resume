@@ -1,123 +1,83 @@
 ---
-title: "Environment Variables"
-description: "Comprehensive reference for configuring VeriWorkly across Frontend, Backend, and Docker environments."
+title: Environment Variables
+description: Comprehensive reference for all configuration options across the VeriWorkly ecosystem.
 ---
-
-import { Key, Globe, Database, Shield, Mail, Cloud, Server } from "lucide-react";
 
 # Environment Variables
 
-Running VeriWorkly in production requires strict configuration of environment variables. Because the architecture splits the frontend UI from the API and background workers, secrets must be routed to their respective contexts securely.
+VeriWorkly utilizes environment variables for secure, flexible configuration across its multiple services. This guide provides a detailed breakdown of all available configuration keys.
 
 ---
 
-## 1. Frontend Configuration (`/.env`)
+## Frontend and Shared Configuration
 
-This file sits at the root of the project and configures the Next.js application.
+These variables should be defined in the root `.env` file for local development.
 
-| Variable                  | Requirement  | Description                                                                                                                                |
-| :------------------------ | :----------- | :----------------------------------------------------------------------------------------------------------------------------------------- |
-| `NEXT_PUBLIC_BACKEND_URL` | **Required** | The public-facing URL of the Express API. The browser uses this to make client-side requests. Example: `https://api.yourdomain.com/api/v1` |
-| `NEXT_PUBLIC_APP_URL`     | Optional     | The canonical URL of your frontend, used for SEO metadata and absolute routing.                                                            |
-
----
-
-## 2. Backend Configuration (`/server/.env`)
-
-This file sits inside the `server/` directory. It contains highly sensitive infrastructure credentials. **Never commit this file to version control.**
-
-### Core Infrastructure
-
-<Cards>
-  <Card title="Database (PostgreSQL)" icon={<Database />}>
-    - `DATABASE_URL`: The full connection string to your PostgreSQL instance (e.g., Neon).
-    - Ensure your string includes `?sslmode=require` if connecting to a managed cloud provider.
-  </Card>
-
-  <Card title="Cache & Queue (Redis)" icon={<Server />}>
-    - `REDIS_URL`: The full connection string (e.g., `redis://localhost:6379`).
-    - *Alternative:* If your host splits variables, use `REDIS_HOST`, `REDIS_PORT`, and `REDIS_PASSWORD`.
-  </Card>
-</Cards>
-
-### Security & Authentication
-
-<Cards>
-  <Card title="CORS & Origin Control" icon={<Globe />}>
-    - `FRONTEND_URL`: The exact URL of your Next.js application (e.g., `https://veriworkly.com`). The Express API uses this to enforce strict CORS policies and allow `HttpOnly` cookies.
-  </Card>
-
-  <Card title="Encryption Secrets" icon={<Shield />}>
-    - `AUTH_SECRET`: A 32+ character string used by Better Auth to sign session cookies securely.
-    - `JWT_SECRET`: A 32+ character string used for internal token signing and stateless verification.
-  </Card>
-</Cards>
-
-### External Services (S3 & SMTP)
-
-Because VeriWorkly generates PDFs via Playwright and handles user authentication, it requires storage and email routing.
-
-<Cards>
-  <Card title="AWS S3 (PDF Storage)" icon={<Cloud />}>
-    - `AWS_ACCESS_KEY_ID`: Your IAM user access key.
-    - `AWS_SECRET_ACCESS_KEY`: Your IAM secret key.
-    - `AWS_REGION`: The bucket region (e.g., `us-east-1`).
-    - `S3_BUCKET_NAME`: The destination bucket for rendered PDFs.
-  </Card>
-
-  <Card title="SMTP (Nodemailer)" icon={<Mail />}>
-    - `SMTP_HOST`: Your mail provider (e.g., Amazon SES, Resend, SendGrid).
-    - `SMTP_PORT`: Usually `587` or `465`.
-    - `SMTP_USER` & `SMTP_PASS`: SMTP credentials.
-    - `EMAIL_FROM`: The verified sender address (e.g., `noreply@veriworkly.com`).
-  </Card>
-</Cards>
+| Variable | Required | Description | Example / Default |
+| :--- | :--- | :--- | :--- |
+| `SITE_URL` | Yes | The primary public URL of the application. | `https://veriworkly.com` |
+| `NEXT_PUBLIC_BACKEND_URL` | Yes | The public API endpoint utilized by the browser. | `http://localhost:8080/api/v1` |
+| `BACKEND_INTERNAL_URL` | No | Internal API address utilized by the frontend for Server-Side Rendering (SSR). | `http://api:8080/api/v1` |
+| `ADMIN_EMAIL` | Yes | Primary administrator email for system notifications. | `admin@veriworkly.com` |
+| `AUTH_SECRET` | Yes | Security secret for session encryption (must match backend). | `secure-random-string` |
 
 ---
 
-## 3. Docker Overrides (`/.env.docker`)
+## Server and API Configuration
 
-When deploying via `docker compose`, the network topology changes. Containers cannot use `localhost` to talk to each other.
+These variables are specific to the backend service and should be placed in `apps/server/.env`.
 
-If you are using Docker, create `.env.docker` at the root. It should inherit your standard variables but **override the internal routing**:
+### Core Runtime
+| Variable | Description | Default |
+| :--- | :--- | :--- |
+| `NODE_ENV` | Operational environment (`development` or `production`). | `development` |
+| `PORT` | Port the API server listens on. | `8080` |
+| `TRUST_PROXY` | Set to `true` when operating behind a reverse proxy. | `true` |
+| `ALLOWED_ORIGINS` | Comma-separated list of permitted CORS origins. | `http://localhost:3000` |
 
-```bash title=".env.docker"
-# Tells Next.js SSR how to reach the Express API inside the Docker bridge network
-BACKEND_INTERNAL_URL=http://api:8080/api/v1
+### Database and Persistence
+| Variable | Required | Description | Example |
+| :--- | :--- | :--- | :--- |
+| `DATABASE_URL` | Yes | PostgreSQL connection string. | `postgresql://user:pass@host:5432/db` |
+| `REDIS_URL` | Yes* | Unified Redis connection string. | `redis://localhost:6379` |
+| `REDIS_HOST` | No | Redis hostname (if URL is not utilized). | `localhost` |
+| `REDIS_PORT` | No | Redis port (if URL is not utilized). | `6379` |
 
-# Tells the Express API how to reach Redis inside the Docker bridge network
-REDIS_URL=redis://redis:6379
-```
+### Authentication (Better-Auth)
+| Variable | Description | Default / Example |
+| :--- | :--- | :--- |
+| `AUTH_SECRET` | Security secret (must match frontend). | |
+| `AUTH_BASE_URL` | The base URL of the API for authentication callbacks. | `http://localhost:8080` |
+| `AUTH_SESSION_TTL_SECONDS` | Maximum session duration (seconds). | `2592000` (30 days) |
+| `AUTH_OTP_TTL_SECONDS` | Validity duration for Email OTP tokens (seconds). | `600` (10 minutes) |
+| `AUTH_OTP_ALLOWED_ATTEMPTS` | Maximum permitted failed verification attempts. | `3` |
+
+### Email Infrastructure
+| Variable | Description | Example |
+| :--- | :--- | :--- |
+| `AUTH_EMAIL_FROM` | Dispatcher email address and display name. | `VeriWorkly <noreply@v.com>` |
+| `AUTH_EMAIL_PROVIDER` | Email driver selection (`smtp`, `resend`, etc.). | `smtp` |
+| `AUTH_SMTP_HOST` | SMTP server address. | `smtp.resend.com` |
+| `AUTH_SMTP_PORT` | SMTP server port. | `587` |
+| `AUTH_SMTP_USER` / `PASS` | SMTP authentication credentials. | |
+
+### Document Export Pipeline
+| Variable | Description | Default |
+| :--- | :--- | :--- |
+| `EXPORT_QUEUE_NAME` | BullMQ queue identifier in Redis. | `resume-export` |
+| `EXPORT_MAX_CONCURRENCY` | Maximum concurrent rendering instances. | `2` |
+| `EXPORT_ARTIFACT_PROVIDER` | Storage backend selection (`local` or `oci`). | `local` |
+| `EXPORT_TIMEOUT_MS` | Maximum execution duration for a single job. | `45000` |
+| `EXPORT_RESULT_TTL_MS` | Metadata retention duration in Redis. | `600000` |
 
 ---
 
-## Security Best Practices
+## Optional Service Integrations
 
-<Callout type="warn" title="Generating Cryptographic Secrets">
-  Never use easily guessable strings for `AUTH_SECRET` or `JWT_SECRET`. To generate
-  cryptographically secure, 32-byte hex strings suitable for production, run the following command
-  in your terminal:
-</Callout>
-
-<CodeBlockTabs defaultValue="mac" groupId="os">
-  <CodeBlockTabsList>
-    <CodeBlockTabsTrigger value="mac">macOS / Linux</CodeBlockTabsTrigger>
-    <CodeBlockTabsTrigger value="windows">Windows (PowerShell)</CodeBlockTabsTrigger>
-  </CodeBlockTabsList>
-
-  <CodeBlockTab value="mac">
-
-    ```bash
-    openssl rand -hex 32
-    ```
-
-  </CodeBlockTab>
-
-  <CodeBlockTab value="windows">
-
-    ```powershell
-    -join ((48..57) + (97..102) | Get-Random -Count 64 | % {[char]$_})
-    ```
-
-  </CodeBlockTab>
-</CodeBlockTabs>
+### GitHub Roadmap Sync
+| Variable | Description | Default |
+| :--- | :--- | :--- |
+| `GITHUB_SYNC_ENABLED` | Enables automated synchronization with GitHub. | `false` |
+| `GITHUB_TOKEN` | Personal Access Token with repository scope. | |
+| `GITHUB_OWNER` / `REPO` | Target repository for synchronization. | |
+| `GITHUB_SYNC_CRON` | Cron schedule for the synchronization task. | `0 0,12 * * *` |

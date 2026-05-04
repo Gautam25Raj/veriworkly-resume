@@ -1,71 +1,20 @@
-# ⚙️ Environment Setup Guide
+# Environment Variables Configuration
 
-VeriWorkly uses a multi-layered environment configuration to handle the complexity of the monorepo.
+VeriWorkly requires specific environment variables to function correctly across the frontend and backend.
 
-## 📁 Environment Files Locations
+## 🔑 Critical Variables
 
-| File               | Application           | Purpose                                          |
-| :----------------- | :-------------------- | :----------------------------------------------- |
-| `.env`             | Root / Resume Builder | Frontend public variables and shared configs.    |
-| `apps/server/.env` | Backend API           | Database, Auth, and Secret keys.                 |
-| `.env.docker`      | Docker Compose        | Container-specific networking and orchestration. |
+### Backend (`apps/server/.env`)
+- `DATABASE_URL`: PostgreSQL connection string.
+- `REDIS_URL`: Redis connection string.
+- `AUTH_SECRET`: Random secure string for authentication.
+- `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`: For sending OTP emails.
 
----
+### Frontend (`.env`)
+- `NEXT_PUBLIC_API_URL`: URL of the backend server (default: `http://localhost:8080/api/v1`).
+- `NEXT_PUBLIC_APP_URL`: URL of the frontend (default: `http://localhost:3000`).
 
-## 🌐 Frontend Variables (`.env`)
+## 📚 Detailed Variable Reference
 
-These variables are prefixed with `NEXT_PUBLIC_` to be accessible in the browser.
-
-| Variable                  | Description                        | Default                        |
-| :------------------------ | :--------------------------------- | :----------------------------- |
-| `NEXT_PUBLIC_BACKEND_URL` | The public URL of the Backend API. | `http://localhost:8080/api/v1` |
-
----
-
-## 🗄️ Backend Variables (`apps/server/.env`)
-
-These are sensitive and should never be exposed to the client.
-
-### 🔴 Required
-
-- `DATABASE_URL`: PostgreSQL connection string (e.g., Neon.tech).
-- `AUTH_SECRET`: Secret key for Better-Auth. Generate with `openssl rand -base64 32`.
-- `JWT_SECRET`: Secret for signing JWT tokens.
-
-### 🟡 Recommended (Infrastructure)
-
-- `REDIS_URL`: Redis connection string (e.g., `redis://localhost:6379`).
-- `ALLOWED_ORIGINS`: Comma-separated list of allowed CORS origins.
-
----
-
-## 🐳 Docker Variables (`.env.docker`)
-
-Used when running via `docker compose`.
-
-- `DATABASE_URL`: External database connection.
-- `REDIS_URL`: Should be `redis://redis:6379` (using the service name).
-- `NEXT_PUBLIC_BACKEND_URL`: Public-facing API URL.
-
----
-
-## 🔐 Generating Secure Secrets
-
-To generate strong, random strings for your secrets, use the following command:
-
-```bash
-openssl rand -base64 32
-```
-
-Use the output for:
-
-- `AUTH_SECRET`
-- `JWT_SECRET`
-
----
-
-## ⚠️ Best Practices
-
-1. **Never commit `.env` files** to version control. They are ignored by `.gitignore`.
-2. **Use `.env.example`** as a template when adding new variables.
-3. **Keep secrets unique** across development, staging, and production environments.
+For a full list of all available configuration options and their defaults, visit:
+[Environment Variables Guide - VeriWorkly Docs](https://docs.veriworkly.com/docs/operations/environment-variables)

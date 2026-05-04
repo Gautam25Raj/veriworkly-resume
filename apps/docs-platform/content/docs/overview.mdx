@@ -1,78 +1,88 @@
 ---
 title: System Overview
-description: A high-level look at how VeriWorkly manages data, privacy, and background processing.
+description: A high-level analysis of the VeriWorkly architecture, data flow, and processing pipeline.
 ---
 
 import { Database, Laptop, Cloud, Workflow } from "lucide-react";
 
----
-
 # System Overview
 
-VeriWorkly is not a standard web application. Because we prioritize privacy and user control, the platform operates on a **Local-First Architecture** with an optional cloud-sync layer.
-
-Understanding this architecture will help you navigate the platform, whether you are building a resume, self-hosting the application, or contributing to the codebase.
+VeriWorkly utilizes a decoupled, monorepo architecture designed to prioritize user privacy while maintaining the performance required for document rendering and synchronization. The platform operates on a **Local-First Architecture** with an optional cloud-sync layer.
 
 ---
 
-## 1. The Local-First Engine
+## Local-First Engine
 
-By default, VeriWorkly operates entirely inside the user's browser.
+By default, VeriWorkly operates as a client-side application to ensure maximum data privacy.
 
-- **Browser Storage:** When a user opens the dashboard and starts building a resume, their Master Profile and resume layouts are saved directly to `localStorage` (via Zustand).
-- **No Database Required:** Users can write, switch templates, and trigger standard browser-based exports without ever sending a single byte of personal data to our backend.
-- **Privacy by Design:** Because the data never leaves the device, there is zero risk of data mining or unauthorized access.
-
----
-
-## 2. The Optional Cloud Layer
-
-While local-first is great for privacy, users often want to access their resumes across multiple devices or share links with recruiters. For this, VeriWorkly utilizes an optional cloud layer.
-
-When a user decides to create an account (via Better Auth), the system bridges the local state with our backend infrastructure.
-
-<Cards>
-  <Card title="Data Syncing" icon={<Cloud />}>
-    Local Zustand state is securely synced to our PostgreSQL database via the Express API.
-  </Card>
-
-  <Card title="Conflict Resolution" icon={<Workflow />}>
-    We use optimistic concurrency (timestamp checking) to ensure a user editing on their laptop
-    doesn't accidentally overwrite changes made on their phone.
-  </Card>
-</Cards>
+- **Client Storage**: When a user interacts with the dashboard, their Master Profile and resume layouts are saved directly to the browser's persistent storage (IndexedDB/LocalStorage) via Zustand.
+- **Service Independence**: Users can create, modify, and preview resumes without any mandatory interaction with the backend API.
+- **Privacy by Design**: Personal data remains on the user's device unless they explicitly opt-in to cloud services.
 
 ---
 
-## 3. Asynchronous PDF Rendering
+## Optional Cloud Layer
 
-Generating pixel-perfect, ATS-friendly PDFs directly in the browser can be incredibly inconsistent depending on the user's operating system and fonts. To solve this, VeriWorkly uses a heavy-duty backend rendering engine.
+For users requiring cross-device synchronization or managed sharing, VeriWorkly provides an optional cloud layer.
 
-When a user requests a high-fidelity export or creates a shareable link:
-
-1. The frontend sends the resume payload to the backend API.
-2. The API places a job into a **Redis Queue** (managed by BullMQ).
-3. A background worker picks up the job and uses **Playwright** to headlessly render the resume exactly as intended.
-4. The final PDF is uploaded to **AWS S3**, and the secure URL is returned to the user.
+- **Data Synchronization**: Local state is bridged with the backend PostgreSQL database via the Express API using the Better-Auth session framework.
+- **Conflict Management**: We implement optimistic concurrency strategies to ensure data integrity across multiple active sessions.
 
 ---
 
-## What's Next?
+## Asynchronous PDF Rendering
 
-Now that you understand the data flow and system boundaries, you can start setting up the project or dive into specific guides.
+To ensure consistent, ATS-optimized document layouts, VeriWorkly utilizes a server-side rendering pipeline.
 
-<Cards>
-  <Card title="Quick Start" href="/docs/getting-started/quick-start" icon={<Laptop />}>
-    Jump straight into using the resume builder and creating your first profile.
-  </Card>
+### Rendering Pipeline
 
-  <Card
-    title="Checking Service Status"
-    href="/docs/operations/service-status"
-    icon={<Database />}
-  >
-    Learn how to monitor the health of the API, Redis queues, and database.
-  </Card>
-</Cards>
+1. **Request**: The frontend transmits the resume JSON payload to the Express API.
+2. **Queueing**: The API registers a new job in **Redis** (managed via **BullMQ**) to handle processing asynchronously and ensure system stability.
+3. **Rendering**: A dedicated worker process initializes a **Playwright** (Chromium) instance to render the resume in a headless environment.
+4. **Distribution**: The finalized document is stored in **S3-compatible storage** and made available via a secure, temporary download link.
 
 ---
+
+## Technology Stack
+
+The platform utilizes a modern stack optimized for type safety and scalability.
+
+### Frontend Stack
+
+| Layer                | Technology               | Purpose                                       |
+| :------------------- | :----------------------- | :-------------------------------------------- |
+| **Framework**        | Next.js 16+ (App Router) | React meta-framework with SSR, static export  |
+| **UI Library**       | React 19                 | Modern component architecture                 |
+| **Styling**          | Tailwind CSS 4           | Utility-first CSS framework with `@theme` API |
+| **Design System**    | Radix UI                 | Unstyled, accessible components               |
+| **State Management** | Zustand                  | Lightweight, flexible store with middleware   |
+| **Forms**            | React Hook Form          | Performant form handling                      |
+| **Validation**       | Zod                      | TypeScript-first schema validation            |
+| **Icons**            | Lucide React             | Consistent icon library                       |
+| **Markdown**         | MDX                      | JSX in Markdown for docs/blog                 |
+
+### Backend Stack
+
+| Layer                   | Technology          | Purpose                                    |
+| :---------------------- | :------------------ | :----------------------------------------- |
+| **Runtime**             | Node.js 20+         | JavaScript/TypeScript on the backend       |
+| **Framework**           | Express             | Minimal, flexible HTTP server              |
+| **Language**            | TypeScript (Strict) | Type safety across the backend             |
+| **Database**            | PostgreSQL          | Reliable, feature-rich relational database |
+| **ORM**                 | Prisma              | Type-safe database access with migrations  |
+| **Cache/Queue**         | Redis + BullMQ      | Session storage, rate limiting, job queues |
+| **Authentication**      | Better-Auth         | Modern, secure passwordless auth           |
+| **PDF Generation**      | Playwright          | Server-side headless browser rendering     |
+| **Document Generation** | `docx`              | Native Word document generation            |
+| **Validation**          | Zod                 | Schema validation for API payloads         |
+| **Testing**             | Vitest              | Fast unit & integration testing            |
+| **Security**            | Helmet              | HTTP security headers                      |
+
+---
+
+## Reference Guides
+
+- **[Monorepo Architecture](/docs/architecture/monorepo)**: Detailed breakdown of the repository structure.
+- **[Database Schema](/docs/architecture/database-schema)**: Relational data model and Prisma configuration.
+- **[Export Pipeline](/docs/architecture/pdf-generation)**: Deep-dive into the BullMQ and Playwright integration.
+- **[Local Setup](/docs/getting-started/local-setup)**: Instructions for configuring the development environment.

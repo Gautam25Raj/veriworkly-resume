@@ -1,58 +1,92 @@
 ---
 title: Monorepo Architecture
-description: How VeriWorkly organizes apps and shared code in a single repository.
+description: Analysis of the workspace structure and inter-service organization within the VeriWorkly repository.
 ---
 
 # Monorepo Architecture
 
-VeriWorkly is organized as a single repository with multiple applications and one shared UI package.
+VeriWorkly utilizes a monorepo structure to manage multiple integrated applications and shared packages within a single repository. This approach ensures consistent dependency management and facilitates the sharing of design tokens and core logic.
 
-The goal is straightforward: keep product areas independent (builder, docs, blog, backend) while still sharing core styles and components where it makes sense.
+## Application Architecture
 
-## The 4 Core Applications
+The platform is composed of four primary applications, each with a distinct operational scope.
 
 ### 1. Resume Builder (`apps/resume-builder`)
+- **Port**: 3000
+- **Framework**: Next.js (App Router)
+- **Scope**: Primary user interface for resume construction and management.
+- **Key Features**: Local-first state synchronization, real-time previewing, and template customization.
 
-- **Port:** 3000
-- **Framework:** Next.js (App Router)
-- **Role:** Main product experience for creating and editing resumes
-- **Tech highlights:** local-first state with Zustand + persist, template system, export/share flows
+### 2. API Server (`apps/server`)
+- **Port**: 8080
+- **Framework**: Node.js / Express
+- **Scope**: Core backend services including authentication, data persistence, and background task orchestration.
+- **Key Features**: Prisma ORM integration, BullMQ job processing, and Playwright-based document rendering.
 
-### 2. Node.js API Server (`apps/server`)
-
-- **Port:** 8080
-- **Framework:** Express + Node.js 20+
-- **Role:** Auth, sync, sharing, export orchestration, and background processing
-- **Tech highlights:** Prisma + PostgreSQL, queue-based export jobs, Playwright-powered PDF rendering
-
-### 3. Docs Platform (`apps/docs-platform`)
-
-- **Port:** 3001
-- **Framework:** Next.js + Fumadocs
-- **Role:** Product docs, architecture notes, and API reference
-- **Tech highlights:** MDX content and generated OpenAPI artifacts
+### 3. Documentation Platform (`apps/docs-platform`)
+- **Port**: 3001
+- **Framework**: Next.js / Fumadocs
+- **Scope**: Technical and user documentation.
+- **Key Features**: MDX-based content management and automated API reference generation.
 
 ### 4. Blog Platform (`apps/blog-platform`)
+- **Port**: 3002
+- **Framework**: Next.js / Fumadocs
+- **Scope**: Product updates and career-oriented content.
 
-- **Port:** 3002
-- **Framework:** Next.js + Fumadocs
-- **Role:** Product updates, engineering writeups, and career-focused content
+---
 
-## Shared Package (`packages/ui`)
+## Shared Infrastructure (`packages/ui`)
 
-`@veriworkly/ui` is an internal workspace package used across frontends for:
+The `@veriworkly/ui` package serves as the centralized design system for the entire monorepo. It provides:
+- Reusable React primitives and components.
+- Standardized layout utilities.
+- Centralized Tailwind CSS 4 theme configurations and design tokens.
 
-- Reusable primitives (buttons, cards, modals, menus, inputs)
-- Shared container/layout utilities
-- Font and theme variables
+---
 
-This keeps the look and behavior consistent without turning every app into one giant deploy unit.
+## Repository Structure
 
-## Why This Layout Works
+VeriWorkly utilizes standardized monorepo conventions to organize its services and shared logic.
 
-- **Clear ownership:** each app has a clear responsibility and code boundary.
-- **Faster iteration:** docs/blog updates do not require shipping resume-builder changes.
-- **Operational flexibility:** services can be deployed and scaled independently.
-- **Shared consistency:** common UI stays aligned through one internal package.
+import { File, Folder, Files } from 'fumadocs-ui/components/files';
 
-For local development and production setup details, continue with [Quick Start](/docs/getting-started/quick-start) and [Docker Deployment](/docs/getting-started/docker-deployment).
+<Files>
+  <Folder name="apps" defaultOpen>
+    <Folder name="blog-platform">
+      <File name="content/blog" />
+      <File name="README.md" />
+    </Folder>
+    <Folder name="docs-platform" defaultOpen>
+      <File name="content/docs" />
+      <File name="README.md" />
+    </Folder>
+    <Folder name="resume-builder">
+      <File name="app/" />
+      <File name="templates/" />
+      <File name="README.md" />
+    </Folder>
+    <Folder name="server">
+      <File name="src/" />
+      <File name="prisma/schema.prisma" />
+      <File name="README.md" />
+    </Folder>
+  </Folder>
+  <Folder name="packages">
+    <Folder name="ui" defaultOpen>
+      <File name="src/components" />
+      <File name="tailwind.config.ts" />
+    </Folder>
+  </Folder>
+  <File name="compose.yaml" />
+  <File name="package.json" />
+  <File name="README.md" />
+</Files>
+
+---
+
+## Operational Advantages
+
+- **Service Isolation**: Each application maintains independent operational boundaries and deployment lifecycles.
+- **Resource Efficiency**: Shared packages minimize redundant code and ensure visual consistency across all platforms.
+- **Scalability**: Backend services can be scaled independently of the frontend applications.

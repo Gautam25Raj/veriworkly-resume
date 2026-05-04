@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { DocsBody, DocsDescription, DocsPage, DocsTitle } from "fumadocs-ui/layouts/notebook/page";
+import { DocsBody, DocsDescription, DocsPage, DocsTitle, EditOnGitHub } from "fumadocs-ui/layouts/notebook/page";
 import { notFound } from "next/navigation";
 
 import { apiSource } from "@/lib/source";
@@ -31,6 +31,11 @@ export default async function Page(props: PageProps) {
     <DocsPage
       tableOfContent={{
         style: "clerk",
+        footer: (
+          <EditOnGitHub
+            href={`https://github.com/Gautam25Raj/veriworkly-resume/edit/main/apps/docs-platform/content/api-reference/${page.file?.path ?? page.slugs.join("/") + ".mdx"}`}
+          />
+        ),
       }}
       toc={pageData.toc}
       full={pageData.full}

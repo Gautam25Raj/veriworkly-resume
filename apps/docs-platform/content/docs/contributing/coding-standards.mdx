@@ -1,0 +1,70 @@
+---
+title: Coding Standards
+description: The technical rules and conventions for the VeriWorkly codebase.
+---
+
+# Coding Standards
+
+To maintain a high-quality, professional codebase, we follow strict standards for TypeScript, React, and CSS. Consistency is key to a maintainable monorepo.
+
+---
+
+## TypeScript Conventions
+
+- **Strict Type Safety**: `strict: true` is mandatory. Avoid the `any` type at all costs. Use `unknown` or precise interfaces.
+- **Validation**: Every external data source (API responses, environment variables, form inputs) must be validated using **Zod** schemas.
+- **File Naming**: Use `kebab-case` for file names (e.g., `resume-store.ts`) and `PascalCase` for React components (e.g., `Button.tsx`).
+- **Interfaces vs Types**: Prefer `interface` for public APIs and `type` for unions, intersections, or internal logic.
+
+---
+
+## React & Frontend
+
+- **Functional Components**: Use functional components with hooks. Avoid class-based components.
+- **Memoization**: The resume editor is a complex, high-performance interface. Use `React.memo`, `useMemo`, and `useCallback` to prevent unnecessary re-renders in the sidebar and previewer.
+- **State Management**:
+  - Use **Zustand** for global application state (Resumes, UI state).
+  - Use **React Hook Form** for form state.
+  - Use **Native React State** for local, ephemeral UI state.
+- **Hooks**: Abstract complex logic into custom hooks (e.g., `useExport`, `useTemplate`).
+
+---
+
+## Styling (Tailwind CSS 4)
+
+- **Utility-First**: Use Tailwind classes for all styling. Avoid custom CSS files unless absolutely necessary (e.g., specific print media queries).
+- **Design Tokens**: All colors, fonts, and spacing should be derived from our shared `@veriworkly/ui` design system. Reference them using Tailwind variables rather than hardcoded hex codes.
+- **Responsive Design**: We follow a mobile-first approach. Ensure all UI elements work perfectly on screen sizes from 320px to 4K.
+
+---
+
+## Backend & API
+
+- **Service Layer**: Keep Express controllers thin. Business logic should reside in dedicated services in `apps/server/src/services/`.
+- **Error Handling**: Use the centralized error handling middleware. Always return consistent JSON error objects.
+- **Prisma**: Write clean, optimized queries. Use `include` and `select` to minimize over-fetching data.
+
+---
+
+## Testing Requirements
+
+- **Unit Tests**: Write tests for pure utility functions and business logic services using **Vitest**.
+- **Integration Tests**: Verify that components work together with the state store.
+- **E2E Tests**: Use **Playwright** to test critical paths like user login, resume creation, and PDF export.
+
+---
+
+## Automated Checks
+
+Before submitting a Pull Request, ensure the following commands pass:
+
+```bash
+# Run linting checks
+npm run lint
+
+# Automatically fix formatting issues
+npm run format:write
+
+# Run all test suites
+npm test
+```

@@ -1,15 +1,17 @@
 ---
 title: Quick Start
-description: Choose your path to get VeriWorkly running in minutes.
+description: Initial steps for deploying or developing with the VeriWorkly platform.
 ---
 
 import { Laptop, Server, Rocket } from "lucide-react";
 
 # Quick Start
 
-VeriWorkly is a full-stack application consisting of a **Next.js frontend** and an **Express.js backend**. Because of its robust architecture (utilizing PostgreSQL, Redis, and background PDF workers), getting it running requires setting up a few moving parts.
+VeriWorkly is a full-stack platform comprising a **Next.js frontend** and an **Express.js backend**. The architecture is designed for high-fidelity document rendering and secure data synchronization.
 
-To get started, choose the path that best fits your goal:
+## Implementation Paths
+
+Select the deployment or development path that aligns with your requirements:
 
 <Cards>
   <Card 
@@ -17,7 +19,7 @@ To get started, choose the path that best fits your goal:
     icon={<Laptop />} 
     href="/docs/getting-started/local-setup"
   >
-    Best for developers and contributors. Run the frontend and backend manually using Node.js to edit code, test new features, and build templates.
+    Recommended for developers and contributors. Run the platform services manually to modify source code, test features, or design templates.
   </Card>
 
   <Card 
@@ -25,22 +27,39 @@ To get started, choose the path that best fits your goal:
     icon={<Server />} 
     href="/docs/getting-started/docker-deployment"
   >
-    Best for self-hosters and production environments. Spin up the entire ecosystem (Web, API, and Redis) using a single `compose.yaml` file.
+    Recommended for production environments and self-hosters. Deploy the complete ecosystem utilizing our optimized Docker Compose configuration.
   </Card>
 </Cards>
 
 ---
 
-## Architectural Overview
+## Project Structure
 
-Before you deploy, it helps to understand how the pieces connect. Whether you run locally or via Docker, the data flow remains the same:
+VeriWorkly utilizes a monorepo architecture to manage independent services and shared packages efficiently.
 
-1. **Browser (Client):** The user accesses the Next.js frontend (default port `3000`).
-2. **Next.js (Web):** Serves the UI and handles local-first Zustand state.
-3. **Express API (Server):** Runs separately (default port `8080`) to handle database syncing, authentication, and GitHub integrations.
-4. **PostgreSQL (Database):** We highly recommend [Neon](https://neon.tech) for a serverless PostgreSQL experience.
-5. **Redis (Cache & Queue):** Used for rate limiting and managing BullMQ background jobs (like Playwright PDF rendering).
+import { File, Folder, Files } from 'fumadocs-ui/components/files';
 
-Ready to begin? Choose a guide above to start spinning up VeriWorkly.
+<Files>
+  <Folder name="apps" defaultOpen>
+    <File name="resume-builder" />
+    <File name="server" />
+    <File name="docs-platform" />
+    <File name="blog-platform" />
+  </Folder>
+  <Folder name="packages">
+    <File name="ui" />
+  </Folder>
+  <File name="package.json" />
+</Files>
 
 ---
+
+## Architectural Components
+
+The platform consists of several integrated components:
+
+1. **Frontend (Resume Builder)**: A Next.js application handling user interaction and local-first state management.
+2. **Backend API (Server)**: An Express-based service managing authentication, data persistence, and GitHub synchronization.
+3. **Database (PostgreSQL)**: The primary relational store. We recommend [Neon](https://neon.tech) for managed deployments.
+4. **Caching & Jobs (Redis)**: Facilitates rate limiting and manages the BullMQ job queue for document rendering.
+5. **PDF Engine (Playwright)**: An asynchronous worker that renders resumes into ATS-optimized formats.

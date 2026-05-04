@@ -1,0 +1,57 @@
+---
+title: Account Management
+description: Detailed guide on user profiles, the Master Profile system, and cloud synchronization.
+---
+
+# Account Management
+
+VeriWorkly provides a sophisticated account management system designed to balance user privacy with cross-device convenience. The platform supports a hybrid model where users can operate entirely offline or utilize cloud-based features for enhanced productivity.
+
+## User Profile vs. Master Profile
+
+A fundamental aspect of the VeriWorkly ecosystem is the distinction between your account identity and your professional data repository.
+
+### 1. User Profile
+The User Profile manages your authentication and application preferences:
+- **Authentication**: Email address associated with your passwordless OTP login.
+- **Identity**: Display name and profile image.
+- **Preferences**: Application-wide settings including theme selection, localization, and interface configurations.
+
+### 2. Master Profile
+The Master Profile serves as the centralized "Source of Truth" for your career data. It is a comprehensive repository of your professional history, designed to be reused across multiple resumes.
+- **Work History**: All past and present professional experiences.
+- **Skill Repository**: Categorized technical and soft skills.
+- **Academic Background**: Complete educational history and certifications.
+- **Projects & Awards**: A comprehensive list of achievements and personal projects.
+
+**Strategic Advantage**: By maintaining a Master Profile, you can seed new resumes with existing data and then toggle the visibility of specific sections to tailor the document for a particular job application.
+
+---
+
+## Authentication and Account Creation
+
+VeriWorkly utilizes a passwordless authentication model to improve security and eliminate the risks of password fatigue or compromise.
+
+1. **Initiate Sign-In**: Select the **Sign In** option on the dashboard.
+2. **Email Verification**: Provide your email address to receive a 6-digit **One-Time Password (OTP)**.
+3. **Verification**: Enter the OTP within the 10-minute validity window to establish your session.
+
+Upon successful authentication, local resumes can be promoted to the cloud for persistent backup and cross-device access.
+
+---
+
+## Data Synchronization and Conflict Resolution
+
+### Master Profile Updates
+Updates to the Master Profile are performed via the **Dashboard**. These changes persist in the central repository but do not retroactively modify existing resumes. This architectural decision prevents accidental alterations to finalized documents while ensuring new documents utilize the latest information.
+
+### Synchronization Logic
+VeriWorkly employs an optimistic concurrency model for synchronization. In scenarios where a resume is modified across multiple devices, the system utilizes a "Last Write Wins" strategy. We recommend verifying synchronization status (indicated in the editor sidebar) before transitioning between devices.
+
+---
+
+## Account Termination
+
+Users maintain full control over their data and may terminate their account at any time.
+- **Process**: Account deletion is initiated via the **Settings** page.
+- **Impact**: This action results in the permanent removal of your User Profile, Master Profile, and all cloud-synced resumes. This process is irreversible.

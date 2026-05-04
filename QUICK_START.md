@@ -1,69 +1,45 @@
-# ⚡ Quick Start Guide
+# Quick Start Guide
 
-Get the full VeriWorkly ecosystem up and running in less than 5 minutes.
+VeriWorkly is a monorepo consisting of a Next.js frontend and an Express backend. Follow these steps to get up and running quickly.
 
-## 🚀 Way A: Local Node.js (Recommended for Dev)
+## 📦 Installation
 
-VeriWorkly uses **npm workspaces** to manage all platforms from the root.
-
-1. **Clone & Install**:
+1. **Clone the repository**:
    ```bash
    git clone https://github.com/Gautam25Raj/veriworkly-resume.git
    cd veriworkly-resume
+   ```
+
+2. **Install dependencies**:
+   ```bash
    npm install
    ```
 
-2. **Configure Environment**:
+3. **Set up environment variables**:
    ```bash
    cp .env.example .env
    cp apps/server/.env.example apps/server/.env
-   # Add your DATABASE_URL to apps/server/.env
    ```
 
-3. **Setup Database**:
+4. **Initialize the database**:
    ```bash
    npm run db:push -w @veriworkly/server
    ```
 
-4. **Launch Everything**:
-   ```bash
-   npm run dev:all
-   ```
+## 🚀 Running the App
 
----
+To start all services (Frontend, Backend, Docs, Blog) in development mode:
+```bash
+npm run dev
+```
 
-## 🐳 Way B: Using Docker (Fastest)
+To start specific apps:
+- **Resume Builder**: `npm run dev:resume`
+- **Server**: `npm run dev:server`
+- **Docs**: `npm run dev:docs`
+- **Blog**: `npm run dev:blog`
 
-Fastest way to run the production-ready stack.
+## 📖 Full Documentation
 
-1. **Clone & Configure**:
-   ```bash
-   git clone https://github.com/Gautam25Raj/veriworkly-resume.git
-   cd veriworkly-resume
-   cp .env.docker.example .env.docker
-   # Add your DATABASE_URL to .env.docker
-   ```
-
-2. **Launch**:
-   ```bash
-   docker compose --env-file .env.docker up -d --build
-   ```
-
----
-
-## 🔍 Verification
-
-| Platform | URL |
-| :--- | :--- |
-| **Resume Builder** | [http://localhost:3000](http://localhost:3000) |
-| **Backend API** | [http://localhost:8080/api/v1/health](http://localhost:8080/api/v1/health) |
-| **Documentation** | [http://localhost:3001](http://localhost:3001) |
-| **Blog** | [http://localhost:3002](http://localhost:3002) |
-
----
-
-## 📘 Next Steps
-
-- 🏢 **Deep Dive**: Read [PROJECT_DETAILS.md](./PROJECT_DETAILS.md)
-- 📐 **Architecture**: See [PROJECT_ARCHITECTURE.md](./PROJECT_ARCHITECTURE.md)
-- 🤝 **Contribute**: See [CONTRIBUTING.md](./CONTRIBUTING.md)
+For detailed guides on deployment, contribution, and architecture, visit:
+[https://docs.veriworkly.com](https://docs.veriworkly.com)
