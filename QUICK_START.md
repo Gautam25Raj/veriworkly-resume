@@ -1,100 +1,45 @@
-# ⚡ Quick Start Guide
+# Quick Start Guide
 
-Get VeriWorkly up and running in less than 5 minutes.
+VeriWorkly is a monorepo consisting of a Next.js frontend and an Express backend. Follow these steps to get up and running quickly.
 
-## 🐳 Way A: Using Docker (Fastest)
+## 📦 Installation
 
-The fastest way to run the full stack with all services configured.
-
-1. **Clone & Enter**:
-
+1. **Clone the repository**:
    ```bash
-   git clone https://github.com/your-username/veriworkly-resume.git
+   git clone https://github.com/Gautam25Raj/veriworkly-resume.git
    cd veriworkly-resume
    ```
 
-2. **Configure**:
-
+2. **Install dependencies**:
    ```bash
-   cp .env.docker.example .env.docker
-   # Edit .env.docker and add your DATABASE_URL
+   npm install
    ```
 
-3. **Launch**:
-
+3. **Set up environment variables**:
    ```bash
-   docker compose --env-file .env.docker up -d --build
+   cp .env.example .env
+   cp apps/server/.env.example apps/server/.env
    ```
 
-4. **Enjoy**:
-   - Web: http://localhost:3000
-   - API: http://localhost:8080/api/v1/health
+4. **Initialize the database**:
+   ```bash
+   npm run db:push -w @veriworkly/server
+   ```
 
----
+## 🚀 Running the App
 
-## 💻 Way B: Local Node.js Development
-
-Run frontend and backend separately using Node.js.
-
-### 1. Root Setup
-
-```bash
-npm install
-```
-
-### 2. Backend Setup
-
-```bash
-cd server
-npm install
-cp .env.example .env
-```
-
-Update required values:
-
-- `DATABASE_URL`
-- `AUTH_SECRET`
-- `JWT_SECRET`
-
-### 3. Setup Database
-
-```bash
-npm run db:migrate   # recommended
-# or
-npm run db:push
-```
-
-### 4. Start Redis
-
-```bash
-docker run -d -p 6379:6379 --name redis redis:7
-```
-
-### 5. Start Backend
-
+To start all services (Frontend, Backend, Docs, Blog) in development mode:
 ```bash
 npm run dev
 ```
 
-### 6. Start Frontend (New Terminal)
+To start specific apps:
+- **Resume Builder**: `npm run dev:resume`
+- **Server**: `npm run dev:server`
+- **Docs**: `npm run dev:docs`
+- **Blog**: `npm run dev:blog`
 
-```bash
-# From root
-npm run dev
-```
+## 📖 Full Documentation
 
----
-
-## 🧪 Verification
-
-- Open [http://localhost:3000](http://localhost:3000)
-- Try clicking "Open Dashboard"
-- Check [http://localhost:8080/api/v1/health](http://localhost:8080/api/v1/health) to ensure the backend is alive.
-
----
-
-## 📘 Next Steps
-
-- Read [README.md](./README.md) for full project documentation
-- See [README.Docker.md](./README.Docker.md) for production setup
-- Review [ENV_SETUP.md](./ENV_SETUP.md) for detailed environment configuration
+For detailed guides on deployment, contribution, and architecture, visit:
+[https://docs.veriworkly.com](https://docs.veriworkly.com)

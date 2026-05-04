@@ -1,0 +1,66 @@
+---
+title: State Management
+description: Detailed analysis of the local-first state management strategy and synchronization logic.
+---
+
+# State Management
+
+VeriWorkly implements a **Local-First** state management architecture. This approach designates the client's environment as the primary source of truth, utilizing the backend API as a secondary layer for persistence, synchronization, and document processing.
+
+## Strategic Objectives
+
+1. **Client-Centricity**: Resume data is persisted locally in the browser to ensure maximum privacy and availability.
+2. **Optimistic Updates**: UI interactions result in immediate state transitions, eliminating network-induced latency.
+3. **Decoupled Synchronization**: Data transmission to the cloud is an asynchronous, user-initiated process.
+4. **Data Integrity**: Runtime schema validation ensures that persisted and transmitted data adheres to strict structural requirements.
+
+---
+
+## Technical Implementation
+
+### Core Technologies
+- **Zustand**: A performance-oriented state management library for React.
+- **Persist Middleware**: Facilitates automatic serialization and deserialization of application state to `localStorage`.
+- **Zod**: Provides a robust schema validation layer for data integrity and type safety.
+
+### Architecture of the Resume Store
+The application's core state resides in the `resume-store.ts`, which manages document collections, active editor sessions, and asynchronous operation states.
+
+```typescript
+interface ResumeStore {
+  resumes: Resume[];
+  currentResume: Resume | null;
+  isLoading: boolean;
+  
+  // State Mutators
+  updateResume: (id: string, partial: Partial<Resume>) => void;
+  deleteResume: (id: string) => Promise<void>;
+  syncWithCloud: () => Promise<void>;
+}
+```
+
+---
+
+## Persistence and Performance Optimization
+
+### Debouncing Strategy
+To maintain interface responsiveness during high-frequency editing sessions, VeriWorkly implements a debounced persistence strategy. This reduces the frequency of write operations to the browser's storage engine.
+
+### Schema Versioning and Migration
+The state store incorporates a versioning system. During initialization, the persistence layer detects version mismatches and executes necessary migration logic to ensure backward compatibility as the document schema evolves.
+
+### Resource Constraints
+The application includes error handling for storage quotas. If the browser's storage capacity is reached, the system notifies the user and provides options for cloud-based offloading or document cleanup.
+
+---
+
+## Synchronization Workflow
+
+The transition from local state to cloud-hosted storage follows a structured protocol:
+
+1. **Schema Validation**: The document is validated against a comprehensive Zod schema before transmission.
+2. **Temporal Resolution**: The system compares local and remote `updatedAt` timestamps to identify the latest version.
+3. **Conflict Resolution**: VeriWorkly utilizes a "Last Write Wins" strategy while maintaining stable identifiers for document sections to prevent structural data loss.
+4. **State Reconciliation**: Upon successful backend acknowledgement, the local state is updated with server-generated metadata and synchronization timestamps.
+
+For a detailed breakdown of the document structure, refer to the [Database Schema](/docs/architecture/database-schema) documentation.

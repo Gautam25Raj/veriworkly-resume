@@ -1,0 +1,5 @@
+{
+  "title": "Roadmap",
+  "description": "Operations related to roadmap.",
+  "pages": ["getRoadmap", "getRoadmapStats", "getRoadmapFeatureById"]
+}

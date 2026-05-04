@@ -1,8 +1,0 @@
-{
-  "title": "Users",
-  "description": "Operations related to authenticated users.",
-  "pages": [
-    "getCurrentUser",
-    "updateUserName"
-  ]
-}

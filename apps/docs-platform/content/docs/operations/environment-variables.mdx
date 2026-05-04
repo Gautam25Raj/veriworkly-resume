@@ -1,0 +1,83 @@
+---
+title: Environment Variables
+description: Comprehensive reference for all configuration options across the VeriWorkly ecosystem.
+---
+
+# Environment Variables
+
+VeriWorkly utilizes environment variables for secure, flexible configuration across its multiple services. This guide provides a detailed breakdown of all available configuration keys.
+
+---
+
+## Frontend and Shared Configuration
+
+These variables should be defined in the root `.env` file for local development.
+
+| Variable | Required | Description | Example / Default |
+| :--- | :--- | :--- | :--- |
+| `SITE_URL` | Yes | The primary public URL of the application. | `https://veriworkly.com` |
+| `NEXT_PUBLIC_BACKEND_URL` | Yes | The public API endpoint utilized by the browser. | `http://localhost:8080/api/v1` |
+| `BACKEND_INTERNAL_URL` | No | Internal API address utilized by the frontend for Server-Side Rendering (SSR). | `http://api:8080/api/v1` |
+| `ADMIN_EMAIL` | Yes | Primary administrator email for system notifications. | `admin@veriworkly.com` |
+| `AUTH_SECRET` | Yes | Security secret for session encryption (must match backend). | `secure-random-string` |
+
+---
+
+## Server and API Configuration
+
+These variables are specific to the backend service and should be placed in `apps/server/.env`.
+
+### Core Runtime
+| Variable | Description | Default |
+| :--- | :--- | :--- |
+| `NODE_ENV` | Operational environment (`development` or `production`). | `development` |
+| `PORT` | Port the API server listens on. | `8080` |
+| `TRUST_PROXY` | Set to `true` when operating behind a reverse proxy. | `true` |
+| `ALLOWED_ORIGINS` | Comma-separated list of permitted CORS origins. | `http://localhost:3000` |
+
+### Database and Persistence
+| Variable | Required | Description | Example |
+| :--- | :--- | :--- | :--- |
+| `DATABASE_URL` | Yes | PostgreSQL connection string. | `postgresql://user:pass@host:5432/db` |
+| `REDIS_URL` | Yes* | Unified Redis connection string. | `redis://localhost:6379` |
+| `REDIS_HOST` | No | Redis hostname (if URL is not utilized). | `localhost` |
+| `REDIS_PORT` | No | Redis port (if URL is not utilized). | `6379` |
+
+### Authentication (Better-Auth)
+| Variable | Description | Default / Example |
+| :--- | :--- | :--- |
+| `AUTH_SECRET` | Security secret (must match frontend). | |
+| `AUTH_BASE_URL` | The base URL of the API for authentication callbacks. | `http://localhost:8080` |
+| `AUTH_SESSION_TTL_SECONDS` | Maximum session duration (seconds). | `2592000` (30 days) |
+| `AUTH_OTP_TTL_SECONDS` | Validity duration for Email OTP tokens (seconds). | `600` (10 minutes) |
+| `AUTH_OTP_ALLOWED_ATTEMPTS` | Maximum permitted failed verification attempts. | `3` |
+
+### Email Infrastructure
+| Variable | Description | Example |
+| :--- | :--- | :--- |
+| `AUTH_EMAIL_FROM` | Dispatcher email address and display name. | `VeriWorkly <noreply@v.com>` |
+| `AUTH_EMAIL_PROVIDER` | Email driver selection (`smtp`, `resend`, etc.). | `smtp` |
+| `AUTH_SMTP_HOST` | SMTP server address. | `smtp.resend.com` |
+| `AUTH_SMTP_PORT` | SMTP server port. | `587` |
+| `AUTH_SMTP_USER` / `PASS` | SMTP authentication credentials. | |
+
+### Document Export Pipeline
+| Variable | Description | Default |
+| :--- | :--- | :--- |
+| `EXPORT_QUEUE_NAME` | BullMQ queue identifier in Redis. | `resume-export` |
+| `EXPORT_MAX_CONCURRENCY` | Maximum concurrent rendering instances. | `2` |
+| `EXPORT_ARTIFACT_PROVIDER` | Storage backend selection (`local` or `oci`). | `local` |
+| `EXPORT_TIMEOUT_MS` | Maximum execution duration for a single job. | `45000` |
+| `EXPORT_RESULT_TTL_MS` | Metadata retention duration in Redis. | `600000` |
+
+---
+
+## Optional Service Integrations
+
+### GitHub Roadmap Sync
+| Variable | Description | Default |
+| :--- | :--- | :--- |
+| `GITHUB_SYNC_ENABLED` | Enables automated synchronization with GitHub. | `false` |
+| `GITHUB_TOKEN` | Personal Access Token with repository scope. | |
+| `GITHUB_OWNER` / `REPO` | Target repository for synchronization. | |
+| `GITHUB_SYNC_CRON` | Cron schedule for the synchronization task. | `0 0,12 * * *` |

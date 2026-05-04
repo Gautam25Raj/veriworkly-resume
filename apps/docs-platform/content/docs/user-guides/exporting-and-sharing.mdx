@@ -1,0 +1,52 @@
+---
+title: Exporting and Sharing
+description: Technical reference for document generation, file formats, and managed public sharing.
+---
+
+import { FileText, FileDown, ShieldCheck, Link as LinkIcon } from "lucide-react";
+
+# Exporting and Sharing
+
+VeriWorkly provides several mechanisms for document distribution, ranging from local file generation to cloud-hosted public links. Our architecture ensures that document fidelity is maintained across all export formats.
+
+---
+
+## 1. High-Fidelity PDF Export
+
+To address the limitations of client-side rendering, VeriWorkly utilizes a server-side pipeline for PDF generation. This ensures 100% layout consistency and full compatibility with Applicant Tracking Systems (ATS).
+
+- **Technical Process**: Upon initiation, the document payload is transmitted to the backend API and queued via BullMQ. A headless Chromium instance (Playwright) renders the document natively, ensuring a selectable text layer and embedded font support.
+- **ATS Compliance**: The resulting PDF is a vector-based document, allowing recruitment software to accurately parse the semantic structure and professional history.
+
+<Callout type="warn" title="Data Privacy Boundary">
+  PDF generation requires the temporary transmission of document payloads to our API. For unauthenticated users, this data is processed exclusively in-memory and is discarded immediately following document delivery.
+</Callout>
+
+---
+
+## 2. DOCX Export
+
+For scenarios requiring manual post-processing in word processors such as Microsoft Word or Google Docs, VeriWorkly supports direct export to the `.docx` format.
+
+- **Client-Side Processing**: DOCX generation is performed locally within the browser, ensuring that professional data remains on the user's device.
+- **Structural Integrity**: While visual styling is adapted for word processor compatibility, the document's structural hierarchy (headings, lists, and metadata) remains preserved.
+
+---
+
+## 3. Managed Public Sharing
+
+Authenticated users with active Cloud Sync may generate persistent, shareable URLs for their resumes. This feature enables real-time document distribution without the need for manual file transfers.
+
+### Link Types and Security
+
+<Cards>
+  <Card title="Public Access Links" icon={<LinkIcon />}>
+    Generates a unique, read-only URI for the document. Updates performed in the editor are immediately reflected on the public link, ensuring that recruiters always access the most current version.
+  </Card>
+
+  <Card title="Protected Access Links" icon={<ShieldCheck />}>
+    Provides an additional security layer by requiring a password for document access. This ensures that sensitive contact information and professional history are restricted to authorized parties.
+  </Card>
+</Cards>
+
+For a deeper analysis of the underlying rendering infrastructure, refer to the [PDF Export Engine](/docs/architecture/pdf-generation) documentation.

@@ -1,0 +1,145 @@
+---
+title: Database Schema
+description: Technical reference for the VeriWorkly relational data model and Prisma schema.
+---
+
+# Database Schema
+
+VeriWorkly utilizes **PostgreSQL** for persistent storage, interfaced via **Prisma ORM**. The schema is optimized for session management, resume versioning, and background job synchronization.
+
+The source of truth for the database schema can be found in the repository:
+[apps/server/prisma/schema.prisma](https://github.com/Gautam25Raj/veriworkly-resume/blob/main/apps/server/prisma/schema.prisma)
+
+---
+
+## Core Authentication
+
+VeriWorkly implements a session-based authentication system.
+
+### User
+The central entity for account management and ownership.
+
+```prisma
+model User {
+  id                  String               @id @default(cuid())
+  email               String               @unique
+  name                String?
+  emailVerified       Boolean              @default(false)
+  image               String?
+  autoSyncEnabled     Boolean              @default(false)
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  sessions            Session[]
+  accounts            Account[]
+  resumes             Resume[]
+  masterProfile       MasterProfile?
+}
+```
+
+### Session
+Handles active authentication states and security metadata.
+
+```prisma
+model Session {
+  id        String   @id @default(cuid())
+  expiresAt DateTime
+  token     String   @unique
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+```
+
+---
+
+## Content Management
+
+### Resume
+Stores individual resume documents and their synchronization status.
+
+```prisma
+model Resume {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title         String   @default("My Resume")
+  content       Json     // Full resume data structure
+  template      String   @default("modern")
+  isPublic      Boolean  @default(false)
+  syncStatus    String   @default("local-only")
+  lastSyncedAt  DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+```
+
+### Master Profile
+A centralized career profile used for seeding multiple resumes.
+
+```prisma
+model MasterProfile {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  content   Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+```
+
+---
+
+## Sharing and Analytics
+
+### ResumeShareLink
+Manages public access to resumes with snapshotting and optional protection.
+
+```prisma
+model ResumeShareLink {
+  id           String   @id @default(cuid())
+  userId       String
+  resumeId     String
+  token        String   @unique
+  snapshot     Json     // Point-in-time copy of resume data
+  passwordHash String?
+  expiresAt    DateTime?
+  viewCount    Int      @default(0)
+  lastViewedAt DateTime?
+}
+```
+
+---
+
+## System Operations
+
+### AuditLog
+Tracks API access and security events across the platform.
+
+```prisma
+model AuditLog {
+  id        String   @id @default(cuid())
+  method    String
+  path      String
+  status    Int
+  ip        String?
+  userAgent String?
+  error     String?
+  createdAt DateTime @default(now())
+}
+```
+
+### ApiKey
+Manages access control for internal services and third-party integrations.
+
+```prisma
+model ApiKey {
+  id        String    @id @default(cuid())
+  key       String    @unique
+  name      String
+  isActive  Boolean   @default(true)
+  rateLimit Int       @default(1000)
+}
+```
+
+For the complete list of models including Roadmap and GitHub Sync entities, refer to the [full schema file](https://github.com/Gautam25Raj/veriworkly-resume/blob/main/apps/server/prisma/schema.prisma).

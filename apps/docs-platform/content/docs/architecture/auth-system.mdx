@@ -1,0 +1,59 @@
+---
+title: Authentication System
+description: Analysis of the passwordless authentication framework and session management architecture.
+---
+
+# Authentication System
+
+VeriWorkly utilizes the **Better-Auth** framework, specifically the **Email OTP** plugin, to provide a secure and frictionless authentication experience. This passwordless approach prioritizes account security and eliminates the risks associated with traditional credential management.
+
+## Authentication Methods
+
+1. **Email OTP (One-Time Password)**: A secure, 6-digit verification code is transmitted to the user's registered email address. Validation of this code establishes a secure session.
+2. **Magic Links**: (Future Implementation) Secure, one-click authentication tokens delivered via email.
+
+---
+
+## Technical Architecture
+
+The authentication infrastructure is distributed between the client and server applications to maintain a clear separation of concerns.
+
+- **Frontend (`apps/resume-builder`)**: Utilizes the Better-Auth client SDK for session lifecycle management and the orchestration of the OTP verification interface.
+- **Backend (`apps/server`)**: Operates as the centralized authentication authority. Responsibilities include database interaction, OTP generation, and secure email dispatch via SMTP.
+
+### Session Management Strategy
+- **Persistence**: Active sessions are persisted in the `Session` table within the PostgreSQL database.
+- **Cookie Security**: Sessions are managed via browser cookies configured with `HttpOnly`, `Secure`, and `SameSite=Lax` attributes.
+- **Cross-Domain Compatibility**: In production environments, cookies are scoped to the root domain (e.g., `.veriworkly.com`) to allow seamless session persistence across all platform subdomains.
+
+---
+
+## Implementation Reference
+
+The following configuration demonstrates the integration of the Better-Auth handler within the backend service.
+
+```typescript
+import { betterAuth } from "better-auth";
+import { emailOTP } from "better-auth/plugins";
+
+export const auth = betterAuth({
+  database: prismaAdapter(prisma, { provider: "postgresql" }),
+  plugins: [
+    emailOTP({
+      async sendVerificationOTP({ email, otp, type }) {
+        await sendAuthOtpEmail({ email, otp, type });
+      },
+    }),
+  ],
+});
+```
+
+---
+
+## Security Controls
+
+- **Rate Limiting**: The OTP request endpoint is governed by strict rate-limiting policies to prevent brute-force attacks and email system abuse.
+- **Temporal Invalidation**: OTP tokens are short-lived (defaulting to a 10-minute validity window) and are invalidated immediately upon successful use.
+- **Proxy Trust**: The authentication handler is configured to correctly resolve client IP addresses when operating behind reverse proxies such as Nginx or Cloudflare.
+
+For additional information on user data persistence, refer to the [Database Schema](/docs/architecture/database-schema) documentation.

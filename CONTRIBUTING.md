@@ -1,131 +1,82 @@
-# 🤝 Contributing to VeriWorkly Resume
+# 🤝 Contributing to VeriWorkly
 
-First off, thank you for considering contributing to **VeriWorkly**! Your contributions help make this project better for everyone.
-
-## 🌈 Our Vision
-
-VeriWorkly aims to provide a **professional, privacy-first, and frictionless resume building experience**.
-
-We value:
-
-- Simplicity
-- Performance
-- Clean design
-- Data privacy
+First off, thank you for considering contributing to **VeriWorkly**! We are building a professional, privacy-first career ecosystem, and we value your help.
 
 ## 🏗️ Getting Started
 
-### Prerequisites
+### 📦 Development Prerequisites
+- **Node.js 20+**
+- **npm v10+**
+- **Docker** (Optional, for full stack testing)
 
-- Node.js (v20 or higher)
-- npm / yarn / pnpm
-- Docker (optional, but recommended for full-stack testing)
-- Redis (optional, recommended)
-- A Neon PostgreSQL account (for backend features)
-
-### Local Development Setup
-
-1. **Fork the repository** on GitHub.
-2. **Clone your fork** locally:
-
+### 🛠️ Local Setup
+1. **Fork** the repository.
+2. **Clone** your fork:
    ```bash
    git clone https://github.com/your-username/veriworkly-resume.git
    cd veriworkly-resume
    ```
-
-3. **Install dependencies**:
-
+3. **Install** dependencies:
    ```bash
    npm install
-   cd server && npm install && cd ..
    ```
-
-4. **Setup environment variables**
-
+4. **Environment**:
    ```bash
    cp .env.example .env
-   cp server/.env.example server/.env
+   cp apps/server/.env.example apps/server/.env
    ```
-
-   > 👉 See `ENV_SETUP.md` for detailed configuration.
-
-5. **Setup database**
-
-   ```bash id="db4x4"
-   cd server
-   npm run db:push
-   ```
-
-6. **Run development servers**
-
-   Backend:
-
+5. **Start Dev**:
    ```bash
-   npm run dev
+   npm run dev:all
    ```
+
+---
 
 ## 🌿 Branching Policy
 
-- `master`: Production-ready code.
-- `dev`: Ongoing development. Base your PRs on this branch if it exists, otherwise use `master`.
+- `main`: Production-ready code.
+- `dev`: Active development and integration branch. **Base your PRs here.**
 
-### Branch Naming
+### Branch Naming Convention
+- `feat/feature-name`
+- `fix/bug-name`
+- `docs/doc-update`
+- `refactor/scope-of-work`
 
-- Feature → `feature/your-feature-name`
-- Fix → `fix/issue-description`
-- Refactor → `refactor/scope`
+---
 
-## 🛠️ Development Workflow
+## 🛠️ Development Guidelines
 
-### 📦 Code Style
+### 🎨 Architecture
+We use a **Monorepo** structure.
+- **apps/resume-builder**: Core Next.js application.
+- **apps/server**: Express API.
+- **apps/docs-platform**: Documentation (Fumadocs).
+- **packages/ui**: Shared Design System.
 
-- Use **TypeScript**
-- Follow existing project structure (feature-based)
-- Write small, reusable components
-- Prefer clear naming over clever code
-
-### Steps to Contribute
-
-1. **Create an issue**: Before starting significant work, please open an issue to discuss it.
-
-2. **Implement your changes**:
-   - Write clean, documented TypeScript.
-   - Follow the existing project structure (feature-based architecture).
-
-3. **Lint and Format**:
-
-   ```bash
-   npm run lint
-   npm run format:write
-   ```
+### 📝 Coding Standards
+- **TypeScript**: Mandatory for all new code.
+- **Linting**: Run `npm run lint` before committing.
+- **Formatting**: We use Prettier. Run `npm run format:write`.
 
 ---
 
 ## 📝 Pull Request Process
 
-1. Ensure your code follows the coding standards.
-2. Update documentation if necessary.
-3. Create a pull request against the `dev` branch.
-4. Provide a clear description of your changes and link to any related issues.
-5. Link the PR to the relevant issue.
-6. Once your PR is submitted, it will be reviewed by the maintainers.
-
----
-
-### ✅ PR Checklist
-
-- [ ] Code builds successfully
-- [ ] Lint passes
-- [ ] Tests pass
-- [ ] No unnecessary console logs
-- [ ] Documentation updated (if needed)
+1. **Create an Issue**: Discuss large changes before starting work.
+2. **Submit PR**: Open a PR against the `dev` branch.
+3. **Checklist**:
+   - [ ] Code builds successfully (`npm run build`)
+   - [ ] Lint passes (`npm run lint`)
+   - [ ] Tests pass (`npm test`)
+   - [ ] Documentation updated (if applicable)
 
 ---
 
 ## 🤝 Code of Conduct
 
-We expect all contributors to adhere to our Code of Conduct (details to be added). Be respectful, inclusive, and collaborative.
+We expect all contributors to follow our [Code of Conduct](CODE_OF_CONDUCT.md). Be respectful, inclusive, and collaborative.
 
 ---
 
-Built by [VeriWorkly](https://veriworkly.com) with ❤️.
+Built with ❤️ by [VeriWorkly Team](https://veriworkly.com)

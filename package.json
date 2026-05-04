@@ -1,53 +1,31 @@
 {
   "name": "veriworkly-resume",
-  "version": "1.11.0",
+  "version": "2.0.0",
   "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "dev": "npm run dev -w @veriworkly/resume-builder",
+    "dev:server": "npm run dev -w @veriworkly/server",
+    "dev:docs": "npm run dev -w @veriworkly/docs-platform -- -p 3001",
+    "dev:blog": "npm run dev -w @veriworkly/blog-platform -- -p 3002",
+    "dev:all": "npm run dev --workspaces --if-present",
+    "build": "npm run build --workspaces --if-present",
+    "build:resume": "npm run build -w @veriworkly/resume-builder",
+    "build:blog": "npm run build -w @veriworkly/blog-platform",
+    "build:docs": "npm run build -w @veriworkly/docs-platform",
     "lint": "eslint .",
-    "test:contracts": "vitest run",
-    "test:visual": "playwright test",
-    "test:visual:update": "playwright test --update-snapshots",
     "format": "prettier --check .",
     "format:write": "prettier --write .",
-    "generate:api": "npx @redocly/cli bundle specs/openapi.yaml -o openapi.yaml && node scripts/generate-api.mjs"
-  },
-  "dependencies": {
-    "@types/mdx": "^2.0.13",
-    "better-auth": "^1.6.9",
-    "clsx": "^2.1.1",
-    "docx": "^9.6.1",
-    "fumadocs-core": "^16.8.3",
-    "fumadocs-mdx": "^14.3.1",
-    "fumadocs-openapi": "^10.8.0",
-    "fumadocs-ui": "^16.8.3",
-    "jose": "^6.2.2",
-    "lucide-react": "^1.11.0",
-    "next": "^16.2.4",
-    "next-themes": "^0.4.6",
-    "react": "^19.2.5",
-    "react-dom": "^19.2.5",
-    "tailwind-merge": "^3.5.0",
-    "zod": "^3.25.76",
-    "zustand": "^5.0.12"
-  },
-  "overrides": {
-    "postcss": "^8.5.10"
+    "generate:api": "npx @redocly/cli bundle apps/docs-platform/specs/openapi.yaml -o apps/docs-platform/openapi.yaml && node scripts/generate-api.mjs"
   },
   "devDependencies": {
-    "@playwright/test": "^1.59.1",
-    "@tailwindcss/postcss": "^4",
     "@types/node": "^25",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "^16.2.4",
     "prettier": "^3.8.3",
     "prettier-plugin-tailwindcss": "^0.7.3",
-    "tailwindcss": "^4",
-    "typescript": "^6",
-    "vitest": "^4.1.5"
+    "typescript": "^6"
   }
 }

@@ -1,0 +1,76 @@
+---
+title: Privacy Policy
+description: Detailed explanation of how VeriWorkly handles personal data, authentication, and document processing.
+---
+
+# Privacy Policy
+
+VeriWorkly (the “Service”) is committed to protecting your privacy and ensuring the security of your personal information. This policy outlines our practices regarding data collection, storage, and processing.
+
+## 1. Overview
+
+VeriWorkly is an open-source platform that can be operated by the VeriWorkly Team (official hosted instance) or by independent organizations (self-hosted instances). The data controller responsible for your information is the operator of the specific instance you are using.
+
+- **Service Operator**: VeriWorkly Team
+- **Primary Contact**: [info@veriworkly.com](mailto:info@veriworkly.com)
+- **Official Instance**: [https://veriworkly.com](https://veriworkly.com)
+- **Effective Date**: January 1, 2026
+
+If you are utilizing a self-hosted version, you are the Service Operator and are responsible for regulatory compliance.
+
+---
+
+## 2. Data Collection and Usage
+
+### Account Information
+When you register an account using Email OTP, we store:
+- **Email Address**: Used exclusively for authentication, session management, and critical security notifications.
+- **Profile Metadata**: Optional display name and profile image provided during account setup.
+
+### Resume Content
+When you utilize the builder or enable Cloud Sync, the Service processes and stores:
+- **Professional Data**: Experience history, educational background, skill sets, projects, and contact information.
+- **Document Metadata**: Custom section headers, template preferences, and layout configurations.
+
+### File Storage
+Uploaded assets, such as profile images, are stored in:
+- **Local Filesystem**: Default for development and standard self-hosted environments.
+- **S3-Compatible Storage**: Default for the production environment and highly scalable deployments.
+
+---
+
+## 3. Data Processing and Services
+
+We process your information for the following core purposes:
+- **Authentication**: Verifying identity via secure One-Time Password (OTP) flows.
+- **Document Generation**: Utilizing our server-side Playwright engine to render high-fidelity PDF and DOCX files.
+- **Synchronization**: Maintaining consistency across multiple user devices for authenticated accounts.
+- **Preferences**: Persisting UI configurations such as theme selection and localization settings.
+
+---
+
+## 4. Cookies and Local Storage
+
+### Local-First Persistence
+The majority of resume data is stored locally within your browser using **IndexedDB**. This data remains on your device and is not accessible by our servers unless Cloud Sync is explicitly enabled.
+
+### Authentication Cookies
+We utilize functional cookies to maintain session security:
+- **Session Token**: Securely identifies an active authentication state.
+- **Security Attributes**: All cookies are issued with `HttpOnly`, `Secure`, and `SameSite=Lax` flags.
+
+We do **not** utilize third-party tracking, advertising, or analytics cookies.
+
+---
+
+## 5. Data Retention and Deletion
+
+- **Local Data**: Persists until the browser cache is cleared or the resume is manually deleted by the user.
+- **Cloud Data**: Retained as long as the user account remains active. Users may delete individual resumes or their entire account at any time via the Settings dashboard. Deletion of an account results in the permanent removal of all associated cloud-hosted data.
+
+---
+
+## 6. Contact Information
+
+For inquiries regarding this Privacy Policy or to exercise your data protection rights, please contact us at:
+- **Email**: [info@veriworkly.com](mailto:info@veriworkly.com)

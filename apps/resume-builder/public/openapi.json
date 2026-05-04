@@ -1,0 +1,166 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "VeriWorkly Resume API",
+    "version": "1.0.0",
+    "description": "Privacy-first, local-first API for building and managing professional resumes."
+  },
+  "servers": [
+    {
+      "url": "https://api.veriworkly.com/api/v1",
+      "description": "Production Server"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health Check",
+        "description": "Check the health status of the API and its dependencies.",
+        "responses": {
+          "200": { "description": "System is healthy" }
+        }
+      }
+    },
+    "/resumes": {
+      "get": {
+        "summary": "List Resumes",
+        "description": "Retrieve a list of all resumes for the authenticated user.",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Array of resume objects" },
+          "401": { "description": "Unauthorized" }
+        }
+      }
+    },
+    "/resumes/{resumeId}": {
+      "get": {
+        "summary": "Get Resume",
+        "description": "Retrieve specific resume data.",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "resumeId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Resume object" },
+          "404": { "description": "Not Found" }
+        }
+      }
+    },
+    "/resumes/{resumeId}/sync": {
+      "put": {
+        "summary": "Sync Resume",
+        "description": "Sync local resume data to the server.",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "resumeId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "data": { "type": "object" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Synced successfully" }
+        }
+      }
+    },
+    "/profiles/master": {
+      "get": {
+        "summary": "Get Master Profile",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": { "description": "Master profile object" }
+        }
+      },
+      "put": {
+        "summary": "Update Master Profile",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "profile": { "type": "object" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Updated successfully" }
+        }
+      }
+    },
+    "/shares/resumes/{resumeId}": {
+      "get": {
+        "summary": "List Share Links",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "resumeId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": { "200": { "description": "Array of share links" } }
+      },
+      "post": {
+        "summary": "Create Share Link",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "resumeId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": { "201": { "description": "Share link created" } }
+      }
+    },
+    "/share-links/{token}": {
+      "get": {
+        "summary": "Get Public Resume",
+        "parameters": [
+          { "name": "token", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Public resume data" },
+          "404": { "description": "Token invalid or expired" }
+        }
+      }
+    },
+    "/exports/resumes/{resumeId}/jobs": {
+      "post": {
+        "summary": "Queue Private Export",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          { "name": "resumeId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "202": { "description": "Export job queued" }
+        }
+      }
+    },
+    "/exports/jobs/{jobId}": {
+      "get": {
+        "summary": "Get Job Status",
+        "parameters": [
+          { "name": "jobId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Job status" }
+        }
+      }
+    }
+  }
+}
