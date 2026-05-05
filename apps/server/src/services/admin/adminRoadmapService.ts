@@ -6,7 +6,7 @@ import { cacheDelByPrefix } from "#utils/redis";
 
 import { Prisma } from "@prisma/client";
 
-import { RoadmapStatus } from "../roadmapService";
+import { RoadmapStatus } from "#services/roadmapService";
 
 interface RoadmapAdminCreateInput {
   id?: string;

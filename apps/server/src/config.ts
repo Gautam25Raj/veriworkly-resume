@@ -62,6 +62,21 @@ export const config = {
     smtpPass: process.env.AUTH_SMTP_PASS || "",
   },
 
+  apiKeys: {
+    hashSecret: process.env.API_KEY_HASH_SECRET || process.env.AUTH_SECRET || "dev-api-key-secret",
+    authCacheTtlSeconds: parseInt(process.env.API_KEY_AUTH_CACHE_TTL_SECONDS || "300", 10),
+    lastUsedTouchIntervalSeconds: parseInt(
+      process.env.API_KEY_LAST_USED_TOUCH_INTERVAL_SECONDS || "300",
+      10,
+    ),
+    defaultRateLimit: parseInt(process.env.API_KEY_DEFAULT_RATE_LIMIT || "20", 10),
+    defaultScopes: (process.env.API_KEY_DEFAULT_SCOPES || "user:read")
+      .split(",")
+      .map((scope) => scope.trim())
+      .filter(Boolean),
+    defaultKeyLifetimeDays: parseInt(process.env.API_KEY_DEFAULT_LIFETIME_DAYS || "365", 10),
+  },
+
   server: {
     trustProxy: parseBoolean(process.env.TRUST_PROXY, false),
   },

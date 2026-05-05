@@ -27,6 +27,7 @@ model User {
   resumeCloudSyncs    ResumeCloudSync[]
   resumeShareLinks    ResumeShareLink[]
   roadmapInteractions RoadmapInteraction[]
+  apiKeys             ApiKey[]
 
   @@index([email])
 }
@@ -267,16 +268,27 @@ model GitHubSyncItem {
 
 // API Keys for rate limiting and access control
 model ApiKey {
-  id        String    @id @default(cuid())
-  key       String    @unique
-  name      String
-  isActive  Boolean   @default(true)
-  rateLimit Int       @default(1000)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  lastUsed  DateTime?
+  id         String    @id @default(cuid())
+  keyHash    String    @unique
+  keyPrefix  String
+  keySuffix  String
+  name       String
+  scopes     String[]  @default(["user:read"])
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  isActive   Boolean   @default(true)
+  rateLimit  Int       @default(20)
+  expiresAt  DateTime?
+  revokedAt  DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  lastUsed   DateTime?
 
+  @@index([userId])
+  @@index([userId, isActive])
   @@index([isActive])
+  @@index([expiresAt])
+  @@index([keyHash])
 }
 
 // Audit log for tracking API access

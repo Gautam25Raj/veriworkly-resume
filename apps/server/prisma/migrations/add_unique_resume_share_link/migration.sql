@@ -11,8 +11,11 @@ BEGIN
 				OR (older."createdAt" = newer."createdAt" AND older."id" < newer."id")
 			);
 
-		ALTER TABLE "ResumeShareLink"
-		ADD CONSTRAINT "ResumeShareLink_userId_resumeId_key"
-		UNIQUE ("userId", "resumeId");
+		-- Check if the unique constraint/index already exists
+		IF to_regclass('public."ResumeShareLink_userId_resumeId_key"') IS NULL THEN
+			ALTER TABLE "ResumeShareLink"
+			ADD CONSTRAINT "ResumeShareLink_userId_resumeId_key"
+			UNIQUE ("userId", "resumeId");
+		END IF;
 	END IF;
 END $$;

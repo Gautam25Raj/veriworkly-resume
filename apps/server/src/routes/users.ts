@@ -1,14 +1,15 @@
 import { Router } from "express";
 
-import { authMiddleware } from "#middleware/auth";
+import { flexibleAuth } from "#middleware/flexibleAuth";
+import { requireApiKeyScopes } from "#middleware/apiKeyScope";
 
 import { getCurrentUserController, updateUserNameController } from "#controllers/userController";
 
 const router = Router();
 
-router.use(authMiddleware);
+router.use(flexibleAuth);
 
-router.get("/me", getCurrentUserController);
-router.put("/me/name", updateUserNameController);
+router.get("/me", requireApiKeyScopes("user:read"), getCurrentUserController);
+router.put("/me/name", requireApiKeyScopes("user:write"), updateUserNameController);
 
 export default router;
