@@ -13,14 +13,12 @@ export default function ProfileCTA() {
           </div>
 
           <div className="flex items-center gap-8">
-            <div className="bg-accent/10 text-accent ring-accent/20 group-hover:bg-accent flex h-16 w-16 items-center justify-center rounded-2xl ring-1 transition-all duration-500 group-hover:scale-110 group-hover:text-white">
+            <div className="bg-accent/10 text-accent ring-accent/20 group-hover:bg-accent flex h-16 w-16 items-center justify-center rounded-2xl ring-1 transition-all duration-300 group-hover:scale-110 group-hover:text-white">
               <UserCircle className="h-9 w-9" />
             </div>
 
             <div className="space-y-1">
-              <h3 className="text-foreground text-xl font-bold">
-                Master Profile
-              </h3>
+              <h3 className="text-foreground text-xl font-bold">Master Profile</h3>
 
               <p className="text-muted-foreground text-sm">
                 Centralized data used for auto-filling resume drafts.

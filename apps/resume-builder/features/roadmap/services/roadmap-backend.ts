@@ -98,10 +98,7 @@ const statusTitles: Record<RoadmapStatus, string> = {
   done: "Done",
 };
 
-async function fetchApiData<T>(
-  path: string,
-  options?: RequestInit,
-): Promise<T> {
+async function fetchApiData<T>(path: string, options?: RequestInit): Promise<T> {
   const response = await fetch(backendApiUrl(path), {
     ...options,
     credentials: options?.credentials ?? "include",
@@ -141,10 +138,7 @@ function parseDetails(raw: unknown): RoadmapDetails | null {
 
             const item = entry as Record<string, unknown>;
 
-            if (
-              typeof item.before !== "string" ||
-              typeof item.after !== "string"
-            ) {
+            if (typeof item.before !== "string" || typeof item.after !== "string") {
               return null;
             }
 
@@ -153,33 +147,27 @@ function parseDetails(raw: unknown): RoadmapDetails | null {
               after: item.after,
             };
           })
-          .filter(
-            (entry): entry is { before: string; after: string } =>
-              entry !== null,
-          )
+          .filter((entry): entry is { before: string; after: string } => entry !== null)
       : undefined;
 
   const readMedia = (value: unknown) =>
     Array.isArray(value)
       ? value
-          .map(
-            (entry): { type?: string; label?: string; url?: string } | null => {
-              if (!entry || typeof entry !== "object" || Array.isArray(entry)) {
-                return null;
-              }
+          .map((entry): { type?: string; label?: string; url?: string } | null => {
+            if (!entry || typeof entry !== "object" || Array.isArray(entry)) {
+              return null;
+            }
 
-              const item = entry as Record<string, unknown>;
+            const item = entry as Record<string, unknown>;
 
-              return {
-                type: typeof item.type === "string" ? item.type : undefined,
-                label: typeof item.label === "string" ? item.label : undefined,
-                url: typeof item.url === "string" ? item.url : undefined,
-              };
-            },
-          )
+            return {
+              type: typeof item.type === "string" ? item.type : undefined,
+              label: typeof item.label === "string" ? item.label : undefined,
+              url: typeof item.url === "string" ? item.url : undefined,
+            };
+          })
           .filter(
-            (entry): entry is { type?: string; label?: string; url?: string } =>
-              entry !== null,
+            (entry): entry is { type?: string; label?: string; url?: string } => entry !== null,
           )
       : undefined;
 
@@ -199,10 +187,7 @@ function parseDetails(raw: unknown): RoadmapDetails | null {
 
             return {
               name: item.name,
-              description:
-                typeof item.description === "string"
-                  ? item.description
-                  : undefined,
+              description: typeof item.description === "string" ? item.description : undefined,
               image: typeof item.image === "string" ? item.image : undefined,
             };
           })
@@ -211,20 +196,12 @@ function parseDetails(raw: unknown): RoadmapDetails | null {
 
   return {
     fullDescription:
-      typeof details.fullDescription === "string"
-        ? details.fullDescription
-        : undefined,
-    whyItMatters:
-      typeof details.whyItMatters === "string"
-        ? details.whyItMatters
-        : undefined,
-    timeline:
-      typeof details.timeline === "string" ? details.timeline : undefined,
+      typeof details.fullDescription === "string" ? details.fullDescription : undefined,
+    whyItMatters: typeof details.whyItMatters === "string" ? details.whyItMatters : undefined,
+    timeline: typeof details.timeline === "string" ? details.timeline : undefined,
     problem: typeof details.problem === "string" ? details.problem : undefined,
-    solution:
-      typeof details.solution === "string" ? details.solution : undefined,
-    approach:
-      typeof details.approach === "string" ? details.approach : undefined,
+    solution: typeof details.solution === "string" ? details.solution : undefined,
+    approach: typeof details.approach === "string" ? details.approach : undefined,
     keyImprovements: readStringArray(details.keyImprovements),
     beforeAfter: readBeforeAfter(details.beforeAfter),
     technicalHighlights: readStringArray(details.technicalHighlights),
@@ -257,9 +234,7 @@ async function fetchRoadmapStatusItems(
       offset: offset.toString(),
     });
 
-    const listData = await fetchApiData<RoadmapListPayload>(
-      `/roadmap?${query.toString()}`,
-    );
+    const listData = await fetchApiData<RoadmapListPayload>(`/roadmap?${query.toString()}`);
 
     items.push(...listData.items.map(normalizeFeature));
 
@@ -277,14 +252,10 @@ function nowIso() {
   return new Date().toISOString();
 }
 
-export async function fetchRoadmapFromBackend(
-  query: RoadmapQuery = {},
-): Promise<RoadmapResponse> {
+export async function fetchRoadmapFromBackend(query: RoadmapQuery = {}): Promise<RoadmapResponse> {
   const sort = query.sort ?? "newest";
 
-  const statuses: RoadmapStatus[] = query.status
-    ? [query.status]
-    : ["todo", "in-progress", "done"];
+  const statuses: RoadmapStatus[] = query.status ? [query.status] : ["todo", "in-progress", "done"];
 
   const statusEntries = await Promise.all(
     statuses.map(async (status) => {
@@ -293,10 +264,7 @@ export async function fetchRoadmapFromBackend(
     }),
   );
 
-  const sectionsMap = Object.fromEntries(statusEntries) as Record<
-    RoadmapStatus,
-    RoadmapFeature[]
-  >;
+  const sectionsMap = Object.fromEntries(statusEntries) as Record<RoadmapStatus, RoadmapFeature[]>;
 
   const sections = statuses.map((status) => {
     return {
@@ -316,9 +284,7 @@ export async function fetchRoadmapFromBackend(
   };
 }
 
-export async function fetchRoadmapFeatureById(
-  id: string,
-): Promise<RoadmapFeature | null> {
+export async function fetchRoadmapFeatureById(id: string): Promise<RoadmapFeature | null> {
   try {
     const feature = await fetchApiData<RoadmapFeature>(`/roadmap/${id}`);
 

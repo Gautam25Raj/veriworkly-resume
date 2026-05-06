@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  useMemo,
-  useState,
-  useEffect,
-  useCallback,
-  useSyncExternalStore,
-} from "react";
+import { useMemo, useState, useEffect, useCallback, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 
 import {
@@ -29,10 +23,7 @@ import { listSavedResumes } from "@/features/resume/services/resume-core";
 import { trackUsageEvent } from "@/features/analytics/services/usage-metrics";
 import { RESUME_STORAGE_UPDATED_EVENT } from "@/features/resume/services/local-storage";
 
-import {
-  RESUME_ACTIVE_ID_STORAGE_KEY,
-  RESUME_COLLECTION_STORAGE_KEY,
-} from "@/lib/constants";
+import { RESUME_ACTIVE_ID_STORAGE_KEY, RESUME_COLLECTION_STORAGE_KEY } from "@/lib/constants";
 
 import { useUserStore } from "@/store/useUserStore";
 
@@ -119,19 +110,13 @@ const DashboardWorkspace = () => {
 
   const [shareTargetId, setShareTargetId] = useState<string | null>(null);
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
-  const [syncDetailsTargetId, setSyncDetailsTargetId] = useState<string | null>(
-    null,
-  );
+  const [syncDetailsTargetId, setSyncDetailsTargetId] = useState<string | null>(null);
 
   const [isRefreshingCloud, setIsRefreshingCloud] = useState(false);
   const [syncNotice, setSyncNotice] = useState<string | null>(null);
   const [syncingResumeId, setSyncingResumeId] = useState<string | null>(null);
 
-  const resumes = useSyncExternalStore(
-    subscribe,
-    getResumeSnapshot,
-    () => EMPTY_RESUMES,
-  );
+  const resumes = useSyncExternalStore(subscribe, getResumeSnapshot, () => EMPTY_RESUMES);
 
   useEffect(() => {
     if (!isLoggedIn) return;
@@ -222,9 +207,7 @@ const DashboardWorkspace = () => {
 
     setSyncNotice(result.message);
     trackUsageEvent({
-      event: result.ok
-        ? "resume_sync_local_only"
-        : "resume_sync_local_only_failed",
+      event: result.ok ? "resume_sync_local_only" : "resume_sync_local_only_failed",
     });
     setSyncDetailsTargetId(null);
   }, []);
@@ -273,8 +256,8 @@ const DashboardWorkspace = () => {
 
       <DestructiveModal
         open={Boolean(deleteTargetId)}
-        onConfirm={handleConfirmDelete}
-        onClose={() => setDeleteTargetId(null)}
+        onConfirmAction={handleConfirmDelete}
+        onCloseAction={() => setDeleteTargetId(null)}
         entityName={deleteTarget?.title ?? "resume"}
       />
 

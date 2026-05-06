@@ -1,15 +1,6 @@
 "use client";
 
-import {
-  Eye,
-  Lock,
-  Copy,
-  Globe,
-  Link2,
-  Trash2,
-  Calendar,
-  AlertCircle,
-} from "lucide-react";
+import { Eye, Lock, Copy, Globe, Link2, Trash2, Calendar, AlertCircle } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
 
 import { Badge, Modal, Input, Button, Checkbox } from "@veriworkly/ui";
@@ -57,21 +48,18 @@ const ActiveLinkRow = ({
           <p className="text-foreground max-w-30 truncate font-mono text-xs font-bold tracking-tight sm:max-w-none">
             {link.token}
           </p>
-          {link.passwordRequired && (
-            <Lock className="text-accent h-3 w-3 shrink-0" />
-          )}
+
+          {link.passwordRequired && <Lock className="text-accent h-3 w-3 shrink-0" />}
         </div>
 
         <div className="text-muted-foreground mt-1 flex items-center gap-2 text-[10px] font-medium tracking-wider uppercase">
           <span className="flex items-center gap-0.5">
             <Eye className="h-3 w-3" /> {link.viewCount}
           </span>
+
           <span className="opacity-30">•</span>
-          <span
-            className={
-              link.expiresAt ? "text-orange-500/80" : "text-emerald-500/80"
-            }
-          >
+
+          <span className={link.expiresAt ? "text-orange-500/80" : "text-emerald-500/80"}>
             {link.expiresAt ? "Expiring" : "Permanent"}
           </span>
         </div>
@@ -105,11 +93,7 @@ const ActiveLinkRow = ({
   );
 };
 
-const ShareResumeModal = ({
-  resumeId,
-  onClose,
-  onNotice,
-}: ShareResumeModalProps) => {
+const ShareResumeModal = ({ resumeId, onClose, onNotice }: ShareResumeModalProps) => {
   const [busy, setBusy] = useState(false);
   const [expiry, setExpiry] = useState("");
   const [password, setPassword] = useState("");
@@ -129,9 +113,7 @@ const ShareResumeModal = ({
 
       return links;
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Could not load share links.",
-      );
+      setError(err instanceof Error ? err.message : "Could not load share links.");
 
       return null;
     } finally {
@@ -140,7 +122,13 @@ const ShareResumeModal = ({
   }, []);
 
   useEffect(() => {
-    if (resumeId) refreshShareLinks(resumeId);
+    if (resumeId) {
+      const timer = setTimeout(() => {
+        void refreshShareLinks(resumeId);
+      }, 0);
+
+      return () => clearTimeout(timer);
+    }
   }, [resumeId, refreshShareLinks]);
 
   const handleCreate = async () => {
@@ -160,11 +148,7 @@ const ShareResumeModal = ({
       const shareLink = await createResumeShareLink(fullResume, {
         resumeTitle: fullResume.basics.fullName || "Shared Resume",
         password: password.trim() || undefined,
-        expiresAt: noExpiry
-          ? null
-          : expiry
-            ? new Date(expiry).toISOString()
-            : null,
+        expiresAt: noExpiry ? null : expiry ? new Date(expiry).toISOString() : null,
         noExpiry,
       });
 
@@ -197,9 +181,7 @@ const ShareResumeModal = ({
         return;
       }
 
-      setError(
-        err instanceof Error ? err.message : "Unable to create share link.",
-      );
+      setError(err instanceof Error ? err.message : "Unable to create share link.");
     } finally {
       setBusy(false);
     }
@@ -214,9 +196,7 @@ const ShareResumeModal = ({
       setShareLinks((prev) => prev.filter((item) => item.id !== linkId));
       onNotice("Share link revoked.");
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Unable to revoke share link.",
-      );
+      setError(err instanceof Error ? err.message : "Unable to revoke share link.");
     }
   };
 
@@ -231,12 +211,14 @@ const ShareResumeModal = ({
   };
 
   if (!resumeId) return null;
+
   return (
     <Modal open={true} onClose={handleClose}>
       <Modal.Content className="w-full overflow-hidden p-0 sm:rounded-xl">
         <div className="flex items-center gap-3 border-b px-4 pt-2 pb-4 md:bg-zinc-50/50 md:pt-4 dark:bg-zinc-900/50">
           <Link2 className="text-accent h-5 w-5" />
-          <h2 className="text-base font-semibold">Share Resume</h2>
+
+          <Modal.Title>Share Resume</Modal.Title>
         </div>
 
         <div className="space-y-6 p-4">
@@ -281,12 +263,7 @@ const ShareResumeModal = ({
             </div>
           </div>
 
-          <Button
-            size="sm"
-            loading={busy}
-            onClick={handleCreate}
-            className="w-full shadow-sm"
-          >
+          <Button size="sm" loading={busy} onClick={handleCreate} className="w-full shadow-sm">
             Create Share Link
           </Button>
 
@@ -300,16 +277,12 @@ const ShareResumeModal = ({
           <div className="border-t pt-2">
             <h4 className="text-muted-foreground mb-3 flex items-center justify-between text-xs font-semibold">
               ACTIVE LINKS
-              <Badge className="p-1.5 py-0.5 text-[10px]">
-                {shareLinks.length}
-              </Badge>
+              <Badge className="p-1.5 py-0.5 text-[10px]">{shareLinks.length}</Badge>
             </h4>
 
             <div className="max-h-48 space-y-2 overflow-y-auto">
               {linksLoading ? (
-                <p className="text-muted-foreground py-4 text-center text-xs">
-                  Loading...
-                </p>
+                <p className="text-muted-foreground py-4 text-center text-xs">Loading...</p>
               ) : shareLinks.length === 0 ? (
                 <div className="text-muted-foreground rounded-lg border-2 border-dashed py-8 text-center">
                   <Globe className="mx-auto mb-2 h-6 w-6 opacity-20" />
@@ -330,12 +303,7 @@ const ShareResumeModal = ({
         </div>
 
         <Modal.Footer>
-          <Button
-            size="sm"
-            variant="secondary"
-            onClick={handleClose}
-            className="w-full md:w-fit"
-          >
+          <Button size="sm" variant="secondary" onClick={handleClose} className="w-full md:w-fit">
             Close
           </Button>
         </Modal.Footer>

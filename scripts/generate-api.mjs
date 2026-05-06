@@ -1,15 +1,17 @@
+import path from "node:path";
 import { generateFiles } from "fumadocs-openapi";
 import { createOpenAPI } from "fumadocs-openapi/server";
-import { copyFileSync } from "node:fs";
+
+process.chdir(path.join(process.cwd(), "apps/docs-platform"));
 
 const openapi = createOpenAPI({
-  input: ["./apps/docs-platform/openapi.yaml"],
+  input: ["./openapi.yaml"],
   proxyUrl: "/api/proxy",
 });
 
 void generateFiles({
   input: openapi,
-  output: "./apps/docs-platform/content/api-reference",
+  output: "./content/api-reference",
   per: "operation",
   groupBy: "tag",
 });

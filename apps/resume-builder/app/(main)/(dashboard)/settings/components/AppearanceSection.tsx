@@ -38,10 +38,7 @@ export default function AppearanceSection() {
     return () => clearTimeout(timer);
   }, []);
 
-  if (!mounted)
-    return (
-      <div className="bg-muted/10 h-48 w-full animate-pulse rounded-3xl" />
-    );
+  if (!mounted) return <div className="bg-muted/10 h-48 w-full animate-pulse rounded-3xl" />;
 
   const currentTheme = theme;
 
@@ -52,9 +49,7 @@ export default function AppearanceSection() {
           <Sun className="text-accent h-5 w-5" /> Visual Interface
         </h2>
 
-        <p className="text-muted-foreground text-sm">
-          Select your preferred workspace theme.
-        </p>
+        <p className="text-muted-foreground text-sm">Select your preferred workspace theme.</p>
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -67,7 +62,7 @@ export default function AppearanceSection() {
               key={opt.key}
               onClick={() => setTheme(opt.key)}
               className={cn(
-                "group relative flex flex-col rounded-3xl border-2 p-5 text-left transition-all duration-300 active:scale-[0.97]",
+                "group relative flex flex-col rounded-3xl border-2 p-5 text-left transition-all duration-300 active:scale-[0.97] cursor-pointer",
                 isActive
                   ? "border-accent bg-accent/3 shadow-accent/10 shadow-xl"
                   : "border-border hover:border-accent/40 hover:bg-accent/1 hover:-translate-y-1",
