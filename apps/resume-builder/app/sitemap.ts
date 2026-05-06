@@ -51,6 +51,11 @@ const publicRoutes = [
     priority: 0.75,
   },
   {
+    url: `${siteConfig.url}/style-guide`,
+    changeFrequency: "monthly" as const,
+    priority: 0.5,
+  },
+  {
     url: `${siteConfig.url}/privacy`,
     changeFrequency: "yearly" as const,
     priority: 0.5,
@@ -76,8 +81,6 @@ const publicRoutes = [
     priority: 0.7,
   },
 ] satisfies MetadataRoute.Sitemap;
-
-
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const lastModified = new Date();

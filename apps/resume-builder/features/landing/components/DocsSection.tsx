@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { BookOpen, Shield, Code, Zap, ArrowRight } from "lucide-react";
+import { Shield, Code, Zap, ArrowRight } from "lucide-react";
+
 import { Card } from "@veriworkly/ui";
 
 const featuredDocs = [
@@ -11,6 +12,7 @@ const featuredDocs = [
     color: "text-amber-500",
     bg: "bg-amber-500/10",
   },
+
   {
     title: "Privacy Architecture",
     description: "Deep dive into our local-first engine and how we keep your data 100% private.",
@@ -19,6 +21,7 @@ const featuredDocs = [
     color: "text-emerald-500",
     bg: "bg-emerald-500/10",
   },
+
   {
     title: "API Reference",
     description: "Explore our developer-first API to automate your resume workflows.",
@@ -37,9 +40,11 @@ const DocsSection = () => {
           <p className="text-muted text-xs font-semibold tracking-[0.24em] uppercase">
             Documentation
           </p>
+
           <h2 id="docs-heading" className="text-foreground text-3xl font-semibold tracking-tight">
             Built for users. Loved by developers.
           </h2>
+
           <p className="text-muted max-w-2xl text-base leading-7">
             Explore our comprehensive guides to understand the engineering behind VeriWorkly or
             learn how to get the most out of the builder.
@@ -66,16 +71,21 @@ const DocsSection = () => {
               <doc.icon className="h-6 w-6" />
             </div>
 
-            <h3 className="text-foreground mb-3 line-clamp-1 text-xl font-bold tracking-tight">{doc.title}</h3>
-            <p className="text-muted mb-6 line-clamp-2 text-sm leading-relaxed">{doc.description}</p>
+            <h3 className="text-foreground mb-3 line-clamp-1 text-xl font-bold tracking-tight">
+              {doc.title}
+            </h3>
 
+            <p className="text-muted mb-6 line-clamp-2 text-sm leading-relaxed">
+              {doc.description}
+            </p>
 
             <Link href={doc.href} className="absolute inset-0">
               <span className="sr-only">Read {doc.title}</span>
             </Link>
 
             <div className="flex items-center gap-2 text-[10px] font-bold tracking-widest text-zinc-400 uppercase transition-colors group-hover:text-foreground">
-              Read Guide <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />
+              Read Guide{" "}
+              <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />
             </div>
           </Card>
         ))}

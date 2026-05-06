@@ -5,7 +5,8 @@
     "**/.next": true,
     "**/out": true,
     "**/build": true,
-    "**/prisma/migrations": true
+    "**/prisma/migrations": true,
+    "**/.source": true
   },
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",

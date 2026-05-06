@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { siteConfig } from "@/config/site";
 
 import {
@@ -23,7 +24,7 @@ import StatsFilters from "./components/StatsFilters";
 import StatsOverview from "./components/StatsOverview";
 import StatsPagination from "./components/StatsPagination";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: `Development Activity | ${siteConfig.name}`,
   description:
     "Follow the GitHub sync board with live status filters, pagination, and sync timing.",
@@ -62,8 +63,7 @@ export default async function StatsPage({ searchParams }: StatsPageProps) {
     }).catch(() => null),
   ]);
 
-  const projectName =
-    stats?.projectName ?? `${siteConfig.shortName} GitHub Board`;
+  const projectName = stats?.projectName ?? `${siteConfig.shortName} GitHub Board`;
   const projectUrl = stats?.projectUrl ?? siteConfig.links.github;
 
   const issueCount = stats?.stats.issues ?? 0;
@@ -76,10 +76,7 @@ export default async function StatsPage({ searchParams }: StatsPageProps) {
   const nextSyncAt = stats?.nextSyncAt ?? null;
 
   const hasMore = Boolean(issuePage?.hasMore);
-  const totalPages = Math.max(
-    1,
-    Math.ceil((issuePage?.total ?? 0) / PAGE_SIZE),
-  );
+  const totalPages = Math.max(1, Math.ceil((issuePage?.total ?? 0) / PAGE_SIZE));
   const currentPage = Math.min(page, totalPages);
 
   return (
@@ -99,18 +96,9 @@ export default async function StatsPage({ searchParams }: StatsPageProps) {
           pullRequestCount={pullRequestCount}
         />
 
-        <StatsFilters
-          kind={kind}
-          status={status}
-          updatedTo={updatedTo}
-          updatedFrom={updatedFrom}
-        />
+        <StatsFilters kind={kind} status={status} updatedTo={updatedTo} updatedFrom={updatedFrom} />
 
-        <StatsBoard
-          offset={offset}
-          issuePage={issuePage}
-          totalItems={totalItems}
-        />
+        <StatsBoard offset={offset} issuePage={issuePage} totalItems={totalItems} />
 
         <StatsPagination
           kind={kind}
@@ -122,14 +110,12 @@ export default async function StatsPage({ searchParams }: StatsPageProps) {
         />
 
         <section className="border-border/70 bg-card/70 mt-10 rounded-3xl border p-6">
-          <h3 className="text-foreground text-lg font-semibold">
-            About this sync
-          </h3>
+          <h3 className="text-foreground text-lg font-semibold">About this sync</h3>
 
           <p className="text-muted mt-3 max-w-3xl leading-relaxed">
-            GitHub data is synced on the server, persisted as normalized rows,
-            and served in filtered slices so the frontend can render quickly
-            without re-fetching the entire board on every visit.
+            GitHub data is synced on the server, persisted as normalized rows, and served in
+            filtered slices so the frontend can render quickly without re-fetching the entire board
+            on every visit.
           </p>
         </section>
       </Container>

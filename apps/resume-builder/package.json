@@ -1,12 +1,14 @@
 {
   "name": "@veriworkly/resume-builder",
-  "version": "2.0.0",
+  "version": "2.2.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
+    "format": "prettier --check .",
+    "format:write": "prettier --write .",
     "test:contracts": "vitest run",
     "test:visual": "playwright test",
     "test:visual:update": "playwright test --update-snapshots"

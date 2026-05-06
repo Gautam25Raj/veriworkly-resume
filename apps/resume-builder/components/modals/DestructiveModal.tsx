@@ -7,24 +7,26 @@ import { Modal, Input, Button } from "@veriworkly/ui";
 
 interface DestructiveModalProps {
   open: boolean;
-  onClose: () => void;
-  onConfirm: () => void;
+  onCloseAction: () => void;
+  onConfirmAction: () => void;
   entityName?: string;
   title?: string;
   description?: string;
   confirmText?: string;
   warningText?: string;
+  loading?: boolean;
 }
 
 const DestructiveModal = ({
   open,
-  onClose,
-  onConfirm,
+  onCloseAction,
+  onConfirmAction,
   entityName = "item",
   title,
   description,
   confirmText = "DELETE",
   warningText,
+  loading = false,
 }: DestructiveModalProps) => {
   const [value, setValue] = useState("");
 
@@ -40,11 +42,11 @@ const DestructiveModal = ({
 
   const handleConfirm = () => {
     if (!isValid) return;
-    onConfirm();
+    onConfirmAction();
   };
 
   return (
-    <Modal open={open} onClose={onClose}>
+    <Modal open={open} onClose={onCloseAction}>
       <Modal.Content className="w-full max-w-md overflow-hidden p-0 sm:rounded-xl">
         <div className="border-destructive/10 bg-destructive/5 flex items-center gap-3 border-b px-4 py-4 md:bg-red-50/50 dark:md:bg-red-950/20">
           <div className="bg-destructive/10 text-destructive flex h-9 w-9 shrink-0 items-center justify-center rounded-full">
@@ -108,20 +110,16 @@ const DestructiveModal = ({
         </Modal.Body>
 
         <div className="flex flex-col-reverse gap-2 border-t bg-zinc-50/50 p-4 sm:flex-row sm:justify-end dark:bg-zinc-900/50">
-          <Button
-            onClick={onClose}
-            variant="secondary"
-            className="h-9 w-full text-xs sm:w-auto"
-          >
+          <Button onClick={onCloseAction} variant="secondary" className="h-9 w-full text-xs sm:w-auto">
             Cancel
           </Button>
 
           <Button
-            disabled={!isValid}
+            disabled={!isValid || loading}
             onClick={handleConfirm}
             className="h-9 w-full bg-red-600 px-6 text-xs font-bold tracking-widest text-white uppercase shadow-lg shadow-red-600/20 hover:bg-red-700 disabled:opacity-30 sm:w-auto"
           >
-            Confirm Deletion
+            {loading ? "Deleting..." : "Confirm Deletion"}
           </Button>
         </div>
       </Modal.Content>

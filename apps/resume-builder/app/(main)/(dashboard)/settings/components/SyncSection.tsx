@@ -75,20 +75,15 @@ export default function SyncSection() {
           <h2 className="flex items-center gap-2 text-xl font-bold">
             <CloudSync className="text-accent h-5 w-5" /> Cloud & Data
           </h2>
-          <p className="text-muted-foreground text-sm">
-            Manage background synchronization.
-          </p>
+          <p className="text-muted-foreground text-sm">Manage background synchronization.</p>
         </div>
+
         <div className="border-border/40 flex items-center gap-3 rounded-full border bg-zinc-500/5 p-2 px-4">
           <span className="text-muted-foreground text-[10px] font-bold tracking-tighter uppercase">
             Auto-Sync
           </span>
 
-          <Switch
-            checked={autoSync}
-            onCheckedChange={handleToggle}
-            disabled={loading}
-          />
+          <Switch checked={autoSync} onCheckedChange={handleToggle} disabled={loading} />
         </div>
       </div>
 
@@ -104,9 +99,16 @@ export default function SyncSection() {
           icon={History}
           label="Last Attempt"
           value={
-            telemetry.lastAttemptAt
-              ? new Date(telemetry.lastAttemptAt).toLocaleTimeString()
-              : "N/A"
+            telemetry.lastAttemptAt ? (
+              <>
+                <span>{new Date(telemetry.lastAttemptAt).toLocaleTimeString()}</span>
+                <span className="text-muted-foreground/40 text-[10px] font-semibold ml-1">
+                  ({new Date(telemetry.lastAttemptAt).toLocaleDateString()})
+                </span>
+              </>
+            ) : (
+              "N/A"
+            )
           }
         />
       </div>
@@ -121,7 +123,7 @@ function StatsTile({
   success,
 }: {
   label: string;
-  value: string;
+  value: string | React.ReactNode;
   icon: LucideIcon;
   success?: boolean;
 }) {
@@ -133,16 +135,11 @@ function StatsTile({
         </span>
 
         <Icon
-          className={cn(
-            "h-4 w-4",
-            success ? "text-emerald-500" : "text-muted-foreground/40",
-          )}
+          className={cn("h-4 w-4", success ? "text-emerald-500" : "text-muted-foreground/40")}
         />
       </div>
 
-      <p className="text-foreground text-2xl font-bold tracking-tighter">
-        {value}
-      </p>
+      <p className="text-foreground text-2xl font-bold tracking-tighter">{value}</p>
     </div>
   );
 }

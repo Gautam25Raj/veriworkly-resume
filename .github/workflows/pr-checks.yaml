@@ -5,6 +5,9 @@ on:
     branches: [main, master, develop]
   workflow_dispatch:
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true # Future-proofs actions against Node 20 deprecation
+
 jobs:
   quality:
     name: Quality & Testing
