@@ -1,0 +1,88 @@
+---
+title: Roadmap Tracker
+description: Query public features, development status, and completion statistics.
+---
+
+import { Map, BarChart, Target } from "lucide-react";
+
+---
+
+## Description
+
+Transparency is a core tenet of VeriWorkly. The Roadmap API exposes our internal development pipeline directly to the public. This allows the community (and our frontend client) to query upcoming features, track active progress, and view historical completion data.
+
+Unlike the GitHub proxy (which fetches from an external source), the Roadmap data is managed internally within our PostgreSQL database, ensuring zero-latency responses and highly relational queries.
+
+---
+
+## Query Parameters & Pagination
+
+Because the roadmap will grow indefinitely over the lifecycle of the project, the list endpoint is heavily optimized for large datasets.
+
+- **Offset Pagination:** All lists are paginated. You must use the `limit` (max 50) and `offset` parameters to traverse the data. The response will always include a `hasMore` boolean to inform your UI if a "Load More" button is needed.
+- **Granular Filtering:** You can filter the pipeline strictly by its lifecycle `status` (`todo`, `in-progress`, `done`).
+- **Chronological Sorting:** Support for time-series sorting via `newest`, `oldest`, or `recently-completed`.
+
+---
+
+## Authentication
+
+| Method | Access Level | Requirement                                                            |
+| :----- | :----------- | :--------------------------------------------------------------------- |
+| `GET`  | **Public**   | None. No session cookies are required to fetch features or statistics. |
+
+---
+
+## Available Endpoints
+
+<div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-6">
+  <a href="./roadmap/getRoadmap" className="block no-underline group border rounded-lg p-4 bg-card hover:bg-muted/5 transition-all duration-200 shadow-sm">
+    <div className="flex items-start justify-between gap-4">
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 mb-2">
+          <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 uppercase">Get</span>
+          <span className="text-[10px] font-mono text-muted-foreground truncate">/roadmap</span>
+        </div>
+        <h4 className="font-bold text-sm mb-1 group-hover:text-primary transition-colors">List Roadmap Features</h4>
+        <div className="text-xs text-muted-foreground leading-normal">Fetch a paginated, filterable list of features.</div>
+      </div>
+      <Map className="w-4 h-4 text-muted-foreground/50 mt-1 shrink-0" />
+    </div>
+  </a>
+
+  <a href="./roadmap/getRoadmapStats" className="block no-underline group border rounded-lg p-4 bg-card hover:bg-muted/5 transition-all duration-200 shadow-sm">
+    <div className="flex items-start justify-between gap-4">
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 mb-2">
+          <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 uppercase">Get</span>
+          <span className="text-[10px] font-mono text-muted-foreground truncate">/roadmap/stats</span>
+        </div>
+        <h4 className="font-bold text-sm mb-1 group-hover:text-primary transition-colors">Fetch Roadmap Stats</h4>
+        <div className="text-xs text-muted-foreground leading-normal">Retrieve metadata and completion rates.</div>
+      </div>
+      <BarChart className="w-4 h-4 text-muted-foreground/50 mt-1 shrink-0" />
+    </div>
+  </a>
+
+  <a href="./roadmap/getRoadmapFeatureById" className="block no-underline group border rounded-lg p-4 bg-card hover:bg-muted/5 transition-all duration-200 shadow-sm">
+    <div className="flex items-start justify-between gap-4">
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 mb-2">
+          <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 uppercase">Get</span>
+          <span className="text-[10px] font-mono text-muted-foreground truncate">/roadmap/&#123;id&#125;</span>
+        </div>
+        <h4 className="font-bold text-sm mb-1 group-hover:text-primary transition-colors">Get Feature Details</h4>
+        <div className="text-xs text-muted-foreground leading-normal">Fetch deep details for a specific item.</div>
+      </div>
+      <Target className="w-4 h-4 text-muted-foreground/50 mt-1 shrink-0" />
+    </div>
+  </a>
+</div>
+
+
+
+
+
+
+
+---

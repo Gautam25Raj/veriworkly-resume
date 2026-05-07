@@ -1,0 +1,86 @@
+---
+title: Users Module
+description: Manage authenticated user profiles, preferences, and account metadata.
+---
+
+import { User, Settings, Lock } from "lucide-react";
+
+---
+
+## Description
+
+The Users module handles the core identity and profile metadata for authenticated VeriWorkly users.
+
+While VeriWorkly is heavily designed around a **local-first** philosophy, users who opt into creating an account (to utilize cloud sync, resume sharing, or managed backups) interact with these endpoints to manage their platform identity.
+
+---
+
+## The Local-First Boundary
+
+To maintain strict data privacy, this module respects a clear boundary: **User Identity vs. Resume Data**.
+
+The User profile returned by these endpoints _only_ contains top-level account metadata:
+
+- Display Name
+- Verified Email Address
+- Cloud Sync Preferences (`autoSyncEnabled`)
+- Relational counts (e.g., total resumes, total active share links)
+
+<Callout type="info">
+  Actual resume content (experience, education, templates) is never exposed through the `/users`
+  routes. That data is strictly managed via the separate Profile and Resume domains.
+</Callout>
+
+---
+
+## Security & Access Control
+
+Identity operations are highly sensitive. All endpoints in this module enforce strict session validation.
+
+| Feature                 | Enforcement                                                                                  |
+| :---------------------- | :------------------------------------------------------------------------------------------- |
+| **Authentication**      | Requires a valid **Better Auth** HTTP-only session cookie (`veriworkly-auth.session_token`). |
+| **Data Integrity**      | Email addresses are strictly **read-only** to prevent account hijacking.                     |
+| **Unauthorized Access** | Requests missing valid cookies immediately return `401 Unauthorized`.                        |
+
+---
+
+## Available Endpoints
+
+<div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-6">
+  <a href="./users/getCurrentUser" className="block no-underline group border rounded-lg p-4 bg-card hover:bg-muted/5 transition-all duration-200 shadow-sm">
+    <div className="flex items-start justify-between gap-4">
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 mb-2">
+          <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 uppercase">Get</span>
+          <span className="text-[10px] font-mono text-muted-foreground truncate">/users/me</span>
+        </div>
+        <h4 className="font-bold text-sm mb-1 group-hover:text-primary transition-colors">Get Current User</h4>
+        <div className="text-xs text-muted-foreground leading-normal">Fetch profile metadata and account statistics.</div>
+      </div>
+      <User className="w-4 h-4 text-muted-foreground/50 mt-1 shrink-0" />
+    </div>
+  </a>
+
+  <a href="./users/updateUserName" className="block no-underline group border rounded-lg p-4 bg-card hover:bg-muted/5 transition-all duration-200 shadow-sm">
+    <div className="flex items-start justify-between gap-4">
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 mb-2">
+          <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400 uppercase">Put</span>
+          <span className="text-[10px] font-mono text-muted-foreground truncate">/users/me/name</span>
+        </div>
+        <h4 className="font-bold text-sm mb-1 group-hover:text-primary transition-colors">Update User Name</h4>
+        <div className="text-xs text-muted-foreground leading-normal">Update display name. Email modifications are blocked.</div>
+      </div>
+      <Settings className="w-4 h-4 text-muted-foreground/50 mt-1 shrink-0" />
+    </div>
+  </a>
+</div>
+
+
+
+
+
+
+
+---

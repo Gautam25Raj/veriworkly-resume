@@ -583,3 +583,64 @@ GenericSuccessResponse:
 ##################################################
 # GITHUB SCHEMA
 ##################################################
+##################################################
+# API KEY SCHEMA
+##################################################
+
+ApiKeyObject:
+  type: object
+  required:
+    - id
+    - key
+    - name
+    - isActive
+    - rateLimit
+    - createdAt
+    - updatedAt
+  properties:
+    id:
+      type: string
+    key:
+      type: string
+      description: The API key. Masked in lists, full key only on creation.
+      example: "vw_a1b2c3...x9y0z1"
+    name:
+      type: string
+    isActive:
+      type: boolean
+    rateLimit:
+      type: integer
+    createdAt:
+      type: string
+      format: date-time
+    updatedAt:
+      type: string
+      format: date-time
+    lastUsed:
+      type: string
+      format: date-time
+      nullable: true
+
+ApiKeyListResponse:
+  type: object
+  required: [success, message, data]
+  properties:
+    success:
+      type: boolean
+    message:
+      type: string
+    data:
+      type: array
+      items:
+        $ref: "#/ApiKeyObject"
+
+ApiKeyCreateResponse:
+  type: object
+  required: [success, message, data]
+  properties:
+    success:
+      type: boolean
+    message:
+      type: string
+    data:
+      $ref: "#/ApiKeyObject"

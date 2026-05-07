@@ -1,0 +1,79 @@
+sendOtp:
+  post:
+    tags:
+      - Authentication
+    operationId: sendOTP
+    summary: Send OTP
+
+    description: Sends a one-time password (OTP) to the specified email address.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - email
+            properties:
+              email:
+                type: string
+                format: email
+    responses:
+      "200":
+        description: OTP sent successfully
+
+verifyOtp:
+  post:
+    tags:
+      - Authentication
+    operationId: verifyOTP
+    summary: Verify OTP
+
+    description: Verifies the OTP sent to the email address and starts a session.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - email
+              - otp
+            properties:
+              email:
+                type: string
+                format: email
+              otp:
+                type: string
+    responses:
+      "200":
+        description: OTP verified successfully. Sets session cookies.
+
+getSession:
+  get:
+    tags:
+      - Authentication
+    operationId: getSession
+    summary: Get Current Session
+
+    security:
+      - LocalSession: []
+      - ProdSession: []
+    description: Retrieves the current active session based on cookies.
+    responses:
+      "200":
+        description: Session information retrieved successfully.
+      "401":
+        $ref: "../components/responses.yaml#/UnauthorizedError"
+
+signOut:
+  post:
+    tags:
+      - Authentication
+    operationId: signOut
+    summary: Sign Out
+
+    description: Terminates the current session and clears cookies.
+    responses:
+      "200":
+        description: Signed out successfully.

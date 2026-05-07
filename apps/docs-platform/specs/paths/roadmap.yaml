@@ -4,6 +4,10 @@ getRoadmap:
       - Roadmap
     operationId: getRoadmap
     summary: Get Roadmap Features
+    security:
+      - ApiKeyAuth: []
+      - LocalSession: []
+      - ProdSession: []
     description: Fetch roadmap features with optional filtering, sorting, and pagination.
     parameters:
       - name: status
@@ -94,6 +98,10 @@ getRoadmapStats:
       - Roadmap
     operationId: getRoadmapStats
     summary: Get Roadmap Stats
+    security:
+      - ApiKeyAuth: []
+      - LocalSession: []
+      - ProdSession: []
     description: Retrieve aggregated roadmap statistics.
     responses:
       "200":
@@ -118,6 +126,10 @@ getRoadmapFeatureById:
       - Roadmap
     operationId: getRoadmapFeatureById
     summary: Get Roadmap Feature by ID
+    security:
+      - ApiKeyAuth: []
+      - LocalSession: []
+      - ProdSession: []
     description: Fetch detailed roadmap feature by ID.
     parameters:
       - name: id

@@ -1,0 +1,5 @@
+{
+  "title": "Authentication",
+  "description": "Operations related to authentication.",
+  "pages": ["overview", "sendOTP", "verifyOTP", "getSession", "signOut"]
+}

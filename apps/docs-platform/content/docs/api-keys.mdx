@@ -1,0 +1,84 @@
+---
+title: API Keys
+description: Learn how to use API keys to authenticate your requests to the VeriWorkly API.
+---
+
+# API Keys
+
+API keys are used to authenticate programmatic requests to the VeriWorkly API. Unlike session-based authentication, which is designed for browser use, API keys allow you to integrate VeriWorkly features into your own applications and scripts.
+
+## Getting an API Key
+
+You can manage your API keys in the **Settings** section of the VeriWorkly Resume Builder.
+
+1. Log in to [VeriWorkly Resume Builder](https://resume.veriworkly.com).
+2. Navigate to **Settings** > **API Keys**.
+3. Click **Generate New Key**.
+4. Give your key a descriptive name (e.g., "GitHub Integration").
+5. **Copy and save your key immediately.** For security reasons, we will not show it again.
+
+### Key Safety Model
+
+VeriWorkly stores only a hashed version of each API key. The full key is shown only once when it is created.
+
+Each key can also have:
+
+- **Scopes**: what the key is allowed to do.
+- **Expiry**: when the key stops working.
+- **Rate limit**: how much traffic the key can generate.
+
+If you need to replace a key, use rotation. Rotation creates a new key and revokes the old one.
+
+## Using Your API Key
+
+To authenticate a request, include your API key in the `X-API-Key` header:
+
+```bash
+curl -H "X-API-Key: YOUR_API_KEY" https://api.veriworkly.com/api/v1/users/me
+```
+
+## Rate Limits
+
+API keys are subject to rate limiting to ensure fair usage and system stability.
+
+| Limit Type              | Rate                       |
+| :---------------------- | :------------------------- |
+| **Standard Rate Limit** | 20 requests per 15 minutes |
+
+If you exceed the rate limit, the API will return a `429 Too Many Requests` status code. The response will include headers indicating when you can retry:
+
+- `Retry-After`: Seconds to wait before the next request.
+- `X-RateLimit-Limit`: Maximum requests allowed in the window.
+- `X-RateLimit-Remaining`: Remaining requests in the current window.
+- `X-RateLimit-Reset`: Unix timestamp when the limit resets.
+
+## Scopes
+
+Scopes are like little permission labels. A key with only `user:read` can read user data, but it should not be able to write it.
+
+Common scopes include:
+
+- `user:read`
+- `user:write`
+- `resume:read`
+- `resume:write`
+- `roadmap:read`
+- `roadmap:write`
+- `github:read`
+- `github:write`
+
+## Rotation and Revocation
+
+- **Rotate**: create a new key and retire the old one.
+- **Revoke**: turn a key off so it stops working immediately.
+
+Use rotation when an integration is still needed. Use revocation when a key should no longer exist.
+
+## Security Best Practices
+
+- **Never share your API key.**
+- **Do not commit API keys to version control** (e.g., GitHub). Use environment variables instead.
+- **Revoke compromised keys immediately** via the Settings dashboard and generate a new one.
+- **Use descriptive names** for your keys to easily track their usage.
+- **Prefer the smallest possible scope set.**
+- **Use shorter expiries for risky integrations.**

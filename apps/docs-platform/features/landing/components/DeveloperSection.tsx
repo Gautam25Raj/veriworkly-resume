@@ -56,7 +56,7 @@ export const DeveloperSection = () => {
 
             <p>
               <span className="text-emerald-400">curl</span> -X GET{" "}
-              <span className="text-zinc-400">"http://localhost:8080/api/v1/health"</span>
+              <span className="text-zinc-400">&quot;http://localhost:8080/api/v1/health&quot;</span>
             </p>
 
             <br />
@@ -65,7 +65,7 @@ export const DeveloperSection = () => {
 
             <p>
               <span className="text-purple-400">open</span>{" "}
-              <span className="text-zinc-400">"https://docs.veriworkly.com/api-reference"</span>
+              <span className="text-zinc-400">&quot;https://docs.veriworkly.com/api-reference&quot;</span>
             </p>
 
             <p className="pl-4">
