@@ -1,0 +1,75 @@
+---
+title: API Key Security Runbook
+description: Operational guide for managing API key security, rotation, revocation, and incident response.
+---
+
+# API Key Security Runbook
+
+This page explains how to operate API keys safely in production.
+
+## What API Keys Are
+
+API keys are like special passes for programmatic access. Each pass should:
+
+- only allow the minimum permissions it needs,
+- expire when appropriate,
+- be easy to revoke,
+- never be stored in plain text.
+
+## Normal Operating Rules
+
+1. Create keys with the smallest useful scope.
+2. Set a reasonable expiry date.
+3. Use a lower rate limit for keys that do not need heavy traffic.
+4. Rotate keys on a schedule or when staff change.
+5. Never log the full key value.
+
+## If a Key Is Exposed
+
+If you think a key leaked:
+
+1. Revoke the key immediately.
+2. Check recent usage and suspicious IP addresses.
+3. Rotate any connected integrations.
+4. Review logs for abuse.
+5. If the database was exposed, rotate the API key hash secret as well.
+
+## Safe Rotation Process
+
+Use rotation when you want to replace a key without breaking service right away.
+
+1. Create the replacement key.
+2. Copy it to the application that uses it.
+3. Confirm the application works.
+4. Revoke the old key.
+
+## What the System Does Automatically
+
+- Stores only a hashed form of the key in the database.
+- Caches authentication lookups in Redis for speed.
+- Removes cached authorization data when a key is revoked.
+- Updates last-used timestamps at a throttled interval instead of every request.
+
+## Incident Checklist
+
+When something looks wrong, check these items:
+
+- Did a key expire earlier than expected?
+- Did the key lose a required scope?
+- Is Redis healthy?
+- Are rate limits being exceeded?
+- Are there unusual request spikes from one key?
+
+## Release Checklist
+
+Before a production release, confirm:
+
+- `API_KEY_HASH_SECRET` is set.
+- `API_KEY_AUTH_CACHE_TTL_SECONDS` is reasonable.
+- `API_KEY_LAST_USED_TOUCH_INTERVAL_SECONDS` is set.
+- `API_KEY_DEFAULT_RATE_LIMIT` matches product expectations.
+- `ALLOWED_ORIGINS` is limited to real frontend domains.
+
+## Rule of Thumb
+
+If you can solve a problem by giving a key more access, that is usually the wrong move. Start with less access, shorter lifetime, and faster revocation.

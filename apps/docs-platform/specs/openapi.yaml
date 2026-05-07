@@ -5,11 +5,23 @@ info:
   description: |
     The official API reference for VeriWorkly.
 
-    Authentication:
-    This API uses session-based authentication via cookies.
+    ### Authentication Methods
 
-    - Local: `veriworkly-auth.session_token`
-    - Production: `__Secure-veriworkly-auth.session_token`
+    VeriWorkly supports two primary authentication methods:
+
+    #### 1. API Key Authentication (Recommended for API Docs & Scripts)
+    For programmatic access, use the `X-API-Key` header. This is **required** for all requests made from these documentation pages and external integrations.
+
+    - **Header**: `X-API-Key`
+    - **Rate Limit**: 20 requests per 15 minutes (default).
+
+    #### 2. Session Authentication (Dashboard only)
+    Used internally by the VeriWorkly dashboard and resume builder. This method uses secure HTTP-only cookies.
+
+    - **Cookies**: 
+      - Local: `veriworkly-auth.session_token`
+      - Production: `__Secure-veriworkly-auth.session_token`
+    - **Note**: This method is only allowed for whitelisted domains (e.g., veriworkly.com). Requests from documentation pages **must** use an API Key.
 
 servers:
   - url: https://api.veriworkly.com
@@ -26,6 +38,10 @@ tags:
     description: Operations related to roadmap.
   - name: GitHub
     description: GitHub issues, pull requests, and repository statistics.
+  - name: Authentication
+    description: Authentication operations using email OTP and sessions.
+  - name: API Keys
+    description: Operations related to managing personal API keys.
 
 paths:
   /api/v1/health:
@@ -47,19 +63,44 @@ paths:
     $ref: "./paths/github.yaml#/getGitHubStats"
   /api/v1/github/issues:
     $ref: "./paths/github.yaml#/getGitHubIssues"
-  /api/v1/github/sync:
+  /api/v1/github/admin/sync:
     $ref: "./paths/github.yaml#/syncGitHubStats"
+
+  /api/v1/auth/email-otp/send-otp:
+    $ref: "./paths/auth.yaml#/sendOtp"
+  /api/v1/auth/email-otp/verify-otp:
+    $ref: "./paths/auth.yaml#/verifyOtp"
+  /api/v1/auth/get-session:
+    $ref: "./paths/auth.yaml#/getSession"
+  /api/v1/auth/sign-out:
+    $ref: "./paths/auth.yaml#/signOut"
+
+  /api/v1/api-keys:
+    $ref: "./paths/api-keys.yaml#/apiKeyCollection"
+  /api/v1/api-keys/{id}/rotate:
+    $ref: "./paths/api-keys.yaml#/apiKeyRotate"
+  /api/v1/api-keys/{id}/revoke:
+    $ref: "./paths/api-keys.yaml#/apiKeyRevoke"
+  /api/v1/api-keys/{id}:
+    $ref: "./paths/api-keys.yaml#/apiKeyItem"
 
 components:
   securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: Your personal API key.
     LocalSession:
       type: apiKey
       in: cookie
       name: veriworkly-auth.session_token
+      description: Internal session cookie for local development.
     ProdSession:
       type: apiKey
       in: cookie
       name: __Secure-veriworkly-auth.session_token
+      description: Internal session cookie for production.
 
   schemas:
     $ref: "./components/schemas.yaml"

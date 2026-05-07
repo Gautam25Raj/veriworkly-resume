@@ -2,10 +2,13 @@
   "pages": [
     "---Introduction---",
     "index",
-    "---Core Endpoints---",
+    "---Infrastructure---",
     "health",
+    "---Identity & Access---",
+    "authentication",
+    "api-keys",
     "users",
-    "---Feature Endpoints---",
+    "---Project Data---",
     "roadmap",
     "github"
   ]

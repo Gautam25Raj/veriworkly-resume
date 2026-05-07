@@ -1,0 +1,186 @@
+apiKeyCollection:
+  get:
+    tags:
+      - API Keys
+    operationId: getAllApiKeys
+    summary: List API Keys
+
+    description: Retrieves all API keys associated with the current user. Keys are returned in masked format (e.g., `vw_abc1...xyz9`).
+    security:
+      - LocalSession: []
+      - ProdSession: []
+    responses:
+      "200":
+        description: A list of API keys.
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas.yaml#/ApiKeyListResponse"
+      "401":
+        $ref: "../components/responses.yaml#/UnauthorizedError"
+
+  post:
+    tags:
+      - API Keys
+    operationId: createApiKey
+    summary: Create API Key
+
+    description: Generates a new API key. **The full key is only returned once upon creation.** Ensure you save it securely.
+    security:
+      - LocalSession: []
+      - ProdSession: []
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - name
+            properties:
+              name:
+                type: string
+                description: A descriptive name for the API key.
+                example: "My Documentation Key"
+              scopes:
+                type: array
+                description: Scopes granted to the new key.
+                items:
+                  type: string
+              rateLimit:
+                type: integer
+                minimum: 1
+                maximum: 20
+                description: Requests allowed per window. Values above 20 are capped.
+                example: 20
+              expiresAt:
+                type: string
+                format: date-time
+                description: Optional ISO timestamp for expiration.
+    responses:
+      "201":
+        description: API key created successfully.
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas.yaml#/ApiKeyCreateResponse"
+      "400":
+        $ref: "../components/responses.yaml#/BadRequestError"
+      "401":
+        $ref: "../components/responses.yaml#/UnauthorizedError"
+
+apiKeyRotate:
+  post:
+    tags:
+      - API Keys
+    operationId: rotateApiKey
+    summary: Rotate API Key
+
+    description: Revokes the existing key and creates a replacement key with updated settings.
+    security:
+      - LocalSession: []
+      - ProdSession: []
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: The ID of the API key to rotate.
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              name:
+                type: string
+                description: Optional replacement name for the API key.
+              scopes:
+                type: array
+                description: Scopes granted to the replacement key.
+                items:
+                  type: string
+              rateLimit:
+                type: integer
+                minimum: 1
+                maximum: 20
+                description: Requests allowed per window. Values above 20 are capped.
+              expiresAt:
+                type: string
+                format: date-time
+                description: Optional ISO timestamp for expiration.
+    responses:
+      "201":
+        description: API key rotated successfully.
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas.yaml#/ApiKeyCreateResponse"
+      "400":
+        $ref: "../components/responses.yaml#/BadRequestError"
+      "401":
+        $ref: "../components/responses.yaml#/UnauthorizedError"
+      "404":
+        $ref: "../components/responses.yaml#/NotFoundError"
+
+apiKeyRevoke:
+  post:
+    tags:
+      - API Keys
+    operationId: revokeApiKey
+    summary: Revoke API Key
+
+    description: Immediately disables an API key without deleting its database record.
+    security:
+      - LocalSession: []
+      - ProdSession: []
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: The ID of the API key to revoke.
+    responses:
+      "200":
+        description: API key revoked successfully.
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas.yaml#/GenericSuccessResponse"
+      "401":
+        $ref: "../components/responses.yaml#/UnauthorizedError"
+      "404":
+        $ref: "../components/responses.yaml#/NotFoundError"
+
+apiKeyItem:
+  delete:
+    tags:
+      - API Keys
+    operationId: deleteApiKey
+    summary: Delete API Key
+
+    description: Permanently deletes an API key by its ID.
+    security:
+      - LocalSession: []
+      - ProdSession: []
+    parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+        description: The ID of the API key to delete.
+    responses:
+      "200":
+        description: API key deleted successfully.
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas.yaml#/GenericSuccessResponse"
+      "401":
+        $ref: "../components/responses.yaml#/UnauthorizedError"
+      "404":
+        $ref: "../components/responses.yaml#/NotFoundError"

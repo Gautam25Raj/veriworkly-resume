@@ -15,3 +15,18 @@ UnauthorizedError:
         success: false
         statusCode: 401
         message: "Authentication required"
+
+BadRequestError:
+  description: Bad Request - The request parameters or body are invalid.
+  content:
+    application/json:
+      schema:
+        $ref: "./schemas.yaml#/ErrorResponse"
+
+NotFoundError:
+  description: Not Found - The requested resource does not exist.
+  content:
+    application/json:
+      schema:
+        $ref: "./schemas.yaml#/ErrorResponse"
+

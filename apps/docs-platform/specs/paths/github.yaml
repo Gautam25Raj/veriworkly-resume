@@ -4,6 +4,10 @@ getGitHubStats:
       - GitHub
     operationId: getGitHubStats
     summary: Get GitHub Stats
+    security:
+      - ApiKeyAuth: []
+      - LocalSession: []
+      - ProdSession: []
     description: Fetch aggregated GitHub issue statistics for the configured repository.
     responses:
       "200":
@@ -31,6 +35,10 @@ getGitHubIssues:
       - GitHub
     operationId: getGitHubIssues
     summary: Get GitHub Issues
+    security:
+      - ApiKeyAuth: []
+      - LocalSession: []
+      - ProdSession: []
     description: Fetch paginated GitHub issues and pull requests with optional filters.
     parameters:
       - in: query

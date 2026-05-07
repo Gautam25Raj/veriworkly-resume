@@ -1,0 +1,12 @@
+{
+  "title": "API Keys",
+  "description": "Operations related to API keys.",
+  "pages": [
+    "overview",
+    "getAllApiKeys",
+    "createApiKey",
+    "rotateApiKey",
+    "revokeApiKey",
+    "deleteApiKey"
+  ]
+}
