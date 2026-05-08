@@ -22,7 +22,7 @@ getCurrentUser:
               data:
                 id: "cmnu7awv4000063lk18zpon2m"
                 name: "VeriWorkly User"
-                email: "contact@veriworkly.com"
+                email: "info@veriworkly.com"
                 emailVerified: true
                 autoSyncEnabled: false
                 createdAt: "2026-04-11T10:37:35.584Z"
@@ -83,7 +83,7 @@ updateUserName:
               data:
                 id: "cmnu7awv4000063lk18zpon2m"
                 name: "VeriWorkly User New Name"
-                email: "contact@veriworkly.com"
+                email: "info@veriworkly.com"
                 emailVerified: true
                 autoSyncEnabled: false
                 createdAt: "2026-04-11T10:37:35.584Z"

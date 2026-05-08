@@ -2,7 +2,7 @@
   "schema_version": "1.0",
   "name": "VeriWorkly Resume Builder",
   "description": "Free, open-source, and privacy-first resume builder. Create polished resumes quickly with flexible templates, strong privacy defaults, and optional sync/share workflows.",
-  "contact_email": "contact@veriworkly.com",
+  "contact_email": "info@veriworkly.com",
 
   "api": {
     "type": "openapi",
