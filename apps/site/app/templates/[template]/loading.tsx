@@ -1,5 +1,3 @@
-import {} from "@veriworkly/ui";
-
 export default function TemplatePreviewLoading() {
   return (
     <div className="space-y-10 py-10">
@@ -10,9 +8,9 @@ export default function TemplatePreviewLoading() {
       </div>
 
       <section aria-label="Template Preview Loading" className="space-y-8">
-        <div className="relative aspect-3/4 w-full max-w-4xl mx-auto border border-border/50 rounded-2xl overflow-hidden bg-accent/5 animate-pulse">
+        <div className="border-border/50 bg-accent/5 relative mx-auto aspect-3/4 w-full max-w-4xl animate-pulse overflow-hidden rounded-2xl border">
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="h-12 w-12 animate-spin rounded-full border-4 border-accent/20 border-t-accent" />
+            <div className="border-accent/20 border-t-accent h-12 w-12 animate-spin rounded-full border-4" />
           </div>
         </div>
 

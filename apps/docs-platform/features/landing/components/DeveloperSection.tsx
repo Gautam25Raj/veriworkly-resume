@@ -9,7 +9,7 @@ export const DeveloperSection = () => {
 
       <div className="relative grid items-center gap-12 lg:grid-cols-2">
         <div className="space-y-6">
-          <p className="text-blue-400 text-xs font-semibold tracking-[0.24em] uppercase">
+          <p className="text-xs font-semibold tracking-[0.24em] text-blue-400 uppercase">
             For Developers
           </p>
 

@@ -30,12 +30,12 @@ const TYPOGRAPHY_SAMPLES = [
 
 export const TypographySection = () => {
   return (
-    <section id="typography" className="space-y-8 scroll-mt-24">
+    <section id="typography" className="scroll-mt-24 space-y-8">
       <SectionHeader icon={Type} title="Typography" />
 
       <Card className="divide-border divide-y overflow-hidden">
         {TYPOGRAPHY_SAMPLES.map((sample, index) => (
-          <div key={index} className="p-8 space-y-4">
+          <div key={index} className="space-y-4 p-8">
             <p className="text-muted text-xs font-semibold tracking-[0.24em] uppercase">
               {sample.label}
             </p>
@@ -50,7 +50,7 @@ export const TypographySection = () => {
           </div>
         ))}
 
-        <div className="p-8 space-y-4">
+        <div className="space-y-4 p-8">
           <p className="text-muted text-xs font-semibold tracking-[0.24em] uppercase">Body Text</p>
 
           <p className="text-base leading-8 md:text-lg">
@@ -61,7 +61,7 @@ export const TypographySection = () => {
           <p className="text-muted text-sm italic">text-base leading-8 md:text-lg</p>
         </div>
 
-        <div className="p-8 space-y-4">
+        <div className="space-y-4 p-8">
           <p className="text-muted text-xs font-semibold tracking-[0.24em] uppercase">Font Stack</p>
 
           <p className="text-base leading-7">

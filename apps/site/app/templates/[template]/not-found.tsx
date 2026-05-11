@@ -20,8 +20,8 @@ const TemplateNotFound = () => {
       </header>
 
       <section className="space-y-8">
-        <div className="relative aspect-3/4 w-full max-w-4xl mx-auto border border-dashed border-border rounded-2xl overflow-hidden bg-accent/5 flex flex-col items-center justify-center p-12 text-center">
-          <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-accent/10 text-accent">
+        <div className="border-border bg-accent/5 relative mx-auto flex aspect-3/4 w-full max-w-4xl flex-col items-center justify-center overflow-hidden rounded-2xl border border-dashed p-12 text-center">
+          <div className="bg-accent/10 text-accent mb-6 flex h-20 w-20 items-center justify-center rounded-full">
             <svg className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path
                 strokeLinecap="round"
@@ -32,9 +32,9 @@ const TemplateNotFound = () => {
             </svg>
           </div>
 
-          <h2 className="text-2xl font-bold text-foreground">Missing Layout</h2>
+          <h2 className="text-foreground text-2xl font-bold">Missing Layout</h2>
 
-          <p className="mt-2 text-muted max-w-sm">
+          <p className="text-muted mt-2 max-w-sm">
             We couldn&apos;t locate this specific resume format. Try browsing our other modern
             templates.
           </p>

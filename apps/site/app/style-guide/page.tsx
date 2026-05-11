@@ -2,12 +2,12 @@ import type { Metadata } from "next";
 import { Container } from "@veriworkly/ui";
 import { siteConfig } from "@/config/site";
 
-import { StyleGuideHeader } from "./_components/StyleGuideHeader";
 import { ColorSection } from "./_components/ColorSection";
+import { LayoutSection } from "./_components/LayoutSection";
+import { StyleGuideHeader } from "./_components/StyleGuideHeader";
 import { TypographySection } from "./_components/TypographySection";
 import { ComponentsSection } from "./_components/ComponentsSection";
 import { BrandAssetsSection } from "./_components/BrandAssetsSection";
-import { LayoutSection } from "./_components/LayoutSection";
 
 const pageUrl = `${siteConfig.url}/style-guide`;
 const pageOgImage = `${siteConfig.url}/og/style-page-og.png`;

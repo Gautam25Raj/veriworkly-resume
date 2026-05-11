@@ -1,8 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 
-import { Card } from "@veriworkly/ui";
-import { Badge } from "@veriworkly/ui";
+import { Card, Badge } from "@veriworkly/ui";
 
 interface TemplateCardProps {
   template: {
@@ -21,7 +20,7 @@ const TemplateCard = ({ template }: TemplateCardProps) => {
   const topTags = template.tags.filter((tag) => tag !== "One column" && tag !== "Two column");
 
   return (
-    <Card className="group hover:border-accent/40 relative flex flex-col justify-between space-y-6 overflow-visible transition-colors p-6">
+    <Card className="group hover:border-accent/40 relative flex flex-col justify-between space-y-6 overflow-visible p-6 transition-colors">
       <div className="pointer-events-none absolute top-4 right-4 z-30 hidden w-95 translate-y-2 opacity-0 transition-all duration-200 ease-out xl:block xl:group-hover:translate-y-0 xl:group-hover:opacity-100">
         <div className="border-border bg-card overflow-hidden rounded-xl border shadow-[0_24px_80px_-40px_rgba(15,23,42,0.6)]">
           <div className="h-1 w-full" style={{ backgroundColor: template.accentColor }} />

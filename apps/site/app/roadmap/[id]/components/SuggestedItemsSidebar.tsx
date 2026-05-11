@@ -2,8 +2,7 @@ import Link from "next/link";
 
 import type { RoadmapFeature } from "@/features/roadmap/services/roadmap-backend";
 
-import { Card } from "@veriworkly/ui";
-import { Button } from "@veriworkly/ui";
+import { Card, Button } from "@veriworkly/ui";
 
 const statusLabels = {
   todo: "To Do",
@@ -37,7 +36,7 @@ const SuggestedItemsSidebar = ({
         ) : (
           suggestedItems.map((item) => (
             <Link key={item.id} href={`/roadmap/${item.id}`} className="block">
-              <Card className="cursor-pointer transition-all hover:shadow-md p-4!">
+              <Card className="cursor-pointer p-4! transition-all hover:shadow-md">
                 <div className="space-y-2">
                   <h4 className="text-foreground line-clamp-2 font-semibold">{item.title}</h4>
 

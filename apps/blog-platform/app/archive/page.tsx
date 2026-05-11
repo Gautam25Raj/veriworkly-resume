@@ -60,7 +60,7 @@ const BlogArchive = () => {
             const meta = toBlogMeta(post.data);
             return (
               <Link key={post.url} href={post.url} className="group">
-                <Card className="border-border/50 hover:border-accent/40 h-full transition-all duration-500 hover:shadow-2xl hover:shadow-blue-500/5 group-hover:-translate-y-2">
+                <Card className="border-border/50 hover:border-accent/40 h-full transition-all duration-500 group-hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-500/5">
                   <div className="flex h-full flex-col p-8">
                     <div className="mb-6 flex items-center gap-3 text-[10px] font-bold tracking-widest text-zinc-400 uppercase">
                       <span className="text-zinc-500">

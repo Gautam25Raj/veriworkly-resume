@@ -3,11 +3,12 @@ import type { Metadata } from "next";
 import { siteConfig } from "@/config/site";
 import { templateSummaries } from "@/config/templates";
 
+import { Container } from "@veriworkly/ui";
+
 import EmptyState from "./components/EmptyState";
 import TemplateGroup from "./components/TemplateGroup";
 import TemplatesHeader from "./components/TemplatesHeader";
 import TemplatesSEOContent from "./components/TemplatesSEOContent";
-import { Container } from "@veriworkly/ui";
 
 import { getLayout, getSingleParam, familyByTemplateId } from "./components/utils";
 

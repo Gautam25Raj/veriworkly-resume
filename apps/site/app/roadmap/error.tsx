@@ -29,7 +29,7 @@ export default function RoadmapError({
         </header>
 
         <section className="border-border bg-destructive/5 flex flex-col items-center justify-center rounded-3xl border border-dashed py-20 text-center">
-          <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-destructive/10 text-destructive">
+          <div className="bg-destructive/10 text-destructive mb-6 flex h-20 w-20 items-center justify-center rounded-full">
             <svg className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path
                 strokeLinecap="round"
@@ -40,9 +40,9 @@ export default function RoadmapError({
             </svg>
           </div>
 
-          <h2 className="text-2xl font-bold text-foreground">Sync Interrupted</h2>
+          <h2 className="text-foreground text-2xl font-bold">Sync Interrupted</h2>
 
-          <p className="mt-2 text-muted max-w-sm px-6">
+          <p className="text-muted mt-2 max-w-sm px-6">
             The roadmap data is currently unavailable. You can retry the sync or explore other parts
             of the platform.
           </p>

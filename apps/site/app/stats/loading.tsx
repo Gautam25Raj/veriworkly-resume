@@ -19,7 +19,7 @@ export default function StatsLoading() {
           {[1, 2, 3, 4].map((i) => (
             <div
               key={i}
-              className="bg-border/40 h-32 animate-pulse rounded-3xl border border-border/50"
+              className="bg-border/40 border-border/50 h-32 animate-pulse rounded-3xl border"
             />
           ))}
         </div>
@@ -34,7 +34,7 @@ export default function StatsLoading() {
           {[1, 2, 3, 4, 5].map((i) => (
             <div
               key={i}
-              className="bg-border/40 h-20 animate-pulse rounded-2xl border border-border/50"
+              className="bg-border/40 border-border/50 h-20 animate-pulse rounded-2xl border"
             />
           ))}
         </div>

@@ -1,13 +1,14 @@
 import { z } from "zod";
 import { NextFunction, Request, Response } from "express";
 
+import { PublicShareLink } from "#types/api";
+
 import { requireAuthUser } from "#middleware/auth";
 
 import { ShareService } from "#services/shareService";
 
 import { cacheGet, cacheSet, cacheDel } from "#utils/redis";
 import { createSuccessResponse, handleValidationError, ApiError } from "#utils/errors";
-import { PublicShareLink } from "#types/api";
 
 /**
  * Validation schemas for sharing-related requests
@@ -142,7 +143,7 @@ export class ShareController {
           createSuccessResponse(
             {
               passwordRequired: true,
-              title: shareLink.document.title,
+              resumeTitle: shareLink.document.title,
               expiresAt: shareLink.expiresAt,
             },
             "Password required",
@@ -159,7 +160,7 @@ export class ShareController {
         createSuccessResponse(
           {
             passwordRequired: false,
-            title: shareLink.document.title,
+            resumeTitle: shareLink.document.title,
             expiresAt: shareLink.expiresAt,
             snapshot: shareLink.snapshot,
           },
@@ -200,7 +201,7 @@ export class ShareController {
         createSuccessResponse(
           {
             passwordRequired: false,
-            title: shareLink.document.title,
+            resumeTitle: shareLink.document.title,
             expiresAt: shareLink.expiresAt,
             snapshot: shareLink.snapshot,
           },

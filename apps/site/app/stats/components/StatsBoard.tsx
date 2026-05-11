@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 
-import { Badge } from "@veriworkly/ui";
-
 import type { GitHubIssuePage } from "@/features/github/services/github-backend";
+
+import { Badge } from "@veriworkly/ui";
 
 import { formatRelativeTime, statusBadgeClass } from "./stats-utils";
 

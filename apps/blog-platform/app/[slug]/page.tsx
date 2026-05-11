@@ -88,7 +88,7 @@ export default async function BlogPostPage(props: PageProps) {
             </p>
 
             <div className="flex items-center gap-4 pt-4">
-              <div className="rounded-full border border-border p-1.5">
+              <div className="border-border rounded-full border p-1.5">
                 <Image width={32} height={32} alt="VeriWorkly Logo" src="/veriworkly-logo.png" />
               </div>
 
@@ -99,8 +99,8 @@ export default async function BlogPostPage(props: PageProps) {
             </div>
           </header>
 
-          <div className="relative rounded-3xl border border-border/60 bg-background/20 p-6 md:p-10">
-            <DocsBody className="max-w-none [&_h2]:mt-10 [&_h2]:text-3xl [&_h2]:font-semibold [&_h2]:tracking-tight [&_h3]:mt-8 [&_h3]:text-2xl [&_h3]:font-semibold [&_p]:my-5 [&_p]:text-base [&_p]:leading-8 md:[&_p]:text-lg [&_ul]:my-4 [&_li]:my-2 [&_code]:rounded-md [&_code]:bg-zinc-500/10 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:text-[0.92em]">
+          <div className="border-border/60 bg-background/20 relative rounded-3xl border p-6 md:p-10">
+            <DocsBody className="max-w-none [&_code]:rounded-md [&_code]:bg-zinc-500/10 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:text-[0.92em] [&_h2]:mt-10 [&_h2]:text-3xl [&_h2]:font-semibold [&_h2]:tracking-tight [&_h3]:mt-8 [&_h3]:text-2xl [&_h3]:font-semibold [&_li]:my-2 [&_p]:my-5 [&_p]:text-base [&_p]:leading-8 md:[&_p]:text-lg [&_ul]:my-4">
               <MDX components={getMDXComponents()} />
             </DocsBody>
           </div>
@@ -120,7 +120,7 @@ export default async function BlogPostPage(props: PageProps) {
                     engineering platform. Join us in redefining how professional stories are told.
                   </p>
 
-                  <div className="flex flex-wrap justify-center gap-4 md:gap-6 pt-2 md:justify-start">
+                  <div className="flex flex-wrap justify-center gap-4 pt-2 md:justify-start md:gap-6">
                     <Link
                       href={siteConfig.links.app}
                       className="text-accent text-xs font-bold tracking-wider uppercase hover:underline"

@@ -11,12 +11,12 @@ import { ThemeToggle } from "../ThemeToggle";
 
 export const NavActions = () => {
   return (
-    <div className="hidden lg:flex items-center gap-4">
+    <div className="hidden items-center gap-4 lg:flex">
       <Link
         href={siteConfig.links.github}
         target="_blank"
         rel="noopener noreferrer"
-        className="text-muted hover:text-foreground flex h-10 w-10 items-center justify-center rounded-full transition-colors hover:bg-accent/5"
+        className="text-muted hover:text-foreground hover:bg-accent/5 flex h-10 w-10 items-center justify-center rounded-full transition-colors"
       >
         <GithubIcon className="h-5 w-5" />
       </Link>
@@ -26,7 +26,7 @@ export const NavActions = () => {
       <Button
         asChild
         variant="primary"
-        className="rounded-full px-7 font-bold shadow-lg shadow-accent/10 transition-all hover:shadow-accent/20 active:scale-95"
+        className="shadow-accent/10 hover:shadow-accent/20 rounded-full px-7 font-bold shadow-lg transition-all active:scale-95"
       >
         <Link href={siteConfig.links.app}>Start Building</Link>
       </Button>

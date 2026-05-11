@@ -83,7 +83,7 @@ const DocsSection = () => {
               <span className="sr-only">Read {doc.title}</span>
             </Link>
 
-            <div className="flex items-center gap-2 text-[10px] font-bold tracking-widest text-zinc-400 uppercase transition-colors group-hover:text-foreground">
+            <div className="group-hover:text-foreground flex items-center gap-2 text-[10px] font-bold tracking-widest text-zinc-400 uppercase transition-colors">
               Read Guide{" "}
               <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />
             </div>

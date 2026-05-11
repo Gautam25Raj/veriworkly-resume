@@ -45,7 +45,7 @@ const KanbanItemCard = ({
   const cardContent = (
     <Card
       className={cn(
-        "cursor-default transition-all hover:shadow-lg py-4 px-6",
+        "cursor-default px-6 py-4 transition-all hover:shadow-lg",
         (showUrl && item.url) || showRoadmapLinks ? "cursor-pointer" : "",
       )}
     >

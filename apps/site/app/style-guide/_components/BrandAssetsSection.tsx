@@ -7,10 +7,10 @@ import { SectionHeader } from "./SectionHeader";
 
 export const BrandAssetsSection = () => {
   return (
-    <section id="brand-assets" className="space-y-8 scroll-mt-24">
+    <section id="brand-assets" className="scroll-mt-24 space-y-8">
       <SectionHeader icon={Info} title="Brand Assets" />
 
-      <Card className="p-8 space-y-6">
+      <Card className="space-y-6 p-8">
         <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           <div className="space-y-2">
             <p className="text-lg font-semibold">Primary Logo</p>
@@ -27,12 +27,12 @@ export const BrandAssetsSection = () => {
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">
-          <div className="rounded-2xl border border-border bg-background p-4">
+          <div className="border-border bg-background rounded-2xl border p-4">
             <p className="text-sm font-semibold">Logo path</p>
-            <p className="text-muted mt-1 text-xs font-mono">/veriworkly-logo.png</p>
+            <p className="text-muted mt-1 font-mono text-xs">/veriworkly-logo.png</p>
           </div>
 
-          <div className="rounded-2xl border border-border bg-background p-4">
+          <div className="border-border bg-background rounded-2xl border p-4">
             <p className="text-sm font-semibold">Design references</p>
             <p className="text-muted mt-1 text-xs">Theme tokens live in @veriworkly/ui styles.</p>
           </div>

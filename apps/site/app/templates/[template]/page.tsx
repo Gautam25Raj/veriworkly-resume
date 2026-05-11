@@ -1,13 +1,14 @@
+import Link from "next/link";
+import Image from "next/image";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import Image from "next/image";
-import Link from "next/link";
+
+import { siteConfig } from "@/config/site";
+import { getTemplateById, templateSummaries } from "@/config/templates";
 
 import { Card, Button } from "@veriworkly/ui";
 
 import { TemplateDetailHeader } from "../components/TemplateHeader";
-import { getTemplateById, templateSummaries } from "@/config/templates";
-import { siteConfig } from "@/config/site";
 
 interface Props {
   params: Promise<{ template: string }>;
@@ -43,8 +44,8 @@ export default async function TemplatePreviewPage({ params }: Props) {
       <TemplateDetailHeader template={templateDefinition} />
 
       <section aria-label="Template Preview" className="space-y-8">
-        <Card className="overflow-hidden p-0 md:p-0 border-none bg-transparent shadow-none">
-          <div className="relative aspect-3/4 w-full max-w-4xl mx-auto border border-border rounded-xl overflow-hidden shadow-2xl bg-card">
+        <Card className="overflow-hidden border-none bg-transparent p-0 shadow-none md:p-0">
+          <div className="border-border bg-card relative mx-auto aspect-3/4 w-full max-w-4xl overflow-hidden rounded-xl border shadow-2xl">
             {templateDefinition.previewImage ? (
               <Image
                 src={templateDefinition.previewImage}
@@ -54,12 +55,12 @@ export default async function TemplatePreviewPage({ params }: Props) {
                 priority
               />
             ) : (
-              <div className="flex items-center justify-center h-full text-muted">
+              <div className="text-muted flex h-full items-center justify-center">
                 Preview not available
               </div>
             )}
 
-            <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-12">
+            <div className="absolute inset-0 flex items-end justify-center bg-linear-to-t from-black/60 via-transparent to-transparent pb-12 opacity-0 transition-opacity duration-300 hover:opacity-100">
               <Button asChild size="lg" variant="primary">
                 <Link href={`${siteConfig.links.app}/editor?template=${templateDefinition.id}`}>
                   Use this template
@@ -74,7 +75,7 @@ export default async function TemplatePreviewPage({ params }: Props) {
             asChild
             size="lg"
             variant="primary"
-            className="h-14 px-10 text-lg rounded-full shadow-lg hover:shadow-xl transition-all"
+            className="h-14 rounded-full px-10 text-lg shadow-lg transition-all hover:shadow-xl"
           >
             <Link href={`${siteConfig.links.app}/editor?template=${templateDefinition.id}`}>
               Start Building with {templateDefinition.name}

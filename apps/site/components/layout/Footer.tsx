@@ -48,7 +48,7 @@ const Footer = () => {
 
   return (
     <footer className="border-border/40 relative mt-12 overflow-hidden border-t bg-zinc-50/80 pt-20 pb-10 dark:bg-zinc-950/80">
-      <div className="bg-accent/10 pointer-events-none absolute -bottom-48 -left-48 h-125 w-[5w-125nded-full blur-[120px]" />
+      <div className="bg-accent/10 w-[5w-125nded-full pointer-events-none absolute -bottom-48 -left-48 h-125 blur-[120px]" />
       <div className="bg-accent/5 pointer-events-none absolute -top-48 -right-48 h-125 w-125 rounded-full blur-[120px]" />
 
       <Container className="relative">
@@ -58,14 +58,17 @@ const Footer = () => {
               <Link href="/" className="group flex items-center gap-3">
                 <div className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl shadow-md transition-transform group-hover:scale-110">
                   <Image
-                    src="/veriworkly-logo.png"
-                    alt="VeriWorkly Logo"
                     fill
+                    sizes="40px"
+                    alt="VeriWorkly Logo"
+                    src="/veriworkly-logo.png"
                     className="object-contain"
                   />
                 </div>
 
-                <span className="text-2xl font-bold tracking-tight">{siteConfig.shortName}</span>
+                <span className="font-mono text-2xl font-semibold tracking-tight">
+                  {siteConfig.shortName}
+                </span>
               </Link>
 
               <p className="text-muted max-w-sm text-base leading-relaxed">
@@ -77,14 +80,14 @@ const Footer = () => {
             <div className="space-y-4">
               <div className="flex items-center gap-3 text-sm text-slate-500">
                 <div className="bg-accent/10 flex h-8 w-8 items-center justify-center rounded-lg">
-                  <Mail className="h-4 w-4 text-accent" />
+                  <Mail className="text-accent h-4 w-4" />
                 </div>
                 hello@veriworkly.com
               </div>
 
               <div className="flex items-center gap-3 text-sm text-slate-500">
                 <div className="bg-accent/10 flex h-8 w-8 items-center justify-center rounded-lg">
-                  <MapPin className="h-4 w-4 text-accent" />
+                  <MapPin className="text-accent h-4 w-4" />
                 </div>
                 Open Source Everywhere
               </div>
@@ -100,7 +103,7 @@ const Footer = () => {
                   key={social.name}
                   href={social.href}
                   target="_blank"
-                  className="bg-accent/5 hover:bg-accent text-muted hover:text-white flex h-11 w-11 items-center justify-center rounded-xl border border-border/40 transition-all active:scale-90"
+                  className="bg-accent/5 hover:bg-accent text-muted border-border/40 flex h-11 w-11 items-center justify-center rounded-xl border transition-all hover:text-white active:scale-90"
                 >
                   <social.icon className="h-5 w-5" />
                 </Link>
@@ -111,7 +114,7 @@ const Footer = () => {
           <div className="grid grid-cols-2 gap-10 sm:grid-cols-3 lg:col-span-8">
             {footerLinks.map((column) => (
               <div key={column.title} className="space-y-6">
-                <h4 className="text-foreground text-xs font-black uppercase tracking-[0.2em]">
+                <h4 className="text-foreground text-xs font-black tracking-[0.2em] uppercase">
                   {column.title}
                 </h4>
 
@@ -142,7 +145,7 @@ const Footer = () => {
               © {currentYear} {siteConfig.name}. Build for the future of work.
             </p>
 
-            <div className="flex items-center gap-2 rounded-full border border-border/40 bg-background/50 px-4 py-1.5 text-[11px] font-bold text-slate-500 backdrop-blur-sm">
+            <div className="border-border/40 bg-background/50 flex items-center gap-2 rounded-full border px-4 py-1.5 text-[11px] font-bold text-slate-500 backdrop-blur-sm">
               <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-500" />
               SYSTEMS OPERATIONAL • ALL TEMPLATES FREE
             </div>

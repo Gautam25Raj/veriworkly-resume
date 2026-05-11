@@ -78,7 +78,7 @@ const BlogSection = () => {
                 </span>
               </div>
 
-              <h3 className="text-foreground group-hover:text-blue-500 mb-4 line-clamp-2 text-2xl font-bold leading-tight transition-colors">
+              <h3 className="text-foreground mb-4 line-clamp-2 text-2xl leading-tight font-bold transition-colors group-hover:text-blue-500">
                 {post.title}
               </h3>
 

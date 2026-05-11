@@ -2,12 +2,12 @@ import { Container } from "@veriworkly/ui";
 
 export default function AppLoading() {
   return (
-    <div className="surface-grid relative flex min-h-[80vh] items-center justify-center overflow-hidden rounded-3xl border border-border/50 mx-4 my-8 md:mx-8 md:my-12">
-      <div className="absolute inset-0 bg-linear-to-b from-background/0 via-background/20 to-background/80 pointer-events-none" />
+    <div className="surface-grid border-border/50 relative mx-4 my-8 flex min-h-[80vh] items-center justify-center overflow-hidden rounded-3xl border md:mx-8 md:my-12">
+      <div className="from-background/0 via-background/20 to-background/80 pointer-events-none absolute inset-0 bg-linear-to-b" />
 
-      <Container className="relative flex flex-col items-center text-center py-20">
+      <Container className="relative flex flex-col items-center py-20 text-center">
         <div className="mb-8 flex h-16 w-16 items-center justify-center">
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-accent border-t-transparent" />
+          <div className="border-accent h-10 w-10 animate-spin rounded-full border-4 border-t-transparent" />
         </div>
 
         <p className="text-accent text-sm font-bold tracking-[0.2em] uppercase">Loading</p>

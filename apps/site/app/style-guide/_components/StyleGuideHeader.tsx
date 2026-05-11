@@ -32,7 +32,7 @@ export const StyleGuideHeader = () => {
             <span className="text-muted text-xs">•</span>
             <Link
               href={link.href}
-              className="text-muted text-sm hover:text-foreground transition-colors"
+              className="text-muted hover:text-foreground text-sm transition-colors"
             >
               {link.label}
             </Link>

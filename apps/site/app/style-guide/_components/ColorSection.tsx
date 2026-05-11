@@ -56,7 +56,7 @@ const COLORS = [
 
 export const ColorSection = () => {
   return (
-    <section id="colors" className="space-y-8 scroll-mt-24">
+    <section id="colors" className="scroll-mt-24 space-y-8">
       <SectionHeader icon={Palette} title="Colors" />
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">

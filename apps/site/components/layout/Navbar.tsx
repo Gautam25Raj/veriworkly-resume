@@ -1,14 +1,15 @@
 "use client";
 
-import { X, Menu } from "lucide-react";
 import * as React from "react";
+import { X, Menu } from "lucide-react";
 import { usePathname } from "next/navigation";
+
 import { Container, cn } from "@veriworkly/ui";
 
 import { NavLogo } from "./navbar/NavLogo";
-import { DesktopNav } from "./navbar/DesktopNav";
-import { NavActions } from "./navbar/NavActions";
 import { MobileNav } from "./navbar/MobileNav";
+import { NavActions } from "./navbar/NavActions";
+import { DesktopNav } from "./navbar/DesktopNav";
 
 const Navbar = () => {
   const pathname = usePathname();
@@ -52,9 +53,9 @@ const Navbar = () => {
     <>
       <nav
         className={cn(
-          "fixed top-0 left-0 right-0 z-100 transition-all duration-300",
+          "fixed top-0 right-0 left-0 z-100 transition-all duration-300",
           scrolled || isOpen
-            ? "border-border/40 bg-background/95 border-b backdrop-blur-xl py-3"
+            ? "border-border/40 bg-background/95 border-b py-3 backdrop-blur-xl"
             : "bg-transparent py-5",
         )}
       >
@@ -71,7 +72,7 @@ const Navbar = () => {
               <button
                 aria-label="Toggle menu"
                 onClick={() => setIsOpen(!isOpen)}
-                className="text-muted hover:text-foreground relative z-110 flex h-11 w-11 items-center justify-center rounded-xl bg-accent/5 transition-all active:scale-90 lg:hidden"
+                className="text-muted hover:text-foreground bg-accent/5 relative z-110 flex h-11 w-11 items-center justify-center rounded-xl transition-all active:scale-90 lg:hidden"
               >
                 {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
               </button>

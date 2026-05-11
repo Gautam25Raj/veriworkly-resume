@@ -4,11 +4,11 @@ import { Button, Container } from "@veriworkly/ui";
 
 const NotFound = () => {
   return (
-    <div className="surface-grid relative flex min-h-[80vh] items-center justify-center overflow-hidden rounded-3xl border border-border/50 mx-4 my-8 md:mx-8 md:my-12">
-      <div className="absolute inset-0 bg-linear-to-b from-background/0 via-background/20 to-background/80 pointer-events-none" />
+    <div className="surface-grid border-border/50 relative mx-4 my-8 flex min-h-[80vh] items-center justify-center overflow-hidden rounded-3xl border md:mx-8 md:my-12">
+      <div className="from-background/0 via-background/20 to-background/80 pointer-events-none absolute inset-0 bg-linear-to-b" />
 
-      <Container className="relative flex flex-col items-center text-center py-20">
-        <div className="bg-accent/10 mb-8 flex h-24 w-24 items-center justify-center rounded-full text-accent shadow-xl shadow-accent/5">
+      <Container className="relative flex flex-col items-center py-20 text-center">
+        <div className="bg-accent/10 text-accent shadow-accent/5 mb-8 flex h-24 w-24 items-center justify-center rounded-full shadow-xl">
           <svg className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path
               strokeLinecap="round"

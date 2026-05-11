@@ -22,7 +22,7 @@ export default function RoadmapNotFound() {
         </header>
 
         <section className="border-border bg-accent/5 flex flex-col items-center justify-center rounded-3xl border border-dashed py-20 text-center">
-          <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-accent/10 text-accent">
+          <div className="bg-accent/10 text-accent mb-6 flex h-20 w-20 items-center justify-center rounded-full">
             <svg className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path
                 strokeLinecap="round"
@@ -33,9 +33,9 @@ export default function RoadmapNotFound() {
             </svg>
           </div>
 
-          <h2 className="text-2xl font-bold text-foreground">Lost in the Road</h2>
+          <h2 className="text-foreground text-2xl font-bold">Lost in the Road</h2>
 
-          <p className="mt-2 text-muted max-w-sm px-6">
+          <p className="text-muted mt-2 max-w-sm px-6">
             We couldn&apos;t find this specific part of our product journey. Try going back to the
             main roadmap overview.
           </p>

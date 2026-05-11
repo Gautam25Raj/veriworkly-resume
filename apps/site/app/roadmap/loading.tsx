@@ -24,7 +24,7 @@ export default function RoadmapLoading() {
           {[1, 2, 3, 4].map((i) => (
             <div
               key={i}
-              className="bg-border/40 h-24 animate-pulse rounded-3xl border border-border/50"
+              className="bg-border/40 border-border/50 h-24 animate-pulse rounded-3xl border"
             />
           ))}
         </div>
@@ -37,7 +37,7 @@ export default function RoadmapLoading() {
                 {[1, 2, 3].map((j) => (
                   <div
                     key={j}
-                    className="bg-border/40 h-32 animate-pulse rounded-2xl border border-border/50"
+                    className="bg-border/40 border-border/50 h-32 animate-pulse rounded-2xl border"
                   />
                 ))}
               </div>

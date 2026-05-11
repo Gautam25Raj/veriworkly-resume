@@ -27,8 +27,8 @@ export default function TemplateError({
       </header>
 
       <section className="space-y-8">
-        <div className="relative aspect-3/4 w-full max-w-4xl mx-auto border border-border/50 rounded-2xl overflow-hidden bg-destructive/5 flex flex-col items-center justify-center p-12 text-center">
-          <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-destructive/10 text-destructive">
+        <div className="border-border/50 bg-destructive/5 relative mx-auto flex aspect-3/4 w-full max-w-4xl flex-col items-center justify-center overflow-hidden rounded-2xl border p-12 text-center">
+          <div className="bg-destructive/10 text-destructive mb-6 flex h-20 w-20 items-center justify-center rounded-full">
             <svg className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path
                 strokeLinecap="round"
@@ -38,8 +38,8 @@ export default function TemplateError({
               />
             </svg>
           </div>
-          <h2 className="text-2xl font-bold text-foreground">Loading Failed</h2>
-          <p className="mt-2 text-muted max-w-sm">
+          <h2 className="text-foreground text-2xl font-bold">Loading Failed</h2>
+          <p className="text-muted mt-2 max-w-sm">
             This might be due to a network error or a temporary service disruption.
           </p>
         </div>

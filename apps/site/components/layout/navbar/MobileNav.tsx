@@ -24,13 +24,13 @@ export const MobileNav = ({ isOpen, onClose }: MobileNavProps) => {
   return (
     <div
       className={cn(
-        "fixed inset-0 z-90 flex h-screen w-full flex-col overflow-hidden bg-background transition-all duration-500 ease-[cubic-bezier(0.85,0,0.15,1)] lg:hidden",
+        "bg-background fixed inset-0 z-90 flex h-screen w-full flex-col overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.85,0,0.15,1)] lg:hidden",
         isOpen ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0",
       )}
     >
-      <div className="bg-accent/10 absolute top-[-10%] right-[-10%] h-[50%] w-[50%] rounded-full blur-[120px] pointer-events-none" />
+      <div className="bg-accent/10 pointer-events-none absolute top-[-10%] right-[-10%] h-[50%] w-[50%] rounded-full blur-[120px]" />
 
-      <Container className="flex h-full flex-col px-4 pt-28 pb-10 overflow-y-auto overflow-x-hidden">
+      <Container className="flex h-full flex-col overflow-x-hidden overflow-y-auto px-4 pt-28 pb-10">
         <div className="flex-1 space-y-8">
           <div>
             <p className="text-accent mb-4 text-xs font-black tracking-[0.3em] uppercase opacity-70">
@@ -44,7 +44,7 @@ export const MobileNav = ({ isOpen, onClose }: MobileNavProps) => {
                   href={item.href}
                   onClick={onClose}
                   className={cn(
-                    "group flex items-center justify-between rounded-2xl py-4 px-4 transition-all duration-300",
+                    "group flex items-center justify-between rounded-2xl px-4 py-4 transition-all duration-300",
                     pathname === item.href
                       ? "bg-accent/10 text-foreground"
                       : "text-muted hover:bg-accent/5 hover:text-foreground",
@@ -58,7 +58,7 @@ export const MobileNav = ({ isOpen, onClose }: MobileNavProps) => {
                   <div className="flex items-center gap-4">
                     <div
                       className={cn(
-                        "flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-border/40 transition-colors",
+                        "border-border/40 flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border transition-colors",
                         pathname === item.href
                           ? "bg-accent border-accent/20 text-white"
                           : "bg-accent/5",
@@ -84,7 +84,7 @@ export const MobileNav = ({ isOpen, onClose }: MobileNavProps) => {
           </div>
 
           <div
-            className="grid grid-cols-2 gap-6 border-t border-border/40 pt-8"
+            className="border-border/40 grid grid-cols-2 gap-6 border-t pt-8"
             style={{
               transitionDelay: "250ms",
               transform: isOpen ? "translateY(0)" : "translateY(20px)",
@@ -92,7 +92,7 @@ export const MobileNav = ({ isOpen, onClose }: MobileNavProps) => {
             }}
           >
             <div className="space-y-3">
-              <p className="text-[10px] font-black tracking-[0.2em] text-muted uppercase">
+              <p className="text-muted text-[10px] font-black tracking-[0.2em] uppercase">
                 Resources
               </p>
 
@@ -100,7 +100,7 @@ export const MobileNav = ({ isOpen, onClose }: MobileNavProps) => {
                 <Link
                   href="/faq"
                   onClick={onClose}
-                  className="text-sm font-medium text-muted hover:text-foreground transition-colors"
+                  className="text-muted hover:text-foreground text-sm font-medium transition-colors"
                 >
                   Help Center
                 </Link>
@@ -108,7 +108,7 @@ export const MobileNav = ({ isOpen, onClose }: MobileNavProps) => {
                 <Link
                   href="/security"
                   onClick={onClose}
-                  className="text-sm font-medium text-muted hover:text-foreground transition-colors"
+                  className="text-muted hover:text-foreground text-sm font-medium transition-colors"
                 >
                   Security
                 </Link>
@@ -116,7 +116,7 @@ export const MobileNav = ({ isOpen, onClose }: MobileNavProps) => {
                 <Link
                   href="/style-guide"
                   onClick={onClose}
-                  className="text-sm font-medium text-muted hover:text-foreground transition-colors"
+                  className="text-muted hover:text-foreground text-sm font-medium transition-colors"
                 >
                   Brand assets
                 </Link>
@@ -124,13 +124,13 @@ export const MobileNav = ({ isOpen, onClose }: MobileNavProps) => {
             </div>
 
             <div className="space-y-3">
-              <p className="text-[10px] font-black tracking-[0.2em] text-muted uppercase">Legal</p>
+              <p className="text-muted text-[10px] font-black tracking-[0.2em] uppercase">Legal</p>
 
               <div className="flex flex-col gap-2">
                 <Link
                   href="/privacy"
                   onClick={onClose}
-                  className="text-sm font-medium text-muted hover:text-foreground transition-colors"
+                  className="text-muted hover:text-foreground text-sm font-medium transition-colors"
                 >
                   Privacy Policy
                 </Link>
@@ -138,7 +138,7 @@ export const MobileNav = ({ isOpen, onClose }: MobileNavProps) => {
                 <Link
                   href="/terms"
                   onClick={onClose}
-                  className="text-sm font-medium text-muted hover:text-foreground transition-colors"
+                  className="text-muted hover:text-foreground text-sm font-medium transition-colors"
                 >
                   Terms of Service
                 </Link>
@@ -155,25 +155,25 @@ export const MobileNav = ({ isOpen, onClose }: MobileNavProps) => {
             opacity: isOpen ? 1 : 0,
           }}
         >
-          <div className="flex items-center justify-between gap-4 rounded-3xl bg-accent/5 p-4 border border-border/40">
+          <div className="bg-accent/5 border-border/40 flex items-center justify-between gap-4 rounded-3xl border p-4">
             <div className="flex items-center gap-4">
-              <div className="h-10 w-10 flex items-center justify-center rounded-full bg-accent/10">
+              <div className="bg-accent/10 flex h-10 w-10 items-center justify-center rounded-full">
                 <ThemeToggle />
               </div>
 
               <div>
                 <p className="text-sm font-bold">Theme Appearance</p>
-                <p className="text-[10px] text-muted font-medium">Switch between light & dark</p>
+                <p className="text-muted text-[10px] font-medium">Switch between light & dark</p>
               </div>
             </div>
 
-            <div className="h-4 w-px bg-border/40" />
+            <div className="bg-border/40 h-4 w-px" />
 
             <Link
               href={siteConfig.links.github}
               target="_blank"
               onClick={onClose}
-              className="text-muted hover:text-foreground h-10 w-10 flex items-center justify-center rounded-full transition-colors"
+              className="text-muted hover:text-foreground flex h-10 w-10 items-center justify-center rounded-full transition-colors"
             >
               <GithubIcon className="h-5 w-5" />
             </Link>
@@ -181,7 +181,7 @@ export const MobileNav = ({ isOpen, onClose }: MobileNavProps) => {
 
           <Button
             asChild
-            className="w-full h-16 rounded-2xl bg-foreground text-background text-lg font-black shadow-xl shadow-foreground/5"
+            className="bg-foreground text-background shadow-foreground/5 h-16 w-full rounded-2xl text-lg font-black shadow-xl"
             onClick={onClose}
           >
             <Link href={siteConfig.links.app}>Start Building Free</Link>

@@ -8,16 +8,18 @@ export const NavLogo = () => {
     <Link href="/" className="group flex items-center gap-3 transition-all active:scale-95">
       <div className="relative h-10 w-10 shrink-0">
         <Image
-          src="/veriworkly-logo.png"
-          alt="VeriWorkly Logo"
+          priority
           width={40}
           height={40}
-          priority
+          alt="VeriWorkly Logo"
+          src="/veriworkly-logo.png"
           className="h-full w-full object-contain"
         />
       </div>
 
-      <span className="text-2xl font-bold tracking-tight">{siteConfig.shortName}</span>
+      <span className="font-mono text-2xl font-semibold tracking-tight">
+        {siteConfig.shortName}
+      </span>
     </Link>
   );
 };

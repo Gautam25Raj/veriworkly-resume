@@ -7,11 +7,11 @@ import { SectionHeader } from "./SectionHeader";
 
 export const ComponentsSection = () => {
   return (
-    <section id="components" className="space-y-8 scroll-mt-24">
+    <section id="components" className="scroll-mt-24 space-y-8">
       <SectionHeader icon={Component} title="Components" />
 
       <div className="grid gap-8 md:grid-cols-2">
-        <Card className="p-8 space-y-6">
+        <Card className="space-y-6 p-8">
           <h3 className="text-lg font-semibold">Buttons</h3>
 
           <div className="flex flex-wrap gap-4">
@@ -31,23 +31,23 @@ export const ComponentsSection = () => {
           </div>
         </Card>
 
-        <Card className="p-8 space-y-6">
+        <Card className="space-y-6 p-8">
           <h3 className="text-lg font-semibold">Badges</h3>
 
           <div className="flex flex-wrap gap-4">
             <Badge>Default Badge</Badge>
 
-            <Badge className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20">
+            <Badge className="border-emerald-500/20 bg-emerald-500/10 text-emerald-600">
               Success
             </Badge>
 
-            <Badge className="bg-amber-500/10 text-amber-600 border-amber-500/20">Warning</Badge>
+            <Badge className="border-amber-500/20 bg-amber-500/10 text-amber-600">Warning</Badge>
 
-            <Badge className="bg-red-500/10 text-red-600 border-red-500/20">Error</Badge>
+            <Badge className="border-red-500/20 bg-red-500/10 text-red-600">Error</Badge>
           </div>
         </Card>
 
-        <Card className="p-8 space-y-6">
+        <Card className="space-y-6 p-8">
           <h3 className="text-lg font-semibold">Interactive Elements</h3>
 
           <div className="flex flex-col gap-4">
@@ -75,23 +75,23 @@ export const ComponentsSection = () => {
           </div>
         </Card>
 
-        <Card className="p-8 space-y-6">
+        <Card className="space-y-6 p-8">
           <h3 className="text-lg font-semibold">Status Icons</h3>
 
           <div className="flex gap-6">
             <div className="flex flex-col items-center gap-2">
-              <CheckCircle2 className="text-emerald-500 size-6" />
-              <span className="text-[10px] uppercase font-bold text-muted">Success</span>
+              <CheckCircle2 className="size-6 text-emerald-500" />
+              <span className="text-muted text-[10px] font-bold uppercase">Success</span>
             </div>
 
             <div className="flex flex-col items-center gap-2">
-              <Info className="text-blue-500 size-6" />
-              <span className="text-[10px] uppercase font-bold text-muted">Info</span>
+              <Info className="size-6 text-blue-500" />
+              <span className="text-muted text-[10px] font-bold uppercase">Info</span>
             </div>
 
             <div className="flex flex-col items-center gap-2">
-              <AlertTriangle className="text-amber-500 size-6" />
-              <span className="text-[10px] uppercase font-bold text-muted">Warning</span>
+              <AlertTriangle className="size-6 text-amber-500" />
+              <span className="text-muted text-[10px] font-bold uppercase">Warning</span>
             </div>
           </div>
         </Card>
