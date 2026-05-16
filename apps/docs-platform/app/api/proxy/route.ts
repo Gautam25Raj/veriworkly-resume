@@ -2,8 +2,14 @@ import { NextRequest } from "next/server";
 
 import { openapi } from "@/lib/openapi";
 
+const allowedOrigins = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(",")
+      .map((o) => o.trim())
+      .filter(Boolean)
+  : ["https://api.veriworkly.com"];
+
 const proxyHandlers = openapi.createProxy({
-  allowedOrigins: ["https://docs.veriworkly.com", "https://veriworkly.com"],
+  allowedOrigins,
 });
 
 const handleRequest = async (req: NextRequest): Promise<Response> => {
