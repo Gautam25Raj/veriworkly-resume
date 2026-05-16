@@ -24,9 +24,8 @@ const handleRequest = async (req: NextRequest): Promise<Response> => {
     headers.set("Cookie", decodedCookie);
   }
 
-  // Inject API key from our custom cookie if not already provided in headers
-  // This allows the sidebar input to work globally for "Try it" requests.
   const docsApiKey = req.cookies.get("docs_api_key")?.value;
+
   if (docsApiKey && !headers.has("X-API-Key")) {
     headers.set("X-API-Key", docsApiKey);
   }
