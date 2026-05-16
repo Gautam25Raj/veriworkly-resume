@@ -1,7 +1,24 @@
 name: "🚀 Feature Request"
 description: "Suggest a new idea or improvement for VeriWorkly."
+title: "[FEATURE]: "
 labels: ["enhancement"]
 body:
+  - type: dropdown
+    id: components
+    attributes:
+      label: "Affected Apps / Packages"
+      description: "Which parts of the monorepo are affected? (Select all that apply)"
+      multiple: true
+      options:
+        - "Site (apps/site)"
+        - "Studio (apps/studio)"
+        - "Server (apps/server)"
+        - "Docs Platform (apps/docs-platform)"
+        - "Blog Platform (apps/blog-platform)"
+        - "UI Library (packages/ui)"
+        - "Infrastructure / Other"
+    validations:
+      required: true
   - type: textarea
     id: problem
     attributes:

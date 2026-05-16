@@ -1,5 +1,6 @@
 name: "📖 Documentation Improvement"
 description: "Suggest improvements or report errors in the documentation."
+title: "[DOCS]: "
 labels: ["documentation"]
 body:
   - type: textarea

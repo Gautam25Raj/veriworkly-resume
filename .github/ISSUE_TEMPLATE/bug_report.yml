@@ -1,5 +1,6 @@
 name: "🐛 Bug Report"
 description: "Tell us about a bug you've found."
+title: "[BUG]: "
 labels: ["bug"]
 body:
   - type: markdown
@@ -7,16 +8,19 @@ body:
       value: |
         Thanks for taking the time to report a bug!
   - type: dropdown
-    id: component
+    id: components
     attributes:
-      label: "App / Component"
-      description: "Which part of the monorepo is affected?"
+      label: "Affected Apps / Packages"
+      description: "Which parts of the monorepo are affected? (Select all that apply)"
+      multiple: true
       options:
         - "Site (apps/site)"
         - "Studio (apps/studio)"
         - "Server (apps/server)"
         - "Docs Platform (apps/docs-platform)"
         - "Blog Platform (apps/blog-platform)"
+        - "UI Library (packages/ui)"
+        - "API Client (packages/api-client)"
         - "Infrastructure / Other"
     validations:
       required: true

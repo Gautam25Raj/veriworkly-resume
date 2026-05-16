@@ -1,5 +1,6 @@
 name: "🎨 New Resume Template"
 description: "Propose a new resume design for the collection."
+title: "[TEMPLATE]: "
 labels: ["template", "enhancement"]
 body:
   - type: input
