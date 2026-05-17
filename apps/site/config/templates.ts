@@ -24,7 +24,7 @@ export const templateSummaries: TemplateSummary[] = [
     description:
       "A dense, recruiter-friendly layout for longer resumes that still exports as a real matching PDF. Built for clarity and parsing accuracy above all else.",
     accentColor: "#10b981",
-    previewImage: "/templates/compact-ats.png",
+    previewImage: "/templates/precision-ats.png",
     tags: ["One column", "ATS-friendly", "Compact", "Simple"],
   },
 ];
