@@ -34,6 +34,22 @@ export type ShareLinkItem = {
   updatedAt: string;
 };
 
+export type ShareLinksPage = {
+  items: ShareLinkItem[];
+  total: number;
+  limit: number;
+  offset: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+  hasMore: boolean;
+  pagination: {
+    mode: "offset";
+    nextOffset: number | null;
+    nextCursor: string | null;
+  };
+};
+
 export type ShareLinkPayload<T = unknown> = {
   passwordRequired: boolean;
   documentTitle: string;
@@ -73,19 +89,44 @@ export async function createShareLink<T = unknown>(
   return payload.data;
 }
 
-export async function listShareLinks(documentId: string): Promise<ShareLinkItem[]> {
-  const response = await fetch(backendApiUrl(`/shares/documents/${documentId}`), {
-    method: "GET",
-    credentials: "include",
-  });
+export async function listShareLinks(
+  documentId: string,
+  options?: { page?: number; pageSize?: number },
+): Promise<ShareLinksPage> {
+  const page = options?.page ?? 1;
+  const pageSize = options?.pageSize ?? 20;
+
+  const response = await fetch(
+    backendApiUrl(`/shares/documents/${documentId}?page=${page}&pageSize=${pageSize}`),
+    {
+      method: "GET",
+      credentials: "include",
+    },
+  );
 
   if (!response.ok) {
     await throwApiError(response, "Failed to load share links");
   }
 
-  const payload = (await response.json()) as { data: ShareLinkItem[] };
+  const payload = (await response.json()) as { data: ShareLinksPage };
 
   return payload.data;
+}
+
+export async function listAllShareLinks(documentId: string): Promise<ShareLinkItem[]> {
+  const items: ShareLinkItem[] = [];
+  let page = 1;
+
+  while (true) {
+    const pageData = await listShareLinks(documentId, { page, pageSize: 20 });
+    items.push(...pageData.items);
+
+    if (!pageData.hasMore) {
+      return items;
+    }
+
+    page += 1;
+  }
 }
 
 export async function revokeShareLink(documentId: string, shareLinkId: string) {

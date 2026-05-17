@@ -21,7 +21,9 @@ export {
   createResume,
   deleteResume,
   loadResumeById,
+  listSavedResumes,
   deleteResumeById,
+  createResumeWithTemplate,
   setAllResumesSyncEnabled,
   type ResumeListItem,
 } from "./resume-core";
@@ -31,13 +33,13 @@ export * from "@/features/documents/export";
 export { importResumeFromFile } from "./resume-import";
 
 export {
+  safeText,
   escapeHtml,
-  formatDateRange,
-  getResumeFileBaseName,
   getResumeTitle,
+  formatDateRange,
   isSectionVisible,
   sanitizeFileName,
-  safeText,
+  getResumeFileBaseName,
 } from "./resume-formatters";
 
 export type { SaveResumeResult } from "@/features/resume/services/local-storage";

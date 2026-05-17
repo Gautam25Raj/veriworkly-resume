@@ -21,7 +21,7 @@ export const defaultSections: ResumeSection[] = [
 
 export const defaultResume: ResumeData = {
   id: "default-resume",
-  templateId: "clean-professional",
+  templateId: "executive-clarity",
 
   basics: {
     fullName: "VeriWorkly User",
@@ -44,7 +44,7 @@ export const defaultResume: ResumeData = {
         id: "link-1",
         type: "github",
         label: "GitHub",
-        url: "https://github.com/Gautam25Raj/veriworkly",
+        url: "https://github.com/VeriWorkly/veriworkly",
       },
       {
         id: "link-2",

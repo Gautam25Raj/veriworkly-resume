@@ -104,7 +104,7 @@ export class DocumentSyncService<T extends BaseDocumentData> {
       if (item && item.sync.enabled) {
         await this.syncNow(due.item.id);
       } else {
-        SyncEngine.removeOutboxItem(due.item.id);
+        SyncEngine.removeOutboxItem(due.item.id, this.config.documentType);
       }
     } finally {
       this.workerTickInFlight = false;
@@ -135,7 +135,7 @@ export class DocumentSyncService<T extends BaseDocumentData> {
       (item) => item.sync.enabled && item.sync.status === "pending",
     );
     for (const item of pending) {
-      SyncEngine.upsertOutboxItem(item.id);
+      SyncEngine.upsertOutboxItem(item.id, {}, this.config.documentType);
     }
   }
 
@@ -169,7 +169,7 @@ export class DocumentSyncService<T extends BaseDocumentData> {
 
     this.setLocalSyncState(id, "syncing");
     SyncEngine.updateTelemetry(id, { lastAttemptAt: new Date().toISOString() });
-    SyncEngine.upsertOutboxItem(id, { state: "syncing" });
+    SyncEngine.upsertOutboxItem(id, { state: "syncing" }, this.config.documentType);
 
     try {
       const isNew = !item.sync.cloudDocumentId;
@@ -194,7 +194,7 @@ export class DocumentSyncService<T extends BaseDocumentData> {
 
       const updated = this.applyCloudSyncMetadata(item, cloud);
       this.config.localStorage.persist(updated);
-      SyncEngine.removeOutboxItem(id);
+      SyncEngine.removeOutboxItem(id, this.config.documentType);
       SyncEngine.updateTelemetry(id, { lastSuccessAt: new Date().toISOString() });
 
       return { ok: true, message: "Document synced successfully." };
@@ -203,10 +203,14 @@ export class DocumentSyncService<T extends BaseDocumentData> {
       const isConflict = message.includes("Conflict");
       this.setLocalSyncState(id, isConflict ? "conflicted" : "pending");
 
-      SyncEngine.upsertOutboxItem(id, {
-        state: isConflict ? "conflicted" : "pending",
-        nextAttemptAt: Date.now() + (isConflict ? 60000 : this.workerIdleDelayMs),
-      });
+      SyncEngine.upsertOutboxItem(
+        id,
+        {
+          state: isConflict ? "conflicted" : "pending",
+          nextAttemptAt: Date.now() + (isConflict ? 60000 : this.workerIdleDelayMs),
+        },
+        this.config.documentType,
+      );
 
       SyncEngine.updateTelemetry(id, {
         lastErrorAt: new Date().toISOString(),
@@ -321,7 +325,7 @@ export class DocumentSyncService<T extends BaseDocumentData> {
         revision: 1,
       },
     } as T);
-    SyncEngine.removeOutboxItem(id);
+    SyncEngine.removeOutboxItem(id, this.config.documentType);
     return { ok: true, message: "Sync disabled for this document." };
   }
 
@@ -331,7 +335,7 @@ export class DocumentSyncService<T extends BaseDocumentData> {
 
   async resolveConflictUseCloud(id: string) {
     const result = await this.hydrateById(id);
-    if (result.ok) SyncEngine.removeOutboxItem(id);
+    if (result.ok) SyncEngine.removeOutboxItem(id, this.config.documentType);
     return result;
   }
 

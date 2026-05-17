@@ -29,7 +29,7 @@ import {
   hasSkillGroupContent,
   normalizeLinkHref,
 } from "@/features/documents/rendering/resume-rendering";
-import { SOCIAL_ICON_SRC_BY_TYPE } from "@/templates/shared/social-icons";
+import { SOCIAL_ICON_SRC_BY_TYPE } from "../../shared/social-icons";
 
 function Section({
   children,

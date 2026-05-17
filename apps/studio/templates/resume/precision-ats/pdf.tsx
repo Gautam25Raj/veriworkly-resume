@@ -4,7 +4,7 @@ import React from "react";
 import { Document, Link, Page, StyleSheet, Text, View } from "@react-pdf/renderer";
 
 import type { ResumeData } from "@/types/resume";
-import type { PdfTemplateProps } from "@/templates/pdf/types";
+import type { PdfTemplateProps } from "@/templates/resume/pdf/types";
 import { FONT_REGISTRY } from "@/features/documents/constants/fonts";
 import {
   RESUME_PAGE_HEIGHT_PT,
@@ -30,7 +30,7 @@ import {
   hasSkillGroupContent,
   normalizeLinkHref,
 } from "@/features/documents/rendering/resume-rendering";
-import { PdfSocialIcon } from "@/templates/pdf/SocialIcon";
+import { PdfSocialIcon } from "../../pdf/SocialIcon";
 
 function makeStyles(resume: ResumeData) {
   const style = getResumeRenderStyle(resume);

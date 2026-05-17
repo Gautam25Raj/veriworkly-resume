@@ -10,7 +10,7 @@ describe("template render contract", () => {
     const uniqueTemplateIds = new Set(templateIds);
 
     expect(uniqueTemplateIds.size).toBe(templateIds.length);
-    expect(templateIds).toEqual(expect.arrayContaining(["clean-professional", "compact-ats"]));
+    expect(templateIds).toEqual(expect.arrayContaining(["executive-clarity", "precision-ats"]));
   });
 
   it("renders every registered template for canonical resume data", async () => {

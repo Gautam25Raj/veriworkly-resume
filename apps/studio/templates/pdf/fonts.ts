@@ -1,6 +1,7 @@
 import { Font } from "@react-pdf/renderer";
 
 import type { ResumeData } from "@/types/resume";
+
 import { FONT_REGISTRY } from "@/features/documents/constants/fonts";
 import { getResumeRenderStyle } from "@/features/documents/rendering/resume-rendering";
 

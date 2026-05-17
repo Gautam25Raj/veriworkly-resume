@@ -1,13 +1,14 @@
 "use client";
 
 import type { ResumeData } from "@/types/resume";
+
 import {
-  createShareLink,
-  listShareLinks,
-  revokeShareLink,
-  type CreateShareLinkOptions,
-  type CreateShareLinkResult,
   type ShareLinkItem,
+  type CreateShareLinkResult,
+  type CreateShareLinkOptions,
+  createShareLink,
+  revokeShareLink,
+  listAllShareLinks,
 } from "@/features/documents/services/share-service";
 
 export type { ShareLinkItem };
@@ -20,7 +21,7 @@ export async function createResumeShareLink(
 }
 
 export async function listResumeShareLinks(resumeId: string): Promise<ShareLinkItem[]> {
-  return listShareLinks(resumeId);
+  return listAllShareLinks(resumeId);
 }
 
 export async function revokeResumeShareLink(resumeId: string, shareLinkId: string) {

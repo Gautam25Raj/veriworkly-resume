@@ -9,8 +9,8 @@ import ToolbarDownloadMenu from "@/app/(main)/editor/components/toolbar/ToolbarD
 import ToolbarSecondaryActions from "@/app/(main)/editor/components/toolbar/ToolbarSecondaryActions";
 import { useToolbarDownloads } from "@/app/(main)/editor/components/toolbar/useToolbarDownloads";
 
-import { saveResume, importResumeFromFile } from "@/features/resume/services/resume-service";
 import { useResume } from "@/features/resume/hooks/use-resume";
+import { saveResume, importResumeFromFile } from "@/features/resume/services/resume-service";
 
 interface ToolbarProps {
   resumeId: string;
@@ -21,19 +21,21 @@ interface ToolbarProps {
 
 const Toolbar = ({ resumeId, resumePreviewId, onOpenShare, onOpenDelete }: ToolbarProps) => {
   const router = useRouter();
-  const { resetResume, resume, setResume } = useResume();
+
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const { resetResume, resume, setResume } = useResume();
 
   const [message, setMessage] = useState("Autosave ready");
 
   const {
     activeDownload,
+    onDownloadPdf,
     onDownloadDocx,
     onDownloadHtml,
     onDownloadJson,
-    onDownloadMarkdown,
-    onDownloadPdf,
     onDownloadText,
+    onDownloadMarkdown,
   } = useToolbarDownloads(resume, resumePreviewId, setMessage);
 
   function getSaveFailureMessage(reason: "quota-exceeded" | "unknown") {
@@ -56,7 +58,7 @@ const Toolbar = ({ resumeId, resumePreviewId, onOpenShare, onOpenDelete }: Toolb
       }
 
       setResume(importedResume);
-      router.push(`/editor/${importedResume.id}`);
+      router.push(`/editor/resume/${importedResume.id}`);
       setMessage("JSON imported successfully");
     } catch {
       setMessage("Import failed. Please use a valid JSON file");
@@ -65,7 +67,7 @@ const Toolbar = ({ resumeId, resumePreviewId, onOpenShare, onOpenDelete }: Toolb
 
   return (
     <div className="border-border bg-card/95 flex flex-wrap items-center justify-between gap-3 rounded-3xl border p-4 shadow-sm backdrop-blur">
-      <ToolbarHeader message={message} onBack={() => router.push("/")} />
+      <ToolbarHeader message={message} onBack={() => router.push("/dashboard")} />
 
       <div className="flex items-center gap-2">
         <ToolbarSecondaryActions
@@ -85,18 +87,18 @@ const Toolbar = ({ resumeId, resumePreviewId, onOpenShare, onOpenDelete }: Toolb
         <ToolbarDownloadMenu
           onDownloadPdf={onDownloadPdf}
           onDownloadDocx={onDownloadDocx}
-          onDownloadMarkdown={onDownloadMarkdown}
           onDownloadHtml={onDownloadHtml}
           onDownloadText={onDownloadText}
           onDownloadJson={onDownloadJson}
           activeDownload={activeDownload}
+          onDownloadMarkdown={onDownloadMarkdown}
         />
 
         <ToolbarActionsMenu
-          onDelete={onOpenDelete}
-          onImport={() => fileInputRef.current?.click()}
-          onExport={onDownloadJson}
           onShare={onOpenShare}
+          onDelete={onOpenDelete}
+          onExport={onDownloadJson}
+          onImport={() => fileInputRef.current?.click()}
           onReset={() => {
             resetResume();
             setMessage("Resume reset to defaults");

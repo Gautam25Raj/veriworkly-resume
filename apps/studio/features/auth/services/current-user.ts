@@ -13,10 +13,19 @@ export type SessionUser = {
   shareResumeCount?: number;
 };
 
-type SessionPayload = { user?: SessionUser };
 type MasterProfileSummaryPayload = {
+  profile?: { userId?: string };
   summary?: Partial<
-    Pick<SessionUser, "createdAt" | "emailVerified" | "autoSyncEnabled" | "shareResumeCount">
+    Pick<
+      SessionUser,
+      | "id"
+      | "email"
+      | "name"
+      | "createdAt"
+      | "emailVerified"
+      | "autoSyncEnabled"
+      | "shareResumeCount"
+    >
   >;
 };
 
@@ -34,11 +43,20 @@ async function fetchMasterProfileSummary(cookieHeader?: string) {
       return null;
     }
 
-    const payload = (await response.json()) as {
-      data?: MasterProfileSummaryPayload;
-    };
+    const payload = (await response.json()) as { data?: MasterProfileSummaryPayload };
+    const summary = payload.data?.summary;
 
-    return payload.data?.summary ?? null;
+    if (!summary) return null;
+
+    return {
+      id: summary.id ?? payload.data?.profile?.userId ?? "",
+      email: summary.email ?? "",
+      name: summary.name,
+      createdAt: summary.createdAt,
+      emailVerified: summary.emailVerified,
+      autoSyncEnabled: summary.autoSyncEnabled,
+      shareResumeCount: summary.shareResumeCount,
+    } satisfies Partial<SessionUser>;
   } catch {
     return null;
   }
@@ -53,22 +71,9 @@ export async function fetchCurrentUser(force = false): Promise<SessionUser | nul
 
       const cookieStore = await cookies();
       const cookieHeader = cookieStore.toString();
-
-      const response = await fetch(backendApiUrl("/auth/get-session"), {
-        headers: { Cookie: cookieHeader },
-      });
-
-      if (!response.ok) return null;
-
-      const payload = (await response.json()) as SessionPayload;
-      const summary = payload?.user ? await fetchMasterProfileSummary(cookieHeader) : null;
-
-      return payload?.user
-        ? {
-            ...payload.user,
-            ...summary,
-          }
-        : null;
+      const summary = await fetchMasterProfileSummary(cookieHeader);
+      if (!summary?.id || !summary?.email) return null;
+      return summary as SessionUser;
     } catch {
       return null;
     }
@@ -77,33 +82,15 @@ export async function fetchCurrentUser(force = false): Promise<SessionUser | nul
   if (!force && memoryCache) return memoryCache;
 
   try {
-    const response = await fetch(backendApiUrl("/auth/get-session"), {
-      method: "GET",
-      credentials: "include",
-    });
-
-    if (!response.ok) {
-      memoryCache = null;
-      return null;
-    }
-
-    const payload = (await response.json()) as SessionPayload;
-    const user = payload?.user ?? null;
-
-    if (!user) {
-      memoryCache = null;
-      return null;
-    }
-
     const summary = await fetchMasterProfileSummary();
-    const mergedUser = {
-      ...user,
-      ...summary,
-    };
+    if (!summary?.id || !summary?.email) {
+      memoryCache = null;
+      return null;
+    }
 
-    memoryCache = mergedUser;
+    memoryCache = summary as SessionUser;
 
-    return mergedUser;
+    return memoryCache;
   } catch {
     return null;
   }

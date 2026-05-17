@@ -1,6 +1,8 @@
 "use client";
 
 import {
+  Copy,
+  Link2,
   Cloud,
   Monitor,
   History,
@@ -12,13 +14,16 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+
+import type { ResumeListItem } from "@/features/resume/services/resume-service";
+import type { ResumeSyncTelemetry } from "@/features/resume/services/resume-sync";
 
 import { cn } from "@/lib/utils";
 
 import { Modal, Button } from "@veriworkly/ui";
 
-import type { ResumeListItem } from "@/features/resume/services/resume-service";
-import type { ResumeSyncTelemetry } from "@/features/resume/services/resume-sync";
+import { listResumeShareLinks } from "@/features/resume/services/share-links";
 
 interface SyncDetailsModalProps {
   resume: ResumeListItem;
@@ -42,8 +47,29 @@ const SyncDetailsModal = ({
   onSyncNow,
 }: SyncDetailsModalProps) => {
   const router = useRouter();
+
   const isSyncing = syncingResumeId === resume.id;
   const isConflicted = resume.sync.status === "conflicted";
+
+  const [shareUrl, setShareUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    void listResumeShareLinks(resume.id)
+      .then((links) => {
+        if (cancelled) return;
+        const token = links[0]?.token;
+        setShareUrl(token ? `${window.location.origin}/share/${token}` : null);
+      })
+      .catch(() => {
+        if (!cancelled) setShareUrl(null);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [resume.id]);
 
   if (!resume) return null;
 
@@ -155,10 +181,39 @@ const SyncDetailsModal = ({
               <Button
                 size="sm"
                 variant="ghost"
-                onClick={() => router.push(`/editor/${resume.id}`)}
+                onClick={() => router.push(`/editor/resume/${resume.id}`)}
                 className="h-8 w-8 rounded-full p-0 opacity-0 transition-all group-hover:opacity-100"
               >
                 <ExternalLink className="h-3.5 w-3.5" />
+              </Button>
+            </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <label className="text-muted text-[10px] font-bold tracking-widest uppercase">
+              Share Link
+            </label>
+
+            <div className="bg-muted/5 flex items-center gap-2 rounded-xl border px-3 py-2">
+              <Link2 className="text-muted h-4 w-4 shrink-0" />
+
+              <span className="text-muted min-w-0 flex-1 truncate text-xs">
+                {shareUrl ?? "No active public share link"}
+              </span>
+
+              <Button
+                size="sm"
+                variant="secondary"
+                disabled={!shareUrl}
+                className="h-8 gap-1.5 text-xs"
+                onClick={() => {
+                  if (!shareUrl) return;
+                  void navigator.clipboard.writeText(shareUrl);
+                  toast.success("Share link copied");
+                }}
+              >
+                <Copy className="h-3.5 w-3.5" />
+                Copy
               </Button>
             </div>
           </div>
@@ -261,7 +316,7 @@ const SyncDetailsModal = ({
                     className="text-[10px] font-black tracking-widest uppercase"
                     onClick={() => {
                       toast.info("Opening editor for manual merge...");
-                      router.push(`/editor/${resume.id}`);
+                      router.push(`/editor/resume/${resume.id}`);
                       onClose();
                     }}
                   >

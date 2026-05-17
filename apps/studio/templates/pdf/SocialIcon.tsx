@@ -3,7 +3,8 @@
 import { Path, Svg } from "@react-pdf/renderer";
 
 import type { ResumeLinkType } from "@/types/resume";
-import { SOCIAL_ICON_PATH_BY_TYPE } from "@/templates/shared/social-icons";
+
+import { SOCIAL_ICON_PATH_BY_TYPE } from "../shared/social-icons";
 
 export function PdfSocialIcon({
   color,

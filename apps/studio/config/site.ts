@@ -12,7 +12,7 @@ export const siteConfig = {
   tagline: "Build career assets. No login. 100% private.",
 
   links: {
-    github: "https://github.com/Gautam25Raj/veriworkly-resume",
+    github: "https://github.com/VeriWorkly/veriworkly",
     twitter: "https://x.com/veriworkly",
   },
 

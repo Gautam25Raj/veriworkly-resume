@@ -24,9 +24,9 @@ const ToolbarSecondaryActions = ({
   return (
     <>
       <Button
-        onClick={() => router.push(`/editor/${resumeId}/preview`)}
         size="sm"
         variant="secondary"
+        onClick={() => router.push(`/editor/resume/${resumeId}/preview`)}
       >
         Full Preview
       </Button>

@@ -1,4 +1,5 @@
 import type { ComponentType } from "react";
+
 import type { ResumeData } from "@/types/resume";
 
 export interface PdfTemplateProps {

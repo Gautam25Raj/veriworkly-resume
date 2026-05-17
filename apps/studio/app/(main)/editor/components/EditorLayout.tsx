@@ -1,8 +1,9 @@
 "use client";
 
-import type { TemplateComponent } from "@/types/template";
-
+import { useRouter, useSearchParams } from "next/navigation";
 import { useDeferredValue, useEffect, useRef, useState } from "react";
+
+import type { TemplateComponent } from "@/types/template";
 
 import { Card } from "@veriworkly/ui";
 
@@ -10,8 +11,11 @@ import {
   startResumeSyncWorker,
   hydrateCloudResumeByIdToLocalStorage,
 } from "@/features/resume/services/resume-sync";
+import {
+  loadResumeById,
+  createResumeWithTemplate,
+} from "@/features/resume/services/resume-service";
 import { useResume } from "@/features/resume/hooks/use-resume";
-import { loadResumeById } from "@/features/resume/services/resume-service";
 import { loadWorkspaceSettingsFromLocalStorage } from "@/features/documents/services/workspace-settings";
 
 import { loadTemplateComponentById } from "@/templates";
@@ -28,11 +32,14 @@ interface EditorLayoutProps {
 }
 
 const EditorLayout = ({ resumeId }: EditorLayoutProps) => {
-  const { hydrateFromStorage, resume, saveToStorage, setResume } = useResume();
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
   const hasHydratedRef = useRef(false);
 
   const isLoggedIn = useUserStore((state) => state.isLoggedIn);
+
+  const { hydrateFromStorage, resume, saveToStorage, setResume } = useResume();
 
   const [panelOpen, setPanelOpen] = useState(true);
   const [activeTab, setActiveTab] = useState<"editor" | "preview">("editor");
@@ -53,12 +60,22 @@ const EditorLayout = ({ resumeId }: EditorLayoutProps) => {
     let cancelled = false;
 
     const hydrate = async () => {
+      if (resumeId === "new") {
+        const template = searchParams.get("template") || "executive-clarity";
+        const newResume = createResumeWithTemplate(template);
+
+        router.replace(`/editor/resume/${newResume.id}`);
+
+        return;
+      }
+
       if (resumeId) {
         const routeResume = loadResumeById(resumeId);
 
         if (routeResume) {
           setResume(routeResume);
           hasHydratedRef.current = true;
+
           return;
         }
 
@@ -277,10 +294,6 @@ const EditorLayout = ({ resumeId }: EditorLayoutProps) => {
             </div>
 
             <div className="relative h-full min-h-0 flex-1 overflow-y-auto p-4 md:p-8">
-              <div className="pointer-events-none absolute inset-0 opacity-45">
-                <div className="from-accent/10 to-accent/5 absolute -top-24 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-radial via-transparent" />
-              </div>
-
               <div
                 className={`relative flex min-h-[70vh] justify-center rounded-3xl border border-dashed border-[color-mix(in_oklab,var(--border)_70%,transparent)] bg-[color-mix(in_oklab,var(--background)_92%,white)] ${stagePaddingClass}`}
               >

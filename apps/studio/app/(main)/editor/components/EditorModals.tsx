@@ -42,10 +42,10 @@ const EditorModals = ({
       if (!nextResume) {
         const fallback = createResume();
         setResume(fallback);
-        router.push(`/editor/${fallback.id}`);
+        router.push(`/editor/resume/${fallback.id}`);
       } else {
         setResume(nextResume);
-        router.push(`/editor/${nextResume.id}`);
+        router.push(`/editor/resume/${nextResume.id}`);
       }
 
       trackUsageEvent({ event: "resume_deleted" });

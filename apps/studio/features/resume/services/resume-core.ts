@@ -93,6 +93,23 @@ export function createResume(): ResumeData {
   return nextResume;
 }
 
+export function createResumeWithTemplate(templateId: string): ResumeData {
+  const workspaceSettings = loadWorkspaceSettingsFromLocalStorage();
+  const nextResume = deriveResumeFromMasterProfile(createId());
+
+  nextResume.templateId = templateId;
+
+  nextResume.sync = {
+    ...defaultResume.sync,
+    enabled: workspaceSettings.autoSyncEnabled,
+    status: (workspaceSettings.autoSyncEnabled ? "pending" : "local-only") as ResumeSyncStatus,
+  };
+
+  saveResume(nextResume);
+
+  return nextResume;
+}
+
 export function deleteResume(resumeId: string): ResumeData | null {
   const nextId = deleteResumeFromLocalStorage(resumeId);
 
