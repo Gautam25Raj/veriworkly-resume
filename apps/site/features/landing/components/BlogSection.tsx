@@ -8,7 +8,7 @@ const latestPosts = [
     title: "Building a Scalable Resume Platform: The VeriWorkly Multi-App Architecture",
     description:
       "Why we run separate apps for builder, docs, blog, and backend, and how that keeps development and deployments reliable.",
-    href: "https://blogs.veriworkly.com/building-scalable-resume-platform-multi-app-architecture",
+    href: "https://blog.veriworkly.com/building-scalable-resume-platform-multi-app-architecture",
     date: "April 28, 2026",
     readTime: "5 min read",
   },
@@ -17,7 +17,7 @@ const latestPosts = [
     title: "Mastering ATS-Friendly Resumes in 2026",
     description:
       "A deep dive into how modern Applicant Tracking Systems parse resumes and why structure matters more than visual design.",
-    href: "https://blogs.veriworkly.com/mastering-ats-friendly-resumes-2026",
+    href: "https://blog.veriworkly.com/mastering-ats-friendly-resumes-2026",
     date: "April 27, 2026",
     readTime: "6 min read",
   },
@@ -26,7 +26,7 @@ const latestPosts = [
     title: "Why Privacy is the Future of Resume Technology",
     description:
       "Exploring data ownership in modern resume tools and why VeriWorkly is built on a local-first architecture.",
-    href: "https://blogs.veriworkly.com/privacy-future-local-first-resume-builder",
+    href: "https://blog.veriworkly.com/privacy-future-local-first-resume-builder",
     date: "April 26, 2026",
     readTime: "6 min read",
   },
@@ -55,7 +55,7 @@ const BlogSection = () => {
         </div>
 
         <Link
-          href="https://blogs.veriworkly.com"
+          href="https://blog.veriworkly.com"
           className="text-accent hover:text-accent/80 flex items-center gap-2 text-sm font-bold transition-colors"
         >
           Explore All Articles <ArrowRight className="h-4 w-4" />

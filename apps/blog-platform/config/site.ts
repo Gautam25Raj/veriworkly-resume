@@ -8,7 +8,7 @@ export const siteConfig = {
 
   tagline: "Career platform ideas and architecture stories.",
   description: "Insights, product notes, and career guidance from the VeriWorkly team.",
-  url: process.env.SITE_URL || (isDev ? "http://localhost:3003" : "https://blogs.veriworkly.com"),
+  url: process.env.SITE_URL || (isDev ? "http://localhost:3003" : "https://blog.veriworkly.com"),
 
   links: {
     twitter: "https://x.com/veriworkly",
@@ -17,7 +17,7 @@ export const siteConfig = {
 
     main: isDev ? "http://localhost:3000" : "https://veriworkly.com",
     app: isDev ? "http://localhost:3001" : "https://app.veriworkly.com",
-    blog: isDev ? "http://localhost:3003" : "https://blogs.veriworkly.com",
+    blog: isDev ? "http://localhost:3003" : "https://blog.veriworkly.com",
     docs: isDev ? "http://localhost:3002" : "https://docs.veriworkly.com",
   },
 

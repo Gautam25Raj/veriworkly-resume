@@ -1,3 +1,5 @@
+const isDev = process.env.NODE_ENV === "development";
+
 export const siteConfig = {
   name: "VeriWorkly Studio",
   shortName: "VeriWorkly",
@@ -14,6 +16,12 @@ export const siteConfig = {
   links: {
     github: "https://github.com/VeriWorkly/veriworkly",
     twitter: "https://x.com/veriworkly",
+    linkedin: "https://linkedin.com/company/veriworkly",
+
+    main: isDev ? "http://localhost:3000" : "https://veriworkly.com",
+    app: isDev ? "http://localhost:3001" : "https://app.veriworkly.com",
+    docs: isDev ? "http://localhost:3002" : "https://docs.veriworkly.com",
+    blog: isDev ? "http://localhost:3003" : "https://blog.veriworkly.com",
   },
 
   keywords: [
@@ -52,7 +60,7 @@ export const siteConfig = {
   },
 
   navigation: [
-    { href: "/dashboard", label: "Dashboard" },
+    { href: "/", label: "Overview" },
     { href: "https://veriworkly.com/templates", label: "Templates" },
     { href: "/profile", label: "Profile" },
     { href: "https://veriworkly.com/roadmap", label: "Roadmap" },

@@ -38,10 +38,10 @@ const Footer = () => {
           </p>
 
           <Link
-            href="/dashboard"
+            href="/"
             className="text-muted hover:text-foreground w-fit text-sm transition-colors"
           >
-            Dashboard
+            Overview
           </Link>
 
           <Link
@@ -66,7 +66,7 @@ const Footer = () => {
           </Link>
 
           <Link
-            href="https://blogs.veriworkly.com"
+            href="https://blog.veriworkly.com"
             className="text-muted hover:text-foreground w-fit text-sm transition-colors"
           >
             Blog

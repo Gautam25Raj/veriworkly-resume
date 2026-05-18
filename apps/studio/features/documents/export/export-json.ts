@@ -1,6 +1,8 @@
 import type { ResumeData } from "@/types/resume";
-import { parseResumeDataForExport } from "@/features/resume/schemas/resume-storage-schema";
+
 import { getResumeFileBaseName } from "@/features/resume/services/resume-formatters";
+import { parseResumeDataForExport } from "@/features/resume/schemas/resume-storage-schema";
+
 import { downloadBlob } from "./download";
 
 export function exportResumeAsJson(resume: ResumeData): void {

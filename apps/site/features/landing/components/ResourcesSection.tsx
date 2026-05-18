@@ -32,7 +32,7 @@ const resources = [
 
   {
     title: "Blog",
-    href: "https://blogs.veriworkly.com",
+    href: "https://blog.veriworkly.com",
     description:
       "Expert resume tips, ATS strategies, and career insights to help you land your next job.",
   },

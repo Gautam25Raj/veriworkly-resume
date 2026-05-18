@@ -1,4 +1,5 @@
 import type { ResumeData } from "@/types/resume";
+
 import {
   safeText,
   escapeHtml,
@@ -7,6 +8,7 @@ import {
   getVisibleSectionMap,
   getResumeFileBaseName,
 } from "@/features/resume/services/resume-formatters";
+
 import { downloadBlob } from "./download";
 
 function getComputedStyleText(style: CSSStyleDeclaration): string {
@@ -51,9 +53,9 @@ function inlineComputedStyles(source: Element, clone: Element): void {
 function buildHtml(resume: ResumeData): string {
   const visibleSections = getVisibleSectionMap(resume);
 
-  const name = escapeHtml(safeText(resume.basics.fullName) || "Your Name");
-  const role = escapeHtml(safeText(resume.basics.role));
   const summary = escapeHtml(safeText(resume.summary));
+  const role = escapeHtml(safeText(resume.basics.role));
+  const name = escapeHtml(safeText(resume.basics.fullName) || "Your Name");
 
   const contact = [
     safeText(resume.basics.email),
@@ -183,9 +185,7 @@ function buildHtml(resume: ResumeData): string {
             })
             .join("");
 
-          if (!items) {
-            return "";
-          }
+          if (!items) return "";
 
           return `<section><h2>${escapeHtml(safeText(section.title) || "Section")}</h2>${items}</section>`;
         })
@@ -291,6 +291,8 @@ function buildRenderedHtmlDocument(targetId: string, resume: ResumeData): string
 export function exportResumeAsHtml(resume: ResumeData, targetId?: string): void {
   const html = targetId ? buildRenderedHtmlDocument(targetId, resume) : buildHtml(resume);
   const outputHtml = html ?? buildHtml(resume);
+
   const blob = new Blob([outputHtml], { type: "text/html;charset=utf-8" });
+
   downloadBlob(blob, `${getResumeFileBaseName(resume)}.html`);
 }

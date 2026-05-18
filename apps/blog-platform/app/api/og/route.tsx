@@ -13,7 +13,7 @@ export async function GET(request: Request) {
 
     const isDark = theme === "dark";
 
-    const baseUrl = process.env.SITE_URL ?? "https://blogs.veriworkly.com";
+    const baseUrl = process.env.SITE_URL ?? "https://blog.veriworkly.com";
     const logoUrl = `${baseUrl}/veriworkly-logo.png`;
 
     const displayDescription =

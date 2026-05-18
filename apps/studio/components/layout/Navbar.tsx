@@ -1,14 +1,12 @@
 "use client";
 
-import { LogOut, Loader2, Settings, UserRound, LayoutDashboard } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { LogOut, Loader2, Settings, UserRound, LayoutDashboard } from "lucide-react";
 
 import { siteConfig } from "@/config/site";
 
-import { Container } from "@veriworkly/ui";
-import { Menu, MenuItem } from "@veriworkly/ui";
-import { Button, buttonClassName } from "@veriworkly/ui";
+import { Container, Menu, MenuItem, Button, buttonClassName } from "@veriworkly/ui";
 
 import { signOutCurrentUser } from "@/features/auth/services/current-user";
 
@@ -84,11 +82,11 @@ const Navbar = () => {
                   <MenuItem
                     onClick={() => {
                       close();
-                      router.push("/dashboard");
+                      router.push("/");
                     }}
                   >
                     <LayoutDashboard className="h-4 w-4" />
-                    Dashboard
+                    Overview
                   </MenuItem>
 
                   <MenuItem

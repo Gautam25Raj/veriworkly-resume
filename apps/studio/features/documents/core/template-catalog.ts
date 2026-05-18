@@ -10,6 +10,7 @@ import type { DocumentType } from "./document-types";
  *
  * They are used as `templateId` in stored documents and as URL slugs.
  */
+
 export const templateCatalogByType: Record<DocumentType, TemplateMeta[]> = {
   RESUME: [
     {
@@ -25,6 +26,7 @@ export const templateCatalogByType: Record<DocumentType, TemplateMeta[]> = {
       description: "A dense, recruiter-friendly layout that exports as a perfectly matching PDF.",
     },
   ],
+
   COVER_LETTER: [
     {
       id: "cover-letter-classic",
@@ -33,6 +35,7 @@ export const templateCatalogByType: Record<DocumentType, TemplateMeta[]> = {
       description: "Traditional business format.",
     },
   ],
+
   FORMAL_LETTER: [
     {
       id: "formal-letter-modern",
@@ -41,6 +44,7 @@ export const templateCatalogByType: Record<DocumentType, TemplateMeta[]> = {
       description: "Structured formal correspondence format.",
     },
   ],
+
   INVOICE: [
     {
       id: "invoice-clean",

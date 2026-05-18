@@ -1,4 +1,4 @@
-export function formatDate(value: string) {
+export function formatDate(value?: string) {
   if (!value) {
     return "Present";
   }

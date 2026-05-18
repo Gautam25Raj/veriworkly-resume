@@ -64,6 +64,14 @@ app.use("/api/v1/documents", documentRoutes);
 app.all("/api/v1/auth", authRequestDiagnosticsMiddleware, authNodeHandler);
 app.all("/api/v1/auth/*", authRequestDiagnosticsMiddleware, authNodeHandler);
 
+// Root GET route
+app.get("/", (req, res) => {
+  res.json({
+    status: "ok",
+    message: "VeriWorkly API Server",
+  });
+});
+
 // 404 handler
 app.use(notFoundHandler);
 

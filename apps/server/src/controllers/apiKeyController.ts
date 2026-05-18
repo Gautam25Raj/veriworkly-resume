@@ -14,9 +14,7 @@ const DEFAULT_ALLOWED_SCOPES = [
   "resume:read",
   "resume:write",
   "roadmap:read",
-  "roadmap:write",
   "github:read",
-  "github:write",
 ];
 
 /**

@@ -4,12 +4,12 @@ import { pdf } from "@react-pdf/renderer";
 
 import type { ResumeData } from "@/types/resume";
 
-import { downloadBlob } from "./download";
-
 import { registerPdfFont } from "@/templates/pdf/fonts";
 import { loadTemplatePdfComponentById } from "@/templates/resume/pdf";
 
 import { getResumeFileBaseName } from "@/features/resume/services/resume-formatters";
+
+import { downloadBlob } from "./download";
 
 export async function exportResumeAsPdf(resume: ResumeData): Promise<void> {
   registerPdfFont(resume);

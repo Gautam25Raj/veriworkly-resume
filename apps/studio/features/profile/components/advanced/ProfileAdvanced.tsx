@@ -9,18 +9,23 @@ import {
   AlertCircle,
   CheckCircle2,
 } from "lucide-react";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 
 import type { MasterProfile } from "@/types/resume";
 
-import { Card } from "@veriworkly/ui";
-import { Badge } from "@veriworkly/ui";
-import { Button } from "@veriworkly/ui";
-import { TextArea } from "@veriworkly/ui";
+import { Card, Badge, Button, TextArea } from "@veriworkly/ui";
 
 import { cn } from "@/lib/utils";
 
 import { ApiRequestError } from "@/utils/fetchApiData";
+
+import ConfirmationModal from "@/components/modals/ConfirmationModal";
+
+import {
+  stringifyProfile,
+  buildProfileExportName,
+  parseMasterProfileJson,
+} from "./advanced-profile-utils";
 
 type ProfileAdvancedProps = {
   profile: MasterProfile;
@@ -29,29 +34,31 @@ type ProfileAdvancedProps = {
 };
 
 const ProfileAdvanced = ({ profile, onSave, isSaving }: ProfileAdvancedProps) => {
-  const [jsonValue, setJsonValue] = useState(() => JSON.stringify(profile, null, 2));
-  const [isJsonValid, setIsJsonValid] = useState(true);
-  const [isExporting, setIsExporting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  let isJsonValid = true;
+
+  const baseJsonValue = stringifyProfile(profile);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  useEffect(() => {
-    try {
-      JSON.parse(jsonValue);
+  const [jsonValue, setJsonValue] = useState(baseJsonValue);
 
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setIsJsonValid(true);
-      setErrorMessage(null);
-    } catch {
-      setIsJsonValid(false);
-    }
-  }, [jsonValue]);
+  const [isExporting, setIsExporting] = useState(false);
+  const [isResetConfirmOpen, setIsResetConfirmOpen] = useState(false);
+
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
+
+  const hasChanges = jsonValue !== baseJsonValue;
+
+  try {
+    parseMasterProfileJson(jsonValue);
+  } catch {
+    isJsonValid = false;
+  }
 
   const handleSave = async () => {
     try {
-      const parsed = JSON.parse(jsonValue);
+      const parsed = parseMasterProfileJson(jsonValue);
 
       await onSave(parsed);
 
@@ -64,21 +71,24 @@ const ProfileAdvanced = ({ profile, onSave, isSaving }: ProfileAdvancedProps) =>
         setErrorMessage("Conflict: This profile was updated elsewhere. Please refresh.");
         return;
       }
-      setErrorMessage(
-        error instanceof SyntaxError ? `Syntax Error: ${error.message}` : "Save failed",
-      );
+      setErrorMessage(error instanceof Error ? error.message : "Save failed");
     }
   };
 
   const handleReset = () => {
-    if (confirm("Discard all changes and reset to current profile?")) {
-      setJsonValue(JSON.stringify(profile, null, 2));
-      setErrorMessage(null);
-    }
+    setIsResetConfirmOpen(true);
+  };
+
+  const handleConfirmReset = () => {
+    setJsonValue(stringifyProfile(profile));
+
+    setErrorMessage(null);
+    setIsResetConfirmOpen(false);
   };
 
   const handleExport = () => {
     setIsExporting(true);
+
     try {
       const blob = new Blob([jsonValue], { type: "application/json" });
 
@@ -86,7 +96,7 @@ const ProfileAdvanced = ({ profile, onSave, isSaving }: ProfileAdvancedProps) =>
       const a = document.createElement("a");
 
       a.href = url;
-      a.download = `master-profile-${new Date().toISOString().split("T")[0]}.json`;
+      a.download = buildProfileExportName();
       a.click();
 
       URL.revokeObjectURL(url);
@@ -124,7 +134,10 @@ const ProfileAdvanced = ({ profile, onSave, isSaving }: ProfileAdvancedProps) =>
           <TextArea
             rows={22}
             value={jsonValue}
-            onChange={(e) => setJsonValue(e.target.value)}
+            onChange={(e) => {
+              setJsonValue(e.target.value);
+              setErrorMessage(null);
+            }}
             className={cn(
               "hide-scrollbar font-mono text-[13px] leading-relaxed transition-all focus:ring-1",
               "selection:bg-accent/30 bg-zinc-950 text-zinc-300 selection:text-white",
@@ -154,14 +167,20 @@ const ProfileAdvanced = ({ profile, onSave, isSaving }: ProfileAdvancedProps) =>
             <Button
               size="sm"
               onClick={handleSave}
-              disabled={isSaving || !isJsonValid}
+              disabled={isSaving || !isJsonValid || !hasChanges}
               className="flex-1 gap-2 px-6 sm:flex-none"
             >
               <Save className="h-4 w-4" />
               {isSaving ? "Saving..." : "Commit Changes"}
             </Button>
 
-            <Button size="sm" variant="secondary" onClick={handleReset} title="Reset to original">
+            <Button
+              size="sm"
+              variant="secondary"
+              onClick={handleReset}
+              disabled={!hasChanges}
+              title="Reset to original"
+            >
               <RotateCcw className="h-4 w-4" />
             </Button>
           </div>
@@ -199,7 +218,9 @@ const ProfileAdvanced = ({ profile, onSave, isSaving }: ProfileAdvancedProps) =>
 
           try {
             const text = await file.text();
-            JSON.parse(text);
+
+            parseMasterProfileJson(text);
+
             setJsonValue(text);
             setStatusMessage("JSON imported successfully. Review before committing.");
           } catch {
@@ -208,6 +229,17 @@ const ProfileAdvanced = ({ profile, onSave, isSaving }: ProfileAdvancedProps) =>
             e.target.value = "";
           }
         }}
+      />
+
+      <ConfirmationModal
+        variant="warning"
+        title="Discard changes?"
+        cancelText="Keep editing"
+        open={isResetConfirmOpen}
+        confirmText="Discard changes"
+        onConfirm={handleConfirmReset}
+        onClose={() => setIsResetConfirmOpen(false)}
+        description="Are you sure you want to discard all local raw JSON modifications and reset back to the saved profile state? This action cannot be undone."
       />
     </div>
   );

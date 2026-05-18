@@ -20,9 +20,7 @@ const ALLOWED_SCOPES = new Set([
   "resume:read",
   "resume:write",
   "roadmap:read",
-  "roadmap:write",
   "github:read",
-  "github:write",
 ]);
 
 type ApiKeyAuthUser = {

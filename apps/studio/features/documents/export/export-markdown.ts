@@ -1,4 +1,5 @@
 import type { ResumeData } from "@/types/resume";
+
 import {
   safeText,
   formatDateRange,
@@ -6,6 +7,7 @@ import {
   getVisibleSectionMap,
   getResumeFileBaseName,
 } from "@/features/resume/services/resume-formatters";
+
 import { downloadBlob } from "./download";
 
 function toMarkdownSection(title: string, body: string[]): string {
@@ -17,11 +19,12 @@ function toMarkdownSection(title: string, body: string[]): string {
 }
 
 function buildMarkdown(resume: ResumeData): string {
-  const visibleSections = getVisibleSectionMap(resume);
   const parts: string[] = [];
 
-  const name = safeText(resume.basics.fullName) || "Your Name";
+  const visibleSections = getVisibleSectionMap(resume);
+
   const role = safeText(resume.basics.role);
+  const name = safeText(resume.basics.fullName) || "Your Name";
 
   parts.push(`# ${name}`);
 
@@ -171,6 +174,7 @@ function buildMarkdown(resume: ResumeData): string {
 export function exportResumeAsMarkdown(resume: ResumeData): void {
   const markdown = buildMarkdown(resume);
   const blob = new Blob([markdown], { type: "text/markdown;charset=utf-8" });
+
   downloadBlob(blob, `${getResumeFileBaseName(resume)}.md`);
 }
 

@@ -1,5 +1,6 @@
 import type { ResumeData } from "@/types/resume";
 import { Document, HeadingLevel, Packer, Paragraph, TextRun } from "docx";
+
 import {
   safeText,
   formatDateRange,
@@ -7,6 +8,7 @@ import {
   getVisibleSectionMap,
   getResumeFileBaseName,
 } from "@/features/resume/services/resume-formatters";
+
 import { downloadBlob } from "./download";
 
 function createDocxParagraph(text: string): Paragraph {
@@ -16,11 +18,12 @@ function createDocxParagraph(text: string): Paragraph {
 }
 
 async function buildDocx(resume: ResumeData): Promise<Blob> {
-  const visibleSections = getVisibleSectionMap(resume);
   const children: Paragraph[] = [];
 
-  const fullName = safeText(resume.basics.fullName) || "Your Name";
+  const visibleSections = getVisibleSectionMap(resume);
+
   const role = safeText(resume.basics.role);
+  const fullName = safeText(resume.basics.fullName) || "Your Name";
 
   children.push(
     new Paragraph({

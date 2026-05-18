@@ -1,6 +1,7 @@
 import * as React from "react";
 
 import { cn } from "../../utils";
+import { Loader2 } from "lucide-react";
 
 type ChildWithProps = {
   className?: string;
@@ -81,7 +82,7 @@ export const Button = ({
     >
       {loading ? (
         <span className="flex items-center gap-2">
-          <span className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+          <Loader2 className="h-4 w-4 animate-spin" />
           <span>Loading...</span>
         </span>
       ) : (

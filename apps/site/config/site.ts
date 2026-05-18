@@ -21,7 +21,7 @@ export const siteConfig = {
     main: isDev ? "http://localhost:3000" : "https://veriworkly.com",
     app: isDev ? "http://localhost:3001" : "https://app.veriworkly.com",
     docs: isDev ? "http://localhost:3002" : "https://docs.veriworkly.com",
-    blog: isDev ? "http://localhost:3003" : "https://blogs.veriworkly.com",
+    blog: isDev ? "http://localhost:3003" : "https://blog.veriworkly.com",
   },
 
   keywords: [
@@ -65,7 +65,7 @@ export const siteConfig = {
     { href: "/stats", label: "Development" },
 
     { href: "https://app.veriworkly.com/dashboard", label: "Dashboard" },
-    { href: "https://blogs.veriworkly.com", label: "Blog" },
+    { href: "https://blog.veriworkly.com", label: "Blog" },
     { href: "https://docs.veriworkly.com", label: "Docs" },
   ],
 } as const;

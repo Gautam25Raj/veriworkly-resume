@@ -11,7 +11,7 @@ export class UserService {
    */
 
   static async getUserById(userId: string) {
-    const cacheKey = `user:profile:${userId}`;
+    const cacheKey = `user:profile:v2:${userId}`;
     const cached = await cacheGet(cacheKey);
 
     if (cached) return cached;
@@ -28,6 +28,7 @@ export class UserService {
         updatedAt: true,
         _count: {
           select: {
+            apiKeys: true,
             shareLinks: true,
             resumes: true,
           },
@@ -63,6 +64,7 @@ export class UserService {
         updatedAt: true,
         _count: {
           select: {
+            apiKeys: true,
             shareLinks: true,
             resumes: true,
           },
@@ -70,7 +72,7 @@ export class UserService {
       },
     });
 
-    await cacheSet(`user:profile:${userId}`, updated, 1800);
+    await cacheSet(`user:profile:v2:${userId}`, updated, 1800);
 
     return updated;
   }

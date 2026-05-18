@@ -33,7 +33,7 @@ const Footer = () => {
           title: "Resources",
           links: [
             { name: "Docs & APIs", href: "https://docs.veriworkly.com", external: true },
-            { name: "Engineering Blog", href: "https://blogs.veriworkly.com", external: true },
+            { name: "Engineering Blog", href: "https://blog.veriworkly.com", external: true },
             { name: "System Security", href: "/security" },
             { name: "Design System", href: "/style-guide" },
             { name: "FAQ & Help", href: "/faq" },

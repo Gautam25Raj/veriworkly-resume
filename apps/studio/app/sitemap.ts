@@ -4,7 +4,7 @@ export const revalidate = 86400;
 
 const publicRoutes = [
   {
-    url: "https://blogs.veriworkly.com",
+    url: "https://blog.veriworkly.com",
     changeFrequency: "weekly" as const,
     priority: 0.7,
   },

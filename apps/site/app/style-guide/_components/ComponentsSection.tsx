@@ -59,7 +59,7 @@ export const ComponentsSection = () => {
             </Link>
 
             <Link
-              href="https://blogs.veriworkly.com"
+              href="https://blog.veriworkly.com"
               className="flex items-center gap-2 text-sm font-medium hover:underline"
             >
               Visit Blog

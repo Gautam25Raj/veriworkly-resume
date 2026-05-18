@@ -1,13 +1,13 @@
 import { z } from "zod";
 
-import { normalizeFontFamilyId } from "@/features/documents/constants/fonts";
 import {
-  monthDateSchema,
-  phoneOrEmptySchema,
   phoneSchema,
-  urlOrEmptySchema,
   yearDateSchema,
+  monthDateSchema,
+  urlOrEmptySchema,
+  phoneOrEmptySchema,
 } from "@/features/resume/schemas/resume-validation-rules";
+import { normalizeFontFamilyId } from "@/features/documents/constants/fonts";
 
 const languageSchema = z.object({
   id: z.string(),
@@ -153,6 +153,7 @@ const customizationSchema = z.object({
 
 const masterProfileDbSchemaBase = z.object({
   templateId: z.string(),
+
   basics: z.object({
     fullName: z.string(),
     role: z.string(),
@@ -164,6 +165,7 @@ const masterProfileDbSchemaBase = z.object({
     linkPhone: z.boolean(),
     linkLocation: z.boolean(),
   }),
+
   links: z.object({
     displayMode: z.enum(["icon", "url", "icon-username"]),
     items: z.array(
@@ -185,7 +187,9 @@ const masterProfileDbSchemaBase = z.object({
       }),
     ),
   }),
+
   summary: z.string(),
+
   experience: z.array(
     z.object({
       id: z.string(),
@@ -199,6 +203,7 @@ const masterProfileDbSchemaBase = z.object({
       highlights: z.array(z.string()),
     }),
   ),
+
   education: z.array(
     z.object({
       id: z.string(),
@@ -211,6 +216,7 @@ const masterProfileDbSchemaBase = z.object({
       summary: z.string(),
     }),
   ),
+
   projects: z.array(
     z.object({
       id: z.string(),
@@ -224,6 +230,7 @@ const masterProfileDbSchemaBase = z.object({
       skills: z.array(z.string()).default([]),
     }),
   ),
+
   skills: z.array(
     z.object({
       id: z.string(),
@@ -231,6 +238,7 @@ const masterProfileDbSchemaBase = z.object({
       keywords: z.array(z.string()),
     }),
   ),
+
   languages: z.array(languageSchema).default([]),
   interests: z.array(interestSchema).default([]),
   awards: z.array(awardSchema).default([]),
@@ -240,6 +248,7 @@ const masterProfileDbSchemaBase = z.object({
   references: z.array(referenceSchema).default([]),
   achievements: z.array(achievementSchema).default([]),
   customSections: z.array(customSectionSchema).default([]),
+
   sections: z.array(sectionSchema).default([]),
   customization: customizationSchema,
   updatedAt: z.string().optional(),
