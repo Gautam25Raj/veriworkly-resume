@@ -1,6 +1,6 @@
 {
   "name": "@veriworkly/site",
-  "version": "v3.7.0-alpha.2",
+  "version": "v3.7.1-beta.1",
   "private": true,
   "scripts": {
     "dev": "next dev",
