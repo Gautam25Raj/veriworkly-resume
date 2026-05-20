@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Info } from "lucide-react";
+import { ExternalLink, Info } from "lucide-react";
 
 import { Card } from "@veriworkly/ui";
 
@@ -27,15 +27,39 @@ export const BrandAssetsSection = () => {
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">
-          <div className="border-border bg-background rounded-2xl border p-4">
-            <p className="text-sm font-semibold">Logo path</p>
-            <p className="text-muted mt-1 font-mono text-xs">/veriworkly-logo.png</p>
-          </div>
+          <a
+            href="https://github.com/VeriWorkly/veriworkly/blob/master/apps/site/public/veriworkly-logo.png"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className="border-border bg-background rounded-2xl border p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-semibold">Logo path</p>
+                  <p className="text-muted mt-1 font-mono text-xs">/veriworkly-logo.png</p>
+                </div>
+                <ExternalLink className="h-5 w-5" />
+              </div>
+            </div>
+          </a>
 
-          <div className="border-border bg-background rounded-2xl border p-4">
-            <p className="text-sm font-semibold">Design references</p>
-            <p className="text-muted mt-1 text-xs">Theme tokens live in @veriworkly/ui styles.</p>
-          </div>
+          <a
+            href="https://github.com/VeriWorkly/veriworkly/tree/master/packages/ui"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <div className="border-border bg-background rounded-2xl border p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-semibold">Design references</p>
+                  <p className="text-muted mt-1 text-xs">
+                    Theme tokens live in @veriworkly/ui styles.
+                  </p>
+                </div>
+                <ExternalLink className="h-5 w-5" />
+              </div>
+            </div>
+          </a>
         </div>
       </Card>
     </section>
