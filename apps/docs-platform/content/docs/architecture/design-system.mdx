@@ -1,0 +1,145 @@
+---
+title: Shared Design System
+description: Technical architecture, components, and token variables of the @veriworkly/ui package.
+---
+
+import { Step, Steps } from "fumadocs-ui/components/steps";
+
+# Shared Design System (`@veriworkly/ui`)
+
+The `@veriworkly/ui` package is the centralized design system and UI library for the VeriWorkly monorepo. It ensures visual consistency, accessibility, and high performance across all workspace platforms:
+
+- **Marketing Site** (`apps/site` on port 3000)
+- **Builder Studio** (`apps/studio` on port 3001)
+- **Documentation** (`apps/docs-platform` on port 3002)
+- **Blog** (`apps/blog-platform` on port 3003)
+
+---
+
+## Theme & Tokens System
+
+The design system implements a dark-and-light theme design using native CSS variables mapped to Tailwind CSS v4 custom theme tokens. This configuration resides in `packages/ui/src/styles/themes.css`.
+
+### Theme CSS Variables
+
+The following core variables are injected into `:root` (light mode) and `.dark` (dark mode) contexts:
+
+| CSS Variable   | Tailwind Token        | Description               | Light Value            | Dark Value               |
+| :------------- | :-------------------- | :------------------------ | :--------------------- | :----------------------- |
+| `--background` | `color-fd-background` | Canvas background         | `#f5f4ef` (cream)      | `#0d1117` (deep dark)    |
+| `--foreground` | `color-fd-foreground` | Primary text and icons    | `#171717` (charcoal)   | `#f3f4f6` (light gray)   |
+| `--card`       | `color-fd-card`       | Container elements        | `#ffffff` (pure white) | `#121924` (slate navy)   |
+| `--border`     | `color-fd-border`     | Divider borders           | `rgba(23,23,23,0.12)`  | `rgba(148,163,184,0.24)` |
+| `--accent`     | `color-fd-primary`    | Interactive action states | `#2563eb` (royal blue) | `#60a5fa` (light blue)   |
+
+### CSS Usage Example
+
+To style a custom element outside the predefined Tailwind utilities, use the CSS custom properties:
+
+```css
+.custom-panel {
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  color: var(--foreground);
+  transition: border-color 0.2s ease;
+}
+
+.custom-panel:hover {
+  border-color: var(--accent);
+}
+```
+
+---
+
+## Component Library
+
+### UI Elements (`src/components/ui`)
+
+All primitives are designed to be fully modular, responsive, and lightweight:
+
+- **Accordion**: Collapsible accordion panels for FAQs and dense details.
+- **Badge**: Pill badges for tag attributes or status indicators.
+- **Button**: Action triggers with loaders, icons, and multiple style variants.
+- **Card**: Elevated border boxes representing standalone content sections.
+- **Checkbox**: Fully accessible check selectors.
+- **Input**: Validated input text fields with layout error messaging.
+- **Menu**: Nested contextual navigation triggers and action menus.
+- **Modal**: Overlay modal displays utilizing smooth transitions.
+- **Select**: Interactive form dropdown components.
+- **Switch**: Visual toggle state controls.
+- **TextArea**: Expandable multi-line textual fields.
+- **Tooltip**: Contextual bubble descriptions on hover.
+
+### Structural Layout Components (`src/components/layout`)
+
+- **Container**: Page margins and content max-width constraints.
+- **MarketingNavbar**: Landing header supporting desktop actions and mobile menu slide-out navigation.
+- **MarketingFooter**: Multi-column site link index containing copyright and social integrations.
+- **AppShell**: Left-rail navigation layout shell for the builder workspace.
+- **ThemeToggle**: Class-based theme switcher button (`light` vs `.dark` DOM root updates).
+- **SocialIcons**: Vector brand assets linking to GitHub, LinkedIn, and Twitter/X.
+
+---
+
+## Typography & Font Setup
+
+Google **Geist** and **Geist Mono** are pre-configured in `src/lib/fonts.ts`. The variables are consolidated into the `globalFontVariables` helper:
+
+### Next.js Integration Guide
+
+Import the fonts and global CSS stylesheet into the main root layout (`app/layout.tsx`):
+
+```tsx
+import { globalFontVariables } from "@veriworkly/ui";
+import "@veriworkly/ui/styles/globals.css";
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en" className={globalFontVariables}>
+      <body className="bg-background text-foreground antialiased">{children}</body>
+    </html>
+  );
+}
+```
+
+---
+
+## Development & Extension
+
+### Creating a New Component
+
+To add a new shared UI component to the design system:
+
+<Steps>
+  <Step>
+    #### Component Implementation
+    Create your component file inside `packages/ui/src/components/ui/` or `/layout/`. Always write styling with Tailwind utilities:
+    ```tsx
+    // packages/ui/src/components/ui/CardHeader.tsx
+    import React from "react";
+    import { cn } from "../../utils";
+
+    export interface CardHeaderProps extends React.HTMLAttributes<HTMLDivElement> {}
+
+    export const CardHeader = ({ className, ...props }: CardHeaderProps) => {
+      return (
+        <div
+          className={cn("border-b border-border pb-4 mb-4", className)}
+          {...props}
+        />
+      );
+    };
+    ```
+
+  </Step>
+
+<Step>
+  #### Export the Component Expose your component in the main entrypoint `packages/ui/src/index.ts`:
+  ```typescript export * from "./components/ui/CardHeader"; ```
+</Step>
+
+  <Step>
+    #### Workspace Hot Reloading
+    Since npm workspaces track the files directly, other apps (`site`, `studio`) will automatically rebuild with Hot Module Replacement (HMR) once you save changes.
+  </Step>
+</Steps>

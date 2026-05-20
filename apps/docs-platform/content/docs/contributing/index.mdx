@@ -11,16 +11,27 @@ First off, thank you for considering contributing to **VeriWorkly**! We are buil
 
 ## Getting Started
 
-To ensure a smooth workflow, please follow these steps to set up your environment:
+To ensure a smooth collaboration, please follow these steps to set up your contribution environment:
 
-1. **Fork the repository** on GitHub.
-2. **Clone your fork** locally:
+1. **Fork the repository** on GitHub by clicking the **Fork** button on the [VeriWorkly Repository](https://github.com/VeriWorkly/veriworkly).
+2. **Clone your personal fork** to your local machine:
    ```bash
-   git clone https://github.com/VeriWorkly/veriworkly.git
+   git clone https://github.com/YOUR_USERNAME/veriworkly.git
    cd veriworkly-resume
    ```
-3. **Set up your local environment** following our [Local Setup Guide](/docs/getting-started/local-setup).
-4. **Create a branch** for your work:
+3. **Configure Upstream Remote**:
+   Keep your fork in sync with the main project by tracking the original repository:
+   ```bash
+   git remote add upstream https://github.com/VeriWorkly/veriworkly.git
+   ```
+4. **Set up your local environment** (environment variables, dependencies) following our detailed [Local Setup Guide](/docs/getting-started/local-setup).
+5. **Sync with Upstream Master Branch**:
+   Before creating a branch, always ensure your local `master` branch is up to date:
+   ```bash
+   git checkout master
+   git pull upstream master
+   ```
+6. **Create a branch** for your work, using our branching convention:
    ```bash
    git checkout -b feat/your-feature-name
    ```
@@ -56,15 +67,44 @@ If you find a bug, please open an issue with:
 
 ### Branching Policy
 
-- `main`: This branch contains the latest stable, production-ready code.
-- `dev`: This is the active development and integration branch. **All Pull Requests should be opened against `dev`.**
+- `master`: Active development, integration, and production branch. **All Pull Requests should be opened against `master`.**
 
 ### Branch Naming Convention
+
+Your branch name should start with one of the following prefixes based on the work type:
 
 - `feat/feature-name`: For new features.
 - `fix/bug-name`: For bug fixes.
 - `docs/doc-update`: For documentation changes.
 - `refactor/scope`: For code refactoring without behavior changes.
+
+### Pre-commit Quality Verification
+
+Before committing and pushing your changes, run automated scripts to ensure style guides and formats are preserved:
+```bash
+# Run typescript compilation and linter
+npm run lint
+
+# Format code automatically using Prettier
+npm run format:write
+
+# Run the test suite (Vitest / Playwright)
+npm test
+```
+
+### Pull Request Process
+
+1. **Discuss Major Changes First**: For significant enhancements, please create an issue first to discuss the design pattern with the maintainers.
+2. **Push to Your Fork**:
+   ```bash
+   git push origin feat/your-feature-name
+   ```
+3. **Open Pull Request**: Navigate to the VeriWorkly main repository and create a Pull Request. Ensure the target branch is set to **`master`**.
+4. **Follow the PR Template**: Make sure to describe the modifications, link the relevant issue, and check all boxes in the PR template:
+   - [ ] Verified build succeeds locally (`npm run build`)
+   - [ ] Linter validation passes (`npm run lint`)
+   - [ ] Prettier formatting succeeds (`npm run format`)
+   - [ ] Local tests pass successfully (`npm test`)
 
 ---
 

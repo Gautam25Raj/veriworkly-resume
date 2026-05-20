@@ -31,20 +31,26 @@ VeriWorkly is a monorepo consisting of a Next.js frontend and an Express backend
 
 ## 🚀 Running the App
 
-To start all services (Frontend, Backend, Docs, Blog) in development mode:
+To start services (Site, Builder Studio, Backend, Docs, Blog) in development mode:
 
 ```bash
 npm run dev
+npm run dev:site
+npm run dev:studio
+npm run dev:server
+npm run dev:docs
+npm run dev:blog
 ```
 
 To start specific apps:
 
-- **Resume Builder**: `npm run dev:resume`
+- **Site/Resume**: `npm run dev` (starts @veriworkly/site)
+- **Studio**: `npm run dev:studio`
 - **Server**: `npm run dev:server`
 - **Docs**: `npm run dev:docs`
 - **Blog**: `npm run dev:blog`
 
-## 📖 Full Documentation
+## 📚 Detailed Documentation
 
 For detailed guides on deployment, contribution, and architecture, visit:
 [https://docs.veriworkly.com](https://docs.veriworkly.com)

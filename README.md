@@ -119,7 +119,7 @@ docker compose --env-file .env.docker up -d --build
 | [User Support](https://docs.veriworkly.com/docs/user-guides/creating-your-first-resume) | Guides for building and managing resumes.    |
 | [Local Setup Guide](README.Local.md)                                                    | Detailed manual installation instructions.   |
 | [Docker Deployment](README.Docker.md)                                                   | Production self-hosting instructions.        |
-| [Contributing Guidelines](https://docs.veriworkly.com/docs/contributing/index)          | Standards and protocols for contributors.    |
+| [Contributing Guidelines](CONTRIBUTING.md)                                              | Standards and protocols for contributors.    |
 
 ## Security & Privacy
 
@@ -142,7 +142,7 @@ For complete security policy, see [SECURITY.md](SECURITY.md)
 
 ## Contributing
 
-VeriWorkly is an open-source project and welcomes community contributions. Please review our [Contributing Guide](https://docs.veriworkly.com/docs/contributing/index) before submitting Pull Requests.
+VeriWorkly is an open-source project and welcomes community contributions. Please review our [Contributing Guide](CONTRIBUTING.md) before submitting Pull Requests.
 
 ### Ways to Contribute
 

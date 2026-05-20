@@ -20,7 +20,7 @@ const eslintConfig = defineConfig([
   {
     settings: {
       next: {
-        rootDir: ["apps/resume-builder/", "apps/docs-platform/", "apps/blog-platform/"],
+        rootDir: ["apps/site/", "apps/studio/", "apps/docs-platform/", "apps/blog-platform/"],
       },
     },
     rules: {

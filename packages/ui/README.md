@@ -34,13 +34,20 @@ This package provides a comprehensive set of production-ready React components b
 
 ### Layout Components (`src/components/layout`)
 
-- **Container**: Responsive page wrapper with standardized max-widths and padding.
+- **Container**: Responsive page layout wrapper with standardized max-widths and paddings.
+- **MarketingNavbar**: Main header component featuring responsive navigation links, branding logo, and active action controls.
+- **MarketingFooter**: Responsive product footer containing multi-column navigation links, copyright information, and integrated social platform links.
+- **AppShell**: Standard sidebar, header, and workspace shell configuration tailored for builder studio tools.
+- **ThemeToggle**: Interactive theme selector button supporting dark/light mode toggle with smooth transitions.
+- **SocialIcons**: Standardized vector social brand icons (GitHub, LinkedIn, Twitter/X) for footer integrations.
 
-## Usage
+---
+
+## 📖 Usage & Setup
 
 ### 1. Installation
 
-The library is managed via npm workspaces. Ensure it is listed in your `package.json`:
+The library is managed via npm workspaces. Verify the dependency in your workspace application `package.json`:
 
 ```json
 {
@@ -50,19 +57,19 @@ The library is managed via npm workspaces. Ensure it is listed in your `package.
 }
 ```
 
-### 2. Implementation
+### 2. Basic Component Usage
 
-Import the desired components directly from the package:
+Import UI and Layout components directly from the package root:
 
 ```tsx
 import { Button, Card, Tooltip, Container } from "@veriworkly/ui";
 
-export default function MyPage() {
+export default function Page() {
   return (
     <Container>
-      <Card>
-        <Tooltip content="Click to submit">
-          <Button>Submit</Button>
+      <Card className="p-8">
+        <Tooltip content="Submit your details">
+          <Button variant="primary">Submit</Button>
         </Tooltip>
       </Card>
     </Container>
@@ -70,20 +77,51 @@ export default function MyPage() {
 }
 ```
 
-## Styling
+### 3. Font Integration
 
-The library uses a global theme system defined in `src/styles/themes.css`. It supports both Light and Dark modes using CSS variables and Tailwind's `@theme` block.
+The package exports Google's **Geist** and **Geist Mono** configuration. Import the font variables helper in your Next.js root layout:
 
-```css
-/* Example of using theme variables */
-.custom-element {
-  background-color: var(--fd-background);
-  color: var(--fd-foreground);
+```tsx
+import { globalFontVariables } from "@veriworkly/ui";
+import "@veriworkly/ui/styles/globals.css";
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en" className={globalFontVariables}>
+      <body className="antialiased">
+        {children}
+      </body>
+    </html>
+  );
 }
 ```
 
-## Development & Contribution
+---
 
-- **HMR**: Components support Hot Module Replacement within the workspace.
-- **Utils**: Use the `cn` utility from `@veriworkly/ui/utils` for conditional class merging.
-- **Mobile First**: Always test new components on small screens (320px+) to ensure "Perfection".
+## 🎨 Theme & Styling System
+
+The library utilizes a dual-theme variable design configured for light and dark modes in `src/styles/themes.css`. 
+
+### Key Custom Theme Variables:
+* `--background` / `--color-fd-background`: Main application canvas color.
+* `--foreground` / `--color-fd-foreground`: Primary typography and element color.
+* `--card` / `--color-fd-card`: Card and modal background color.
+* `--border` / `--color-fd-border`: Soft divider and border color.
+* `--accent` / `--color-fd-primary`: Main brand color for action elements.
+
+### CSS Usage Example:
+```css
+.custom-component {
+  background-color: var(--background);
+  border: 1px solid var(--border);
+  color: var(--foreground);
+}
+```
+
+---
+
+## 🛠️ Development & Contribution
+
+- **HMR**: Hot Module Replacement is supported across all workspaces during development.
+- **Utilities**: Use the `cn` utility exported from `@veriworkly/ui/utils` for tailwind class merge conflict prevention.
+- **Mobile First**: Design and test components on small screens (minimum 320px width) before pushing changes.

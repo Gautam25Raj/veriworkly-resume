@@ -26,74 +26,94 @@ Before initialization, ensure the following dependencies are installed:
 
 <Steps>
   <Step>
-    ### Clone the Repository
-    Initialize your local environment by cloning the official repository:
-
-    ```bash
-    git clone https://github.com/VeriWorkly/veriworkly.git
-    cd veriworkly-resume
-    ```
-
+    ### Fork and Clone the Repository
+    1. Fork the official [VeriWorkly Repository](https://github.com/VeriWorkly/veriworkly) to your personal GitHub account.
+    2. Clone your personal fork to your local development machine:
+       ```bash
+       git clone https://github.com/YOUR_USERNAME/veriworkly.git
+       cd veriworkly-resume
+       ```
   </Step>
 
   <Step>
-    ### Install Dependencies
-    Install all required packages across the monorepo workspaces:
-
+    ### Configure Upstream Remote & Sync
+    Configure the original repository as an upstream remote to pull future updates. Make sure to base your changes on the `master` branch:
     ```bash
-    npm install
+    # Add the upstream remote
+    git remote add upstream https://github.com/VeriWorkly/veriworkly.git
+
+    # Checkout and sync your local master branch with the upstream master branch
+    git checkout master
+    git pull upstream master
     ```
 
   </Step>
+
+<Step>
+  ### Install Dependencies Install all package and workspace dependencies defined in the monorepo
+  root: ```bash npm install ```
+</Step>
 
   <Step>
     ### Configure Environment Variables
-    Environment configuration is required for the site, studio, and server services.
-
+    Duplicate the example configuration files and customize them for your local environment:
     ```bash
-    # Duplicate example configuration files
     cp .env.example .env
     cp apps/server/.env.example apps/server/.env
     cp apps/studio/.env.example apps/studio/.env
     cp apps/site/.env.example apps/site/.env
+    cp apps/docs-platform/.env.example apps/docs-platform/.env
+    cp apps/blog-platform/.env.example apps/blog-platform/.env
     ```
 
-    Ensure the following critical variables are populated:
+    Required variables for basic local functionality:
     - `DATABASE_URL`: PostgreSQL connection string.
-    - `AUTH_SECRET`: Security secret for session encryption (must match between server and studio).
-    - `NEXT_PUBLIC_BACKEND_URL`: Typically `http://localhost:8080/api/v1`.
+    - `AUTH_SECRET`: Random secure token for authentication (must match in server and studio).
+    - `NEXT_PUBLIC_BACKEND_URL`: URL of your local or remote backend (defaults to `http://localhost:8080/api/v1`).
 
   </Step>
 
-  <Step>
-    ### Database Initialization
-    Synchronize your PostgreSQL database with the current Prisma schema:
-
-    ```bash
-    npm run db:push -w @veriworkly/server
-    ```
-
-  </Step>
+<Step>
+  ### Database Initialization If you are planning to work on backend API authentication or syncing
+  features, initialize your PostgreSQL database with the Prisma schema: ```bash npm run db:push -w
+  @veriworkly/server ```
+</Step>
 
   <Step>
     ### Start Development Servers
-    The monorepo allows you to run services independently or concurrently.
+    Depending on what you are building, you can choose to run the frontend independently or run all services concurrently:
 
-    **Option 1: Individual Services**
+    **Option A: Frontend-Only Development (No Database Required)**
+    If you are only editing frontend components, pages, or the design system (e.g., style guide, templates, landing pages):
     ```bash
-    # Terminal 1: Backend API
-    npm run dev:server
+    # Starts the marketing site (apps/site) on port 3000
+    npm run dev
 
-    # Terminal 2: Resume Studio
+    # Or to start the resume editor (apps/studio) on port 3001
     npm run dev:studio
-
-    # Terminal 3: Marketing Site
-    npm run dev:site
     ```
 
-    **Option 2: Concurrent Development**
+    **Option B: Full-Stack Development (Database Required)**
+    If you are building database-dependent features (authentication, account syncing):
     ```bash
+    # Starts all workspaces (site, studio, server, docs, blog)
     npm run dev:all
+    ```
+
+  </Step>
+
+  <Step>
+    ### Code Validation
+    Ensure your code complies with our standards before committing:
+    ```bash
+    # Run ESLint validation
+    npm run lint
+
+    # Run Prettier code formatting
+    npm run format:write
+
+    # Validate production build compiles without errors
+    npm run build
     ```
 
   </Step>
@@ -103,9 +123,10 @@ Before initialization, ensure the following dependencies are installed:
 
 ## Environment Verification
 
-To confirm a successful installation, verify the following endpoints:
+To verify that your services are running successfully, check the following endpoints:
 
-- **Marketing Site**: `http://localhost:3000`
-- **Resume Studio**: `http://localhost:3001`
-- **Documentation**: `http://localhost:3002`
-- **Backend API**: `http://localhost:8080/api/v1/health` (Checks database connectivity)
+- **Marketing Site**: [http://localhost:3000](http://localhost:3000)
+- **Resume Studio**: [http://localhost:3001](http://localhost:3001)
+- **Documentation Platform**: [http://localhost:3002](http://localhost:3002)
+- **Official Blog**: [http://localhost:3003](http://localhost:3003)
+- **Backend API Health**: [http://localhost:8080/api/v1/health](http://localhost:8080/api/v1/health) (returns database status)

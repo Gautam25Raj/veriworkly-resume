@@ -9,10 +9,11 @@ date: "2026-04-28"
 
 VeriWorkly is organized as a multi-app repository with a clear split of concerns:
 
-1. Resume Builder (`apps/resume-builder`)
-2. Docs Platform (`apps/docs-platform`)
-3. Blog Platform (`apps/blog-platform`)
-4. API Server (`apps/server`)
+1. Marketing Landing Site (`apps/site`)
+2. Builder Studio (`apps/studio`)
+3. Docs Platform (`apps/docs-platform`)
+4. Blog Platform (`apps/blog-platform`)
+5. API Server (`apps/server`)
 
 We also maintain one internal shared package, `@veriworkly/ui` (`packages/ui`), for reusable UI primitives and theme tokens.
 
@@ -34,11 +35,16 @@ Each service can be deployed independently. If export traffic spikes, we can tun
 
 ## What Each App Does
 
-### Resume Builder (`apps/resume-builder`)
+### Marketing Landing Site (`apps/site`)
 
-- Interactive editing experience
-- Local-first by default, with optional sync
-- Template rendering and export orchestration from the UI
+- Public-facing landing pages, pricing, and features presentation
+- Integrated blog previews and brand assets section
+
+### Builder Studio (`apps/studio`)
+
+- Interactive resume/CV editor and template selection
+- Local-first document editing and customization
+- Client-side export orchestration and PDF rendering
 
 ### API Server (`apps/server`)
 
