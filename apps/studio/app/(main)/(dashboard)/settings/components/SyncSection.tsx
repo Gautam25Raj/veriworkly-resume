@@ -17,6 +17,7 @@ import {
   loadWorkspaceSettingsFromLocalStorage,
 } from "@/features/documents/services/workspace-settings";
 import { setAllResumesSyncEnabled } from "@/features/resume/services/resume-service";
+import { useUserStore } from "@/store/useUserStore";
 
 interface TelemetryState {
   lastAttemptAt: string | null;
@@ -26,6 +27,7 @@ interface TelemetryState {
 export default function SyncSection() {
   const [loading, setLoading] = useState(false);
   const [autoSync, setAutoSync] = useState(false);
+  const isLoggedIn = useUserStore((state) => state.isLoggedIn);
 
   const [telemetry, setTelemetry] = useState<TelemetryState>({
     lastAttemptAt: null,
@@ -56,6 +58,11 @@ export default function SyncSection() {
   }, []);
 
   const handleToggle = async (checked: boolean) => {
+    if (!isLoggedIn) {
+      setAutoSync(false);
+      return;
+    }
+
     setAutoSync(checked);
     setAutoSyncEnabledInLocalStorage(checked);
     setAllResumesSyncEnabled(checked);
@@ -67,6 +74,8 @@ export default function SyncSection() {
     }
   };
 
+  const displayedAutoSync = isLoggedIn && autoSync;
+
   return (
     <section className="space-y-6">
       <div className="border-border/60 flex items-end justify-between border-b pb-4">
@@ -75,7 +84,11 @@ export default function SyncSection() {
             <CloudSync className="text-accent h-5 w-5" /> Cloud & Data
           </h2>
 
-          <p className="text-muted-foreground text-sm">Manage background synchronization.</p>
+          <p className="text-muted-foreground text-sm">
+            {isLoggedIn
+              ? "Manage background synchronization."
+              : "Sign in to enable background synchronization."}
+          </p>
         </div>
 
         <div className="border-border/40 flex items-center gap-3 rounded-full border bg-zinc-500/5 p-2 px-4">
@@ -83,7 +96,11 @@ export default function SyncSection() {
             Auto-Sync
           </span>
 
-          <Switch checked={autoSync} onCheckedChange={handleToggle} disabled={loading} />
+          <Switch
+            checked={displayedAutoSync}
+            onCheckedChange={handleToggle}
+            disabled={loading || !isLoggedIn}
+          />
         </div>
       </div>
 
